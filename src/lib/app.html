@@ -143,6 +143,34 @@
   .cue{font-family:var(--mono);font-size:10px;color:var(--faint);padding:1px 2px 7px 41px;line-height:1.4;letter-spacing:.01em}
   .cue.up{color:var(--ramp);font-weight:700}
   .cue.m{color:var(--max);font-weight:700}
+  .wload{display:flex;align-items:center;gap:9px;margin:0 0 10px;padding:8px 10px;background:var(--paper);border:1px solid var(--line);border-radius:9px}
+  .wload-l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);flex:1}
+  .wload-i{width:84px;height:32px}
+  .maxbuild{padding:2px 2px 9px 41px;display:flex;flex-direction:column;gap:6px}
+  .max-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .msel{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink);border:1px solid var(--line-strong);border-radius:7px;background:var(--card);padding:6px 8px;cursor:pointer}
+  .msel:focus{outline:none;border-color:var(--ink)}
+  .mfld{height:32px;width:96px}
+  .inp.mfld{font-size:13px}
+  .max-prev{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--max);letter-spacing:.01em}
+  .max-rep{appearance:none;display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--faint);background:transparent;border:1px solid var(--line-strong);border-radius:7px;padding:5px 9px;cursor:pointer;letter-spacing:.02em}
+  .max-rep svg{width:12px;height:12px}
+  .max-rep:hover{color:var(--ink);border-color:var(--ink)}
+  .cardio-cals{display:flex;align-items:center;gap:9px;margin-top:11px;padding-top:11px;border-top:1px solid #2b2c31}
+  .cc-l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9d9c97;flex:1}
+  .cc-i{font-family:var(--mono);font-size:14px;font-weight:500;text-align:center;height:32px;width:84px;border:1px solid #3a3b40;border-radius:7px;background:#2b2c31;color:#fff;padding:0 6px}
+  .cc-i:focus{outline:none;border-color:#fff}
+  .cc-i::placeholder{color:#6e6f74}
+  .cc-u{font-family:var(--mono);font-size:11px;color:#9d9c97}
+  .chist{appearance:none;width:26px;height:26px;border:1px solid #3a3b40;background:transparent;border-radius:7px;color:#9d9c97;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .chist svg{width:14px;height:14px}
+  .chist:hover{color:#fff;border-color:#fff}
+  .hnote{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--max);padding:1px 0 4px 28px}
+  .hwl{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--faint);text-transform:none;letter-spacing:0;margin-left:8px}
+  .chrow{display:flex;align-items:center;gap:12px}
+  .chcal{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink)}
+  .chstage{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .cwhen{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--ramp);margin-left:8px}
 
   .cardio{background:var(--ink);color:#fff;border-radius:12px;padding:14px 15px;margin:0 0 14px}
   .cardio.bottom{margin:18px 0 0}
@@ -233,7 +261,7 @@ const CLIENT_MODE = !!CLIENT_TOKEN_FROM_URL;
 // swapped for the token server-side expects; args where the first argument
 // is a logId need the token prepended instead. Keeps every existing call
 // site in this file unchanged — only gs() itself needs to know this.
-const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getLastSession']);
+const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getLastSession','getCardioHistory']);
 const CLIENT_PREPEND = new Set(['saveProgress','finishSession','getLog']);
 
 class LoginRequired extends Error {}
@@ -376,8 +404,8 @@ const TEMPLATES = [
 const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
-  log:null, runEntries:{}, cardio:{stage:1,done:false}, open:null, last:null,
-  clientsOpen:false, history:{open:false}, infoOpen:false, modal:null, loginError:''
+  log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null,
+  clientsOpen:false, history:{open:false}, cardioHist:{open:false}, infoOpen:false, modal:null, loginError:''
 };
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -393,6 +421,7 @@ const ICON_HIST='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const ICON_INFO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
 const ICON_LOGOUT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
 const ICON_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l1.5-1.5a5 5 0 0 0-7.07-7.07L10 5.88"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.5 1.5a5 5 0 0 0 7.07 7.07L14 18.12"/></svg>';
+const ICON_REPEAT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
 
 /* ============================================================
    RESOLVERS + SAVE
@@ -403,16 +432,50 @@ function move(arr, i, dir){ const j=i+dir; if(j<0||j>=arr.length) return; const 
 
 /* Double progression cue. Working sets: hold weight, add reps inside the
    range; once the top of the range is hit, the cue flips to "add weight".
-   Max sets: no rep chase — just beat last session's load and push to failure. */
+   Max sets are handled separately by the max-set builder below. */
 function parseRange(t){ const m=String(t==null?'':t).match(/(\d+)\s*[–-]\s*(\d+)/); return m?{lo:+m[1],hi:+m[2]}:null; }
 function lastSet(exId,si){ const m=(S.last&&S.last.sets)||{}; return m[exId+':'+si]||null; }
-function progCue(exId,si,st,type){
-  if(type==='R') return null;
-  const prev=lastSet(exId,si);
-  if(type==='M'){
-    const base=(prev&&prev.load)?('go heavier than '+prev.load):'pick your heaviest clean weight';
-    return {t:'Top set — '+base+', push to failure', c:'m'};
+// Working load carries forward across sessions: ghost-prefill from the most
+// recent logged workingLoad for this exercise (any set), editable, no enforcement.
+function lastWorkLoad(exId){
+  const m=(S.last&&S.last.sets)||{};
+  for(const k in m){ if(k.indexOf(exId+':')===0 && m[k].workingLoad) return m[k].workingLoad; }
+  return '';
+}
+function workLoad(exId){ const e=S.exEntries[exId]; return (e&&e.workLoad!=null)?e.workLoad : ''; }
+function setWorkLoad(exId,val){ (S.exEntries[exId]||(S.exEntries[exId]={})).workLoad=val; scheduleProgressSave(); }
+
+/* Max-set builder. Stores a small structured blob per max set; composeMax()
+   turns it into the human string shown as next session's cue. */
+const MAX_METHODS=[
+  ['','How\'d you push it?'],['+reps','+ reps'],['rest-pause','rest-pause'],['dropset','dropset'],
+  ['partials','partials'],['slow','slow eccentric'],['forced','forced reps'],['cluster','cluster'],
+  ['failure','near failure / failure'],['other','other']
+];
+function composeMax(mx){
+  if(!mx||!mx.method) return '';
+  switch(mx.method){
+    case '+reps': return mx.reps?('+'+mx.reps+' reps'):'+reps';
+    case 'rest-pause': return mx.bursts?('rest-pause '+mx.bursts):'rest-pause';
+    case 'dropset': { const a=mx.dload?(mx.dload):''; const b=mx.dreps?('×'+mx.dreps):''; const t=[a,b].filter(Boolean).join(' '); return t?('dropset '+t):'dropset'; }
+    case 'partials': return 'partials'+(mx.pos?(' ('+mx.pos+')'):'');
+    case 'slow': return mx.secs?(mx.secs+'s eccentric'):'slow eccentric';
+    case 'forced': return mx.n?('+'+mx.n+' forced'):'forced reps';
+    case 'cluster': return mx.detail?('cluster '+mx.detail):'cluster';
+    case 'failure': return mx.fail==='near'?(mx.left?('~'+mx.left+' left'):'near failure'):'to failure';
+    case 'other': return mx.text||'';
   }
+  return '';
+}
+function maxOf(exId,si){ const en=S.runEntries[exId+':'+si]; return (en&&en.max)?en.max:null; }
+function setMaxMethod(bi,ei,si,method){ const e=exAt(bi,ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max={method}; scheduleProgressSave(); render(); }
+function setMaxField(bi,ei,si,fld,val){ const e=exAt(bi,ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); (en.max||(en.max={method:''}))[fld]=val; scheduleProgressSave(); }
+function setMaxFieldR(bi,ei,si,fld,val){ setMaxField(bi,ei,si,fld,val); render(); }
+function repeatMax(bi,ei,si){ const e=exAt(bi,ei); const prev=lastSet(e.exId,si); if(!prev||!prev.maxNote) return; let blob=null; try{ blob=JSON.parse(prev.maxNote); }catch(_){ blob=null; } if(!blob) return; const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max=blob; scheduleProgressSave(); render(); }
+function lastMaxDisplay(exId,si){ const prev=lastSet(exId,si); if(!prev||!prev.maxNote) return ''; try{ const b=JSON.parse(prev.maxNote); return composeMax(b); }catch(_){ return ''; } }
+function progCueMain(exId,si,st,type){
+  if(type!=='W') return null;
+  const prev=lastSet(exId,si);
   const range=parseRange(st.target);
   if(!range){ return (prev&&(prev.reps||prev.load))?{t:'Last: '+(prev.reps||'–')+' × '+(prev.load||'–'),c:''}:null; }
   if(!prev||(!prev.reps&&!prev.load)) return {t:'Work in '+range.lo+'–'+range.hi, c:''};
@@ -420,6 +483,10 @@ function progCue(exId,si,st,type){
   if(!isNaN(r)&&r>=range.hi) return {t:'↑ Add weight — hit '+r+' @ '+(prev.load||'?'), c:'up'};
   if(!isNaN(r)) return {t:'Beat '+r+' @ '+(prev.load||'?')+' · same weight', c:''};
   return {t:'Last @ '+(prev.load||'?')+' — add a rep', c:''};
+}
+function progCue(exId,si,st,type){
+  if(type==='R'||type==='M') return null;
+  return progCueMain(exId,si,st,type);
 }
 
 let _pTimer=null, _tTimer=null;
@@ -437,9 +504,12 @@ function buildLogPayload(){
   const s=curSession(); const sets=[];
   s.blocks.forEach(b=>b.items.forEach(e=>e.sets.forEach((st,si)=>{
     const en=S.runEntries[e.exId+':'+si]||{};
-    sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:en.type||st.type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done });
+    const type=en.type||st.type;
+    const wl=workLoad(e.exId);
+    const maxNote=(type==='M' && en.max && en.max.method)?JSON.stringify(en.max):'';
+    sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done, workingLoad:wl, maxNote });
   })));
-  return { clientId:S.clientId, phase:S.phase, sessionId:s.sessionId, sessionName:s.name, cardioStage:S.cardio.stage, cardioDone:S.cardio.done, sets };
+  return { clientId:S.clientId, phase:S.phase, sessionId:s.sessionId, sessionName:s.name, cardioStage:S.cardio.stage, cardioDone:S.cardio.done, cardioCals:S.cardio.cals||'', cardioWhen:(s.cardioPos&&s.cardioPos!=='none')?s.cardioPos:'', sets };
 }
 
 /* ============================================================
@@ -517,18 +587,23 @@ function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTem
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
   S.sessionId=s.sessionId; S.view='session'; S.last=null;
-  if(S.isTemplate){ S.log=null; S.runEntries={}; S.cardio={stage:1,done:false}; render(); window.scrollTo(0,0); return; }
+  if(S.isTemplate){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; render(); window.scrollTo(0,0); return; }
   try{
     const log=await gs('startSession', S.clientId, S.phase, s.sessionId, s.name); S.log=log; hydrate(log);
     try{ S.last=await gs('getLastSession', S.clientId, s.sessionId); }catch(e){ S.last=null; }
   }
-  catch(e){ S.log=null; S.runEntries={}; S.cardio={stage:1,done:false}; S.last=null; }
+  catch(e){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; S.last=null; }
   render(); window.scrollTo(0,0);
 }
 function hydrate(log){
-  S.runEntries={};
-  (log.sets||[]).forEach(s=>{ S.runEntries[s.exId+':'+s.setOrder]={type:s.setType,reps:s.reps,load:s.load,done:s.done}; });
-  S.cardio={ stage:Number(log.cardioStage)||1, done:!!log.cardioDone };
+  S.runEntries={}; S.exEntries={};
+  (log.sets||[]).forEach(s=>{
+    const en={type:s.setType,reps:s.reps,load:s.load,done:s.done};
+    if(s.maxNote){ try{ en.max=JSON.parse(s.maxNote); }catch(_){ } }
+    S.runEntries[s.exId+':'+s.setOrder]=en;
+    if(s.workingLoad && S.exEntries[s.exId]===undefined) S.exEntries[s.exId]={workLoad:s.workingLoad};
+  });
+  S.cardio={ stage:Number(log.cardioStage)||1, done:!!log.cardioDone, cals:log.cardioCals||'' };
 }
 async function backToWeek(){ S.view='week'; S.sessionId=null; if(!S.isTemplate){ try{ S.open=await gs('getOpenSession',S.clientId); }catch(e){ S.open=null; } } render(); window.scrollTo(0,0); }
 async function resumeOpen(){
@@ -562,6 +637,7 @@ function slideCardio(val){
   scheduleProgressSave();
 }
 function toggleCardioDone(){ S.cardio.done=!S.cardio.done; scheduleProgressSave(); render(); }
+function setCardioCals(val){ S.cardio.cals=val; scheduleProgressSave(); }
 
 /* ---- template (edit) interactions ---- */
 function renameSession(i,val){ S.template.sessions[i].name=val; scheduleTemplateSave(); }
@@ -604,6 +680,8 @@ async function pickClient(i){
 /* ---- history ---- */
 async function openHistory(bi,ei){ const e=exAt(bi,ei); S.history={open:true,name:e.name,data:null}; render(); try{ const data=await gs('getExerciseHistory',S.clientId,e.exId); if(S.history.open) S.history.data=data; }catch(e2){ S.history.data=[]; } render(); }
 function closeHistory(){ S.history={open:false}; render(); }
+async function openCardioHistory(){ S.cardioHist={open:true,data:null}; render(); try{ const data=await gs('getCardioHistory',S.clientId); if(S.cardioHist.open) S.cardioHist.data=data; }catch(e2){ S.cardioHist.data=[]; } render(); }
+function closeCardioHistory(){ S.cardioHist={open:false}; render(); }
 
 /* ---- modal ---- */
 function modalInput(title,placeholder){ return new Promise(res=>{ S.modal={kind:'input',title,placeholder:placeholder||'',res}; render(); }); }
@@ -760,6 +838,8 @@ function exHTML(session,bi,ei){
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
     if(e.cues) rows+=`<div class="ex-cues-disp">${esc(e.cues)}</div>`;
+    const hasW=e.sets.some((st,si)=>((S.runEntries[e.exId+':'+si]||{}).type||st.type)==='W');
+    if(hasW){ const wl=workLoad(e.exId); const phw=lastWorkLoad(e.exId)||'–'; rows+=`<div class="wload"><span class="wload-l">Working load</span><input class="inp wload-i" inputmode="decimal" placeholder="${escA(phw)}" value="${escA(wl)}" oninput="setWorkLoad('${e.exId}',this.value)"></div>`; }
     rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
@@ -767,7 +847,8 @@ function exHTML(session,bi,ei){
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
       rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${bi},${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${bi},${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${bi},${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${bi},${ei},${si})">${ICON_CHK}</button></div>`;
-      const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`;
+      if(type==='M') rows+=maxBuild(bi,ei,si,e);
+      else { const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
     rows+=`<button class="ex-add" onclick="addSet(${bi},${ei})">+ set</button>`;
   }
@@ -776,10 +857,31 @@ function exHTML(session,bi,ei){
   const delBtn=S.edit?`<button class="del" onclick="delEx(${bi},${ei})">${ICON_X}</button>`:'';
   return `<div class="ex"><div class="ex-top">${key?`<span class="ex-key">${key}</span>`:''}${nameCell}${hist}${delBtn}</div>${rows}</div>`;
 }
+function numFieldMax(bi,ei,si,fld,ph,val){ return `<input class="inp mfld" inputmode="decimal" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${bi},${ei},${si},'${fld}',this.value)">`; }
+function txtFieldMax(bi,ei,si,fld,ph,val){ return `<input class="inp mfld wide" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${bi},${ei},${si},'${fld}',this.value)">`; }
+function selFieldMax(bi,ei,si,fld,opts,val){ let o=''; opts.forEach(v=>{ o+=`<option value="${escA(v)}" ${v===val?'selected':''}>${esc(v||'choose…')}</option>`; }); return `<select class="msel mfld" onchange="setMaxFieldR(${bi},${ei},${si},'${fld}',this.value)">${o}</select>`; }
+function maxBuild(bi,ei,si,e){
+  const mx=maxOf(e.exId,si)||{method:''}; const m=mx.method||'';
+  let opts=''; MAX_METHODS.forEach(o=>{ opts+=`<option value="${escA(o[0])}" ${o[0]===m?'selected':''}>${esc(o[1])}</option>`; });
+  let fields='';
+  if(m==='+reps') fields=numFieldMax(bi,ei,si,'reps','extra reps',mx.reps);
+  else if(m==='rest-pause') fields=txtFieldMax(bi,ei,si,'bursts','e.g. 8 +3 +2',mx.bursts);
+  else if(m==='dropset') fields=numFieldMax(bi,ei,si,'dload','drop load',mx.dload)+numFieldMax(bi,ei,si,'dreps','drop reps',mx.dreps);
+  else if(m==='partials') fields=selFieldMax(bi,ei,si,'pos',['','long','middle','short'],mx.pos);
+  else if(m==='slow') fields=numFieldMax(bi,ei,si,'secs','seconds',mx.secs);
+  else if(m==='forced') fields=numFieldMax(bi,ei,si,'n','forced reps',mx.n);
+  else if(m==='cluster') fields=txtFieldMax(bi,ei,si,'detail','detail (optional)',mx.detail);
+  else if(m==='failure') fields=selFieldMax(bi,ei,si,'fail',['','failure','near'],mx.fail)+(mx.fail==='near'?numFieldMax(bi,ei,si,'left','reps left',mx.left):'');
+  else if(m==='other') fields=txtFieldMax(bi,ei,si,'text','what you did',mx.text);
+  const disp=composeMax(mx); const preview=disp?`<div class="max-prev">${esc(disp)}</div>`:'';
+  const lastD=lastMaxDisplay(e.exId,si);
+  const repeat=lastD?`<button class="max-rep" onclick="repeatMax(${bi},${ei},${si})">${ICON_REPEAT}<span>last: ${esc(lastD)}</span></button>`:'';
+  return `<div class="maxbuild"><div class="max-row"><select class="msel" onchange="setMaxMethod(${bi},${ei},${si},this.value)">${opts}</select>${fields}</div>${preview}${repeat}</div>`;
+}
 function cardioHTML(session,pos){
   const stage=S.cardio.stage||1; const done=S.cardio.done; const st=LADDER[stage-1];
   let segs=''; for(let i=1;i<=LADDER.length;i++) segs+=`<div class="seg${i===stage?' chosen':''}" id="cseg-${i}"></div>`;
-  let editControls='', ctrl='', foot='';
+  let editControls='', ctrl='', foot='', cals='', histbtn='';
   if(S.edit){
     editControls=`<div class="cardio-pos">
       <button class="posbtn ${session.cardioPos==='top'?'on':''}" onclick="cardioPos('top')">FIRST</button>
@@ -787,13 +889,15 @@ function cardioHTML(session,pos){
       <button class="posbtn" onclick="delCardio()" style="margin-left:auto">REMOVE</button></div>`;
   } else {
     ctrl=`<input type="range" min="1" max="${LADDER.length}" value="${stage}" oninput="slideCardio(this.value)">`;
+    cals=`<div class="cardio-cals"><span class="cc-l">Total output</span><input class="cc-i" inputmode="numeric" placeholder="–" value="${escA(S.cardio.cals||'')}" oninput="setCardioCals(this.value)"><span class="cc-u">cals</span></div>`;
     foot=`<div class="cardio-foot"><span class="lead-note">${pos==='top'?'DO THIS FIRST':'FINISH WITH THIS'}</span><button class="chk" onclick="toggleCardioDone()">${ICON_CHK}</button></div>`;
+    histbtn=`<button class="chist" onclick="openCardioHistory()" title="Cardio history">${ICON_HIST}</button>`;
   }
   return `<div class="cardio ${pos} ${done?'done':''}">
-    <div class="cardio-hd"><span class="cardio-ic">CARDIO · PICK WHAT YOU DID</span><span class="fixed-pill">20 MIN · FIXED</span></div>
+    <div class="cardio-hd"><span class="cardio-ic">CARDIO · PICK WHAT YOU DID</span><span style="display:flex;align-items:center;gap:8px"><span class="fixed-pill">20 MIN · FIXED</span>${histbtn}</span></div>
     ${editControls}<div class="ladder">${segs}</div>${ctrl}
     <div class="cardio-stage" id="cstage">Stage ${stage} · ${esc(st.n)}</div>
-    <div class="cardio-detail" id="cdetail">${esc(st.d)}</div>${foot}</div>`;
+    <div class="cardio-detail" id="cdetail">${esc(st.d)}</div>${cals}${foot}</div>`;
 }
 
 function clientsOverlay(){
@@ -806,9 +910,35 @@ function historyOverlay(){
   const H=S.history; let body='';
   if(H.data===null) body=`<div class="hist-empty">Loading…</div>`;
   else if(!H.data.length) body=`<div class="hist-empty">No history yet for this exercise.</div>`;
-  else H.data.forEach(en=>{ let sets=''; en.sets.forEach(st=>{ sets+=`<div class="hsrow"><span class="badge sm ${st.type}">${st.type}</span><span class="htgt">${esc(st.target)}</span><span class="hval">${esc(st.reps||'–')} <span class="hx">×</span> ${esc(st.load||'–')}</span></div>`; }); body+=`<div class="hist-entry"><div class="hist-d">${esc(en.date)} · ${esc(en.sessionName)}</div>${sets}</div>`; });
+  else H.data.forEach(en=>{
+    let sets='';
+    en.sets.forEach(st=>{
+      let note='';
+      if(st.type==='M' && st.maxNote){ try{ const d=composeMax(JSON.parse(st.maxNote)); if(d) note=`<div class="hnote">${esc(d)}</div>`; }catch(_){ } }
+      sets+=`<div class="hsrow"><span class="badge sm ${st.type}">${st.type}</span><span class="htgt">${esc(st.target)}</span><span class="hval">${esc(st.reps||'–')} <span class="hx">×</span> ${esc(st.load||'–')}</span></div>${note}`;
+    });
+    const wl=(en.sets.find(x=>x.workingLoad)||{}).workingLoad;
+    const wlTag=wl?`<span class="hwl">working ${esc(wl)}</span>`:'';
+    body+=`<div class="hist-entry"><div class="hist-d">${esc(en.date)} · ${esc(en.sessionName)}${wlTag}</div>${sets}</div>`;
+  });
   return `<div class="overlay" onclick="closeHistory()"><div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-h">${esc(H.name)} <button class="x" onclick="closeHistory()">${ICON_X}</button></div>
+    <div class="hist-list">${body}</div></div></div>`;
+}
+function cardioHistoryOverlay(){
+  const H=S.cardioHist; let body='';
+  if(H.data===null) body=`<div class="hist-empty">Loading…</div>`;
+  else if(!H.data.length) body=`<div class="hist-empty">No cardio logged yet.</div>`;
+  else H.data.forEach(en=>{
+    const when=en.when==='top'?'START':(en.when==='bottom'?'END':'');
+    const tag=when?`<span class="cwhen">${when}</span>`:'';
+    const stg=en.stage?('Stage '+en.stage):'';
+    const cals=en.cals?(esc(en.cals)+' cals'):'–';
+    body+=`<div class="hist-entry"><div class="hist-d">${esc(en.date)}${tag}</div>
+      <div class="chrow"><span class="chcal">${cals}</span><span class="chstage">${esc(stg)}</span></div></div>`;
+  });
+  return `<div class="overlay" onclick="closeCardioHistory()"><div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-h">Cardio history <button class="x" onclick="closeCardioHistory()">${ICON_X}</button></div>
     <div class="hist-list">${body}</div></div></div>`;
 }
 function modalOverlay(){
@@ -866,6 +996,7 @@ function render(){
   else h=weekHTML();
   if(S.clientsOpen) h+=clientsOverlay();
   if(S.history && S.history.open) h+=historyOverlay();
+  if(S.cardioHist && S.cardioHist.open) h+=cardioHistoryOverlay();
   if(S.infoOpen) h+=infoOverlay();
   if(S.modal) h+=modalOverlay();
   app.innerHTML=h;

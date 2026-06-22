@@ -130,11 +130,11 @@ export async function startSession(clientId: string, phase: number, sessionId: s
   const logId = uid_();
   await appendRows_("sessionLogs", [{
     logId, clientId, phase, sessionId, sessionName,
-    date: today(), cardioStage: "", cardioDone: false,
+    date: today(), cardioStage: "", cardioDone: false, cardioCals: "", cardioWhen: "",
     status: "open", createdAt: nowISO(), updatedAt: nowISO(),
   }]);
   return { logId, clientId, phase: Number(phase), sessionId, sessionName,
-            status: "open", cardioStage: "", cardioDone: false, sets: [] };
+            status: "open", cardioStage: "", cardioDone: false, cardioCals: "", cardioWhen: "", sets: [] };
 }
 
 export async function saveProgress(logId: string, payload: any) {
@@ -144,6 +144,8 @@ export async function saveProgress(logId: string, payload: any) {
     if (l.logId === logId) {
       if (p.cardioStage !== undefined) l.cardioStage = p.cardioStage;
       if (p.cardioDone !== undefined) l.cardioDone = !!p.cardioDone;
+      if (p.cardioCals !== undefined) l.cardioCals = p.cardioCals;
+      if (p.cardioWhen !== undefined) l.cardioWhen = p.cardioWhen;
       l.updatedAt = nowISO();
     }
   });
@@ -152,6 +154,7 @@ export async function saveProgress(logId: string, payload: any) {
   const mine = (p.sets || []).map((s: any) => ({
     logId, exId: s.exId, exName: s.exName, setOrder: s.setOrder,
     setType: s.setType, target: s.target, reps: s.reps, load: s.load, done: !!s.done,
+    workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
   }));
   await writeRows_("setLogs", others.concat(mine));
   return true;
@@ -177,11 +180,13 @@ export async function getLog(logId: string) {
   const sets = (await readRows_("setLogs")).filter((r) => r.logId === logId).map((s) => ({
     exId: s.exId, exName: s.exName, setOrder: Number(s.setOrder),
     setType: s.setType, target: s.target, reps: s.reps, load: s.load, done: truthy(s.done),
+    workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
   }));
   return {
     logId: l.logId, clientId: l.clientId, phase: Number(l.phase), sessionId: l.sessionId,
     sessionName: l.sessionName, status: l.status,
     cardioStage: l.cardioStage, cardioDone: truthy(l.cardioDone),
+    cardioCals: l.cardioCals || "", cardioWhen: l.cardioWhen || "",
     date: String(l.date), sets,
   };
 }
@@ -198,6 +203,7 @@ export async function getExerciseHistory(clientId: string, exId: string) {
     if (s.exId === exId && logsById[s.logId]) {
       (byLog[s.logId] = byLog[s.logId] || []).push({
         setOrder: Number(s.setOrder), type: s.setType, target: s.target, reps: s.reps, load: s.load,
+        workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
       });
     }
   });
@@ -231,13 +237,31 @@ export async function getLastSession(clientId: string, sessionId: string) {
     );
   const last = logs[0];
   if (!last) return { date: "", sets: {} };
-  const sets: Record<string, { reps: string; load: string; type: string }> = {};
+  const sets: Record<string, { reps: string; load: string; type: string; workingLoad: string; maxNote: string }> = {};
   (await readRows_("setLogs"))
     .filter((s) => s.logId === last.logId)
     .forEach((s) => {
-      sets[`${s.exId}:${Number(s.setOrder)}`] = { reps: s.reps, load: s.load, type: s.setType };
+      sets[`${s.exId}:${Number(s.setOrder)}`] = {
+        reps: s.reps, load: s.load, type: s.setType,
+        workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
+      };
     });
   return { date: String(last.date), sets };
+}
+
+// Global cardio history for a client — every finished session that logged
+// cardio, newest first, each tagged START/END from the snapshot taken at
+// save time (cardioWhen), so moving cardio in the template later won't
+// relabel old entries.
+export async function getCardioHistory(clientId: string) {
+  return (await readRows_("sessionLogs"))
+    .filter((r) => r.clientId === clientId && r.status === "done" && (r.cardioCals !== "" || truthy(r.cardioDone)))
+    .sort((a, b) => +new Date(b.date) - +new Date(a.date) || +new Date(b.updatedAt) - +new Date(a.updatedAt))
+    .map((l) => ({
+      date: String(l.date), sessionName: l.sessionName,
+      stage: Number(l.cardioStage) || 0, cals: l.cardioCals || "",
+      when: l.cardioWhen || "",
+    }));
 }
 
 /* ---------- starter templates ---------- */
@@ -311,6 +335,9 @@ export async function getExerciseHistoryForToken(token: string, exId: string) {
 export async function getLastSessionForToken(token: string, sessionId: string) {
   return getLastSession(await clientIdForToken_(token), sessionId);
 }
+export async function getCardioHistoryForToken(token: string) {
+  return getCardioHistory(await clientIdForToken_(token));
+}
 // saveProgress / finishSession / getLog act on a logId, not a clientId
 // directly — confirm that log actually belongs to this token's client
 // before touching it, so a guessed/leaked logId can't cross clients.
@@ -340,7 +367,7 @@ export async function getLogForToken(token: string, logId: string) {
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
   getClients, addClient, setCurrentPhase, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
-  getExerciseHistory, getHistory, addClientFromTemplate, getLastSession,
+  getExerciseHistory, getHistory, addClientFromTemplate, getLastSession, getCardioHistory,
 };
 
 export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
@@ -353,4 +380,5 @@ export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
   getLog: getLogForToken,
   getExerciseHistory: getExerciseHistoryForToken,
   getLastSession: getLastSessionForToken,
+  getCardioHistory: getCardioHistoryForToken,
 };

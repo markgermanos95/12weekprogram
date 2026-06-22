@@ -15,9 +15,9 @@ export const TABS: Record<string, string[]> = {
   ],
   sessionLogs: [
     "logId", "clientId", "phase", "sessionId", "sessionName", "date",
-    "cardioStage", "cardioDone", "status", "createdAt", "updatedAt",
+    "cardioStage", "cardioDone", "cardioCals", "cardioWhen", "status", "createdAt", "updatedAt",
   ],
-  setLogs: ["logId", "exId", "exName", "setOrder", "setType", "target", "reps", "load", "done"],
+  setLogs: ["logId", "exId", "exName", "setOrder", "setType", "target", "reps", "load", "done", "workingLoad", "maxNote"],
 };
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
