@@ -140,6 +140,9 @@
   .srow.done .inp{opacity:.55}
   .ex-add{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--faint);background:transparent;border:0;cursor:pointer;padding:6px 6px 0 2px;display:inline-flex;align-items:center;gap:5px}
   .ex-add:hover{color:var(--ink)}
+  .cue{font-family:var(--mono);font-size:10px;color:var(--faint);padding:1px 2px 7px 41px;line-height:1.4;letter-spacing:.01em}
+  .cue.up{color:var(--ramp);font-weight:700}
+  .cue.m{color:var(--max);font-weight:700}
 
   .cardio{background:var(--ink);color:#fff;border-radius:12px;padding:14px 15px;margin:0 0 14px}
   .cardio.bottom{margin:18px 0 0}
@@ -230,7 +233,7 @@ const CLIENT_MODE = !!CLIENT_TOKEN_FROM_URL;
 // swapped for the token server-side expects; args where the first argument
 // is a logId need the token prepended instead. Keeps every existing call
 // site in this file unchanged — only gs() itself needs to know this.
-const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory']);
+const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getLastSession']);
 const CLIENT_PREPEND = new Set(['saveProgress','finishSession','getLog']);
 
 class LoginRequired extends Error {}
@@ -373,7 +376,7 @@ const TEMPLATES = [
 const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
-  log:null, runEntries:{}, cardio:{stage:1,done:false}, open:null,
+  log:null, runEntries:{}, cardio:{stage:1,done:false}, open:null, last:null,
   clientsOpen:false, history:{open:false}, infoOpen:false, modal:null, loginError:''
 };
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
@@ -397,6 +400,27 @@ const ICON_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 function curSession(){ return S.template ? S.template.sessions.find(s => s.sessionId === S.sessionId) : null; }
 function exAt(bi, ei){ const s = curSession(); return s.blocks[bi].items[ei]; }
 function move(arr, i, dir){ const j=i+dir; if(j<0||j>=arr.length) return; const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
+
+/* Double progression cue. Working sets: hold weight, add reps inside the
+   range; once the top of the range is hit, the cue flips to "add weight".
+   Max sets: no rep chase — just beat last session's load and push to failure. */
+function parseRange(t){ const m=String(t==null?'':t).match(/(\d+)\s*[–-]\s*(\d+)/); return m?{lo:+m[1],hi:+m[2]}:null; }
+function lastSet(exId,si){ const m=(S.last&&S.last.sets)||{}; return m[exId+':'+si]||null; }
+function progCue(exId,si,st,type){
+  if(type==='R') return null;
+  const prev=lastSet(exId,si);
+  if(type==='M'){
+    const base=(prev&&prev.load)?('go heavier than '+prev.load):'pick your heaviest clean weight';
+    return {t:'Top set — '+base+', push to failure', c:'m'};
+  }
+  const range=parseRange(st.target);
+  if(!range){ return (prev&&(prev.reps||prev.load))?{t:'Last: '+(prev.reps||'–')+' × '+(prev.load||'–'),c:''}:null; }
+  if(!prev||(!prev.reps&&!prev.load)) return {t:'Work in '+range.lo+'–'+range.hi, c:''};
+  const r=parseInt(prev.reps,10);
+  if(!isNaN(r)&&r>=range.hi) return {t:'↑ Add weight — hit '+r+' @ '+(prev.load||'?'), c:'up'};
+  if(!isNaN(r)) return {t:'Beat '+r+' @ '+(prev.load||'?')+' · same weight', c:''};
+  return {t:'Last @ '+(prev.load||'?')+' — add a rep', c:''};
+}
 
 let _pTimer=null, _tTimer=null;
 function setStat(t){ const el=document.getElementById('savestat'); if(el) el.textContent=t; }
@@ -492,10 +516,13 @@ function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTem
 
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
-  S.sessionId=s.sessionId; S.view='session';
+  S.sessionId=s.sessionId; S.view='session'; S.last=null;
   if(S.isTemplate){ S.log=null; S.runEntries={}; S.cardio={stage:1,done:false}; render(); window.scrollTo(0,0); return; }
-  try{ const log=await gs('startSession', S.clientId, S.phase, s.sessionId, s.name); S.log=log; hydrate(log); }
-  catch(e){ S.log=null; S.runEntries={}; S.cardio={stage:1,done:false}; }
+  try{
+    const log=await gs('startSession', S.clientId, S.phase, s.sessionId, s.name); S.log=log; hydrate(log);
+    try{ S.last=await gs('getLastSession', S.clientId, s.sessionId); }catch(e){ S.last=null; }
+  }
+  catch(e){ S.log=null; S.runEntries={}; S.cardio={stage:1,done:false}; S.last=null; }
   render(); window.scrollTo(0,0);
 }
 function hydrate(log){
@@ -737,7 +764,10 @@ function exHTML(session,bi,ei){
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
       const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done;
-      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${bi},${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="–" value="${escA(reps)}" oninput="setCell(${bi},${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="–" value="${escA(load)}" oninput="setCell(${bi},${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${bi},${ei},${si})">${ICON_CHK}</button></div>`;
+      const prev=lastSet(e.exId,si);
+      const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
+      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${bi},${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${bi},${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${bi},${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${bi},${ei},${si})">${ICON_CHK}</button></div>`;
+      const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`;
     });
     rows+=`<button class="ex-add" onclick="addSet(${bi},${ei})">+ set</button>`;
   }

@@ -219,6 +219,27 @@ export async function getHistory(clientId: string, limit?: number) {
   }));
 }
 
+// Most recent finished session of the SAME sessionId, as a map keyed by
+// exId:setOrder -> { reps, load, type }. Drives the double-progression cue:
+// the client sees what they did last time and what to beat.
+export async function getLastSession(clientId: string, sessionId: string) {
+  const logs = (await readRows_("sessionLogs"))
+    .filter((r) => r.clientId === clientId && r.sessionId === sessionId && r.status === "done")
+    .sort((a, b) =>
+      +new Date(b.date) - +new Date(a.date) ||
+      +new Date(b.updatedAt) - +new Date(a.updatedAt)
+    );
+  const last = logs[0];
+  if (!last) return { date: "", sets: {} };
+  const sets: Record<string, { reps: string; load: string; type: string }> = {};
+  (await readRows_("setLogs"))
+    .filter((s) => s.logId === last.logId)
+    .forEach((s) => {
+      sets[`${s.exId}:${Number(s.setOrder)}`] = { reps: s.reps, load: s.load, type: s.setType };
+    });
+  return { date: String(last.date), sets };
+}
+
 /* ---------- starter templates ---------- */
 
 export const TEMPLATE_KEYS = ["tpl_beginner", "tpl_intermediate", "tpl_advanced"];
@@ -287,6 +308,9 @@ export async function getOpenSessionForToken(token: string) {
 export async function getExerciseHistoryForToken(token: string, exId: string) {
   return getExerciseHistory(await clientIdForToken_(token), exId);
 }
+export async function getLastSessionForToken(token: string, sessionId: string) {
+  return getLastSession(await clientIdForToken_(token), sessionId);
+}
 // saveProgress / finishSession / getLog act on a logId, not a clientId
 // directly — confirm that log actually belongs to this token's client
 // before touching it, so a guessed/leaked logId can't cross clients.
@@ -316,7 +340,7 @@ export async function getLogForToken(token: string, logId: string) {
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
   getClients, addClient, setCurrentPhase, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
-  getExerciseHistory, getHistory, addClientFromTemplate,
+  getExerciseHistory, getHistory, addClientFromTemplate, getLastSession,
 };
 
 export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
@@ -328,4 +352,5 @@ export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
   finishSession: finishSessionForToken,
   getLog: getLogForToken,
   getExerciseHistory: getExerciseHistoryForToken,
+  getLastSession: getLastSessionForToken,
 };

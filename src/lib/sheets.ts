@@ -11,6 +11,7 @@ export const TABS: Record<string, string[]> = {
   template: [
     "clientId", "phase", "sessionId", "sessionOrder", "sessionName", "priority", "cardioPos",
     "blockOrder", "blockKind", "exId", "exOrder", "exName", "setOrder", "setType", "target",
+    "exYoutube", "exCues",
   ],
   sessionLogs: [
     "logId", "clientId", "phase", "sessionId", "sessionName", "date",
