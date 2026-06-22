@@ -670,7 +670,9 @@ function editTile(s,i,n){
     <div class="scard-body"><div class="scard-top">
       <button class="ptag btn p${s.priority}" onclick="cyclePriority(${i})">P${s.priority}</button>
       <input class="tinput" value="${escA(s.name)}" oninput="renameSession(${i},this.value)"></div></div>
-    <div class="ec"><button class="del" onclick="delSession(${i})">${ICON_X}</button></div></div>`;
+    <div class="ec">
+      <button class="abtn" onclick="openSession(${i})" title="Edit exercises">${ICON_CHEV}</button>
+      <button class="del" onclick="delSession(${i})">${ICON_X}</button></div></div>`;
 }
 function countSets(s){ let n=0; s.blocks.forEach(b=>b.items.forEach(e=>n+=e.sets.length)); return n; }
 function countEx(s){ let n=0; s.blocks.forEach(b=>n+=b.items.length); return n; }
