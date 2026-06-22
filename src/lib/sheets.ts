@@ -10,7 +10,7 @@ export const TABS: Record<string, string[]> = {
   clients: ["clientId", "name", "goal", "currentPhase", "createdAt", "accessToken"],
   template: [
     "clientId", "phase", "sessionId", "sessionOrder", "sessionName", "priority", "cardioPos",
-    "blockOrder", "blockKind", "exId", "exOrder", "exName", "setOrder", "setType", "target",
+    "exOrder", "groupId", "role", "exId", "exName", "setOrder", "setType", "target",
     "exYoutube", "exCues",
   ],
   sessionLogs: [
@@ -72,6 +72,10 @@ export async function ensureSheets_() {
       _tabInfo![toAdd[i]] = { sheetId: r.addSheet!.properties!.sheetId! };
     });
   }
+  // One-time migration: convert any old block-based template tab (columns
+  // blockOrder/blockKind) to the flat exercise model (exOrder/groupId/role).
+  // Detected by the presence of 'blockKind' in the existing header; idempotent.
+  if (existing.has("template")) await migrateTemplate_(sheets);
   // write header rows (cheap, idempotent — harmless if already correct)
   await sheets.spreadsheets.values.batchUpdate({
     spreadsheetId: SHEET_ID,
@@ -84,6 +88,74 @@ export async function ensureSheets_() {
     },
   });
   _ensured = true;
+}
+
+// Converts old block-based template rows to the flat model in place. Each old
+// block becomes either a standalone exercise (single) or a grouped run sharing
+// a fresh groupId with role 'superset'. Flat exOrder is assigned across the
+// session by (blockOrder, then old exOrder). No-op if already migrated.
+async function migrateTemplate_(sheets: ReturnType<typeof google.sheets>) {
+  const got = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: "template" });
+  const vals = got.data.values || [];
+  if (!vals.length) return;
+  const hdr = (vals[0] || []).map(String);
+  if (hdr.indexOf("blockKind") === -1) return; // already flat (or no old marker)
+
+  const oldRows = vals.slice(1).map((r) => {
+    const o: Record<string, any> = {};
+    hdr.forEach((h, i) => (o[h] = r[i] !== undefined ? r[i] : ""));
+    return o;
+  });
+
+  const bySession: Record<string, Record<string, any>[]> = {};
+  for (const r of oldRows) {
+    const key = `${r.clientId}|${r.phase}|${r.sessionId}`;
+    (bySession[key] = bySession[key] || []).push(r);
+  }
+
+  const out: Record<string, any>[] = [];
+  let gcount = 0;
+  for (const key of Object.keys(bySession)) {
+    const rows = bySession[key];
+    const exMap: Record<string, any> = {};
+    for (const r of rows) {
+      const bo = Number(r.blockOrder), eo = Number(r.exOrder);
+      const k = `${bo}:${eo}`;
+      if (!exMap[k]) exMap[k] = { bo, eo, blockKind: r.blockKind, exId: r.exId };
+    }
+    const exList = (Object.values(exMap) as any[]).sort((a, b) => a.bo - b.bo || a.eo - b.eo);
+    const blockCount: Record<number, number> = {};
+    exList.forEach((e) => { blockCount[e.bo] = (blockCount[e.bo] || 0) + 1; });
+    const blockGid: Record<number, string> = {};
+    const flatByExId: Record<string, any> = {};
+    exList.forEach((e, idx) => {
+      e._flat = idx;
+      const isGroup = e.blockKind === "superset" && blockCount[e.bo] > 1;
+      if (isGroup) {
+        if (!blockGid[e.bo]) blockGid[e.bo] = `mg${++gcount}`;
+        e._gid = blockGid[e.bo]; e._role = "superset";
+      } else { e._gid = ""; e._role = ""; }
+      flatByExId[e.exId] = e;
+    });
+    for (const r of rows) {
+      const e = flatByExId[r.exId];
+      if (!e) continue;
+      out.push({
+        clientId: r.clientId, phase: r.phase, sessionId: r.sessionId, sessionOrder: r.sessionOrder,
+        sessionName: r.sessionName, priority: r.priority, cardioPos: r.cardioPos || "none",
+        exOrder: e._flat, groupId: e._gid || "", role: e._role || "",
+        exId: r.exId, exName: r.exName, exYoutube: r.exYoutube || "", exCues: r.exCues || "",
+        setOrder: r.setOrder, setType: r.setType, target: r.target,
+      });
+    }
+  }
+
+  await sheets.spreadsheets.values.clear({ spreadsheetId: SHEET_ID, range: "template" });
+  const NEW = TABS.template;
+  const data = [NEW].concat(out.map((o) => NEW.map((h) => (o[h] !== undefined ? o[h] : ""))));
+  await sheets.spreadsheets.values.update({
+    spreadsheetId: SHEET_ID, range: "template!A1", valueInputOption: "RAW", requestBody: { values: data },
+  });
 }
 
 function colLetter(n: number): string {

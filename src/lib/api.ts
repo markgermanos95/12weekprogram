@@ -57,17 +57,15 @@ export async function setCurrentPhase(clientId: string, phase: number) {
 function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
   const rows: Record<string, any>[] = [];
   sessions.forEach((s, si) => {
-    (s.blocks || []).forEach((b: any, bi: number) => {
-      (b.items || []).forEach((e: any, ei: number) => {
-        const exId = e.exId || uid_();
-        (e.sets || []).forEach((set: any, ki: number) => {
-          rows.push({
-            clientId, phase, sessionId: s.sessionId, sessionOrder: si,
-            sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
-            blockOrder: bi, blockKind: b.kind, exId, exOrder: ei, exName: e.name,
-            exYoutube: e.youtube || "", exCues: e.cues || "",
-            setOrder: ki, setType: set.type, target: set.target,
-          });
+    (s.exercises || []).forEach((e: any, eo: number) => {
+      const exId = e.exId || uid_();
+      (e.sets || []).forEach((set: any, ki: number) => {
+        rows.push({
+          clientId, phase, sessionId: s.sessionId, sessionOrder: si,
+          sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
+          exOrder: eo, groupId: e.groupId || "", role: e.role || "",
+          exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "",
+          setOrder: ki, setType: set.type, target: set.target,
         });
       });
     });
@@ -84,30 +82,28 @@ export async function getTemplate(clientId: string, phase: number) {
     const sid = r.sessionId;
     if (!sessMap[sid]) sessMap[sid] = {
       sessionId: sid, order: Number(r.sessionOrder), name: r.sessionName,
-      priority: Number(r.priority), cardioPos: r.cardioPos, _blocks: {},
+      priority: Number(r.priority), cardioPos: r.cardioPos, _ex: {},
     };
-    const s = sessMap[sid], bo = Number(r.blockOrder);
-    if (!s._blocks[bo]) s._blocks[bo] = { blockOrder: bo, kind: r.blockKind, _items: {} };
-    const b = s._blocks[bo], eo = Number(r.exOrder);
-    if (!b._items[eo]) b._items[eo] = { exId: r.exId, exOrder: eo, name: r.exName, youtube: r.exYoutube || "", cues: r.exCues || "", _sets: {} };
-    b._items[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target };
+    const s = sessMap[sid], eo = Number(r.exOrder);
+    if (!s._ex[eo]) s._ex[eo] = {
+      exId: r.exId, exOrder: eo, name: r.exName,
+      youtube: r.exYoutube || "", cues: r.exCues || "",
+      groupId: r.groupId || "", role: r.role || "", _sets: {},
+    };
+    s._ex[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target };
   });
   const sessions = Object.values(sessMap)
     .sort((a: any, b: any) => a.order - b.order)
     .map((s: any) => ({
       sessionId: s.sessionId, name: s.name, priority: s.priority, cardioPos: s.cardioPos,
-      blocks: Object.values(s._blocks)
-        .sort((a: any, b: any) => a.blockOrder - b.blockOrder)
-        .map((b: any) => ({
-          kind: b.kind,
-          items: Object.values(b._items)
-            .sort((a: any, b: any) => a.exOrder - b.exOrder)
-            .map((e: any) => ({
-              exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "",
-              sets: Object.values(e._sets)
-                .sort((a: any, b: any) => a.setOrder - b.setOrder)
-                .map((st: any) => ({ type: st.type, target: st.target })),
-            })),
+      exercises: Object.values(s._ex)
+        .sort((a: any, b: any) => a.exOrder - b.exOrder)
+        .map((e: any) => ({
+          exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "",
+          groupId: e.groupId || "", role: e.role || "",
+          sets: Object.values(e._sets)
+            .sort((a: any, b: any) => a.setOrder - b.setOrder)
+            .map((st: any) => ({ type: st.type, target: st.target })),
         })),
     }));
   return { clientId, phase: Number(phase), sessions };

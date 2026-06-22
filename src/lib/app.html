@@ -106,6 +106,17 @@
   .ss-tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--ink);margin:0 0 7px;display:flex;align-items:center;gap:6px}
   .ss-tag .cnt{color:var(--faint)}
   .block-edit{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+  .ss-tag.solo{margin:0 0 7px}
+  .ex-edit-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .ex-edit-tools{display:flex;align-items:center;gap:6px;margin-left:auto}
+  .lnkbtn{appearance:none;width:28px;height:28px;border:1px solid var(--line-strong);background:var(--card);border-radius:7px;color:var(--faint);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .lnkbtn svg{width:14px;height:14px}
+  .lnkbtn:hover{color:var(--ink);border-color:var(--ink)}
+  .lnkbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .rsel{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--ink);border:1px solid var(--line-strong);border-radius:7px;background:var(--card);padding:6px 6px;cursor:pointer;max-width:118px}
+  .rsel:focus{outline:none;border-color:var(--ink)}
+  .grp-bar{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .grp-hint{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--faint)}
 
   .ex{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-bottom:8px}
   .ex:last-child{margin-bottom:0}
@@ -290,98 +301,7 @@ async function gs(method){
   return r.json();
 }
 
-/* ---- mock backend (preview only) ---- */
-let _eid = 0; const eid = () => 'e' + (++_eid);
-function mkSingle(name, sets){ return { kind:'single', items:[{ exId:eid(), name, sets }] }; }
-function mkSS(items){ return { kind:'superset', items: items.map(it => ({ exId:eid(), name:it.name, sets:it.sets })) }; }
-function R(t){return {type:'R',target:t}} function Wk(t){return {type:'W',target:t}} function Mx(t){return {type:'M',target:t}}
-
-function buildSeed(){
-  const P1 = [
-    { sessionId:'p1a', name:'Legs', priority:1, cardioPos:'top', blocks:[
-      mkSingle('Leg Press',[R('~50% × 8'),R('~70% × 6'),Wk('12–15'),Wk('12–15'),Wk('12–15'),Mx('12–15')]),
-      mkSS([{name:'Romanian Deadlift',sets:[R('light × 8'),Wk('12–15'),Wk('12–15'),Wk('12–15')]},{name:'Seated Leg Curl',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]}]),
-      mkSingle('Walking Lunge',[Wk('12–15'),Wk('12–15'),Wk('12–15')]),
-      mkSingle('Standing Calf Raise',[Wk('15–20'),Wk('15–20'),Wk('15–20'),Mx('15–20')]) ]},
-    { sessionId:'p1b', name:'Push + Pull', priority:1, cardioPos:'none', blocks:[
-      mkSingle('Incline DB Press',[R('light × 8'),Wk('12–15'),Wk('12–15'),Wk('12–15'),Mx('12–15')]),
-      mkSingle('Lat Pulldown',[R('light × 8'),Wk('12–15'),Wk('12–15'),Wk('12–15')]),
-      mkSS([{name:'Cable Fly',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]},{name:'Face Pull',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]),
-      mkSS([{name:'Triceps Pushdown',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]},{name:'DB Curl',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]) ]},
-    { sessionId:'p1c', name:'Full-body Pump', priority:2, cardioPos:'bottom', blocks:[
-      mkSingle('Goblet Squat',[R('light × 8'),Wk('12–15'),Wk('12–15'),Wk('12–15')]),
-      mkSS([{name:'Chest-supported Row',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]},{name:'Push-up',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]),
-      mkSS([{name:'Lateral Raise',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]},{name:'Hammer Curl',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]) ]},
-    { sessionId:'p1e', name:'Compound Pump', priority:3, cardioPos:'none', blocks:[
-      mkSS([{name:'Leg Press',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]},{name:'Lying Leg Curl',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]),
-      mkSS([{name:'Chest Press Machine',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]},{name:'Lat Pulldown',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]}]),
-      mkSingle('Romanian Deadlift',[Wk('12–15'),Wk('12–15'),Wk('12–15')]) ]},
-    { sessionId:'p1d', name:'Isolation Pump', priority:4, cardioPos:'none', blocks:[
-      mkSS([{name:'Pec Deck',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]},{name:'Reverse Pec Deck',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]),
-      mkSS([{name:'Overhead Rope Ext',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]},{name:'Cable Curl',sets:[Wk('15–20'),Wk('15–20'),Wk('15–20')]}]),
-      mkSingle('Cable Crunch',[Wk('15–20'),Wk('15–20'),Wk('15–20')]) ]}
-  ];
-  const P2 = [
-    { sessionId:'p2a', name:'Legs', priority:1, cardioPos:'top', blocks:[
-      mkSingle('Back Squat',[R('bar × 8'),R('60% × 5'),Wk('8–10'),Wk('8–10'),Wk('8–10'),Mx('8–10')]),
-      mkSS([{name:'Bulgarian Split Squat',sets:[R('light × 6'),Wk('8–10'),Wk('8–10'),Wk('8–10')]},{name:'Lying Leg Curl',sets:[Wk('8–10'),Wk('8–10'),Wk('8–10')]}]),
-      mkSingle('Barbell Hip Thrust',[Wk('8–10'),Wk('8–10'),Wk('8–10')]),
-      mkSingle('Seated Calf Raise',[Wk('12–15'),Wk('12–15'),Wk('12–15'),Mx('12–15')]) ]},
-    { sessionId:'p2b', name:'Push + Pull', priority:1, cardioPos:'none', blocks:[
-      mkSingle('Flat Barbell Bench',[R('bar × 8'),R('60% × 5'),Wk('8–10'),Wk('8–10'),Wk('8–10'),Mx('8–10')]),
-      mkSingle('Pendlay Row',[R('light × 6'),Wk('8–10'),Wk('8–10'),Wk('8–10')]),
-      mkSS([{name:'Seated Overhead Press',sets:[Wk('8–10'),Wk('8–10'),Wk('8–10')]},{name:'Chest-supported Cable Row',sets:[Wk('8–10'),Wk('8–10'),Wk('8–10')]}]),
-      mkSS([{name:'Skull Crusher',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]},{name:'Barbell Curl',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]}]) ]},
-    { sessionId:'p2c', name:'Full-body Pump', priority:2, cardioPos:'bottom', blocks:[
-      mkSingle('Trap-bar Deadlift',[R('light × 6'),Wk('8–10'),Wk('8–10'),Wk('8–10')]),
-      mkSS([{name:'Incline Machine Press',sets:[Wk('8–10'),Wk('8–10'),Wk('8–10')]},{name:'Single-arm DB Row',sets:[Wk('8–10'),Wk('8–10'),Wk('8–10')]}]),
-      mkSS([{name:'Cable Lateral Raise',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]},{name:'Incline DB Curl',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]}]) ]},
-    { sessionId:'p2e', name:'Compound Pump', priority:3, cardioPos:'none', blocks:[
-      mkSS([{name:'Hack Squat',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]},{name:'Lying Leg Curl',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]}]),
-      mkSS([{name:'Incline Machine Press',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]},{name:'Chest-supported Row',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]}]),
-      mkSingle('Weighted Pull-up',[Wk('8–10'),Wk('8–10'),Wk('8–10')]) ]},
-    { sessionId:'p2d', name:'Isolation Pump', priority:4, cardioPos:'none', blocks:[
-      mkSS([{name:'Cable Lateral Raise',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]},{name:'Reverse Pec Deck',sets:[Wk('12–15'),Wk('12–15'),Wk('12–15')]}]),
-      mkSS([{name:'Rope Pushdown',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]},{name:'Preacher Curl',sets:[Wk('10–12'),Wk('10–12'),Wk('10–12')]}]),
-      mkSingle('Hanging Leg Raise',[Wk('10–15'),Wk('10–15'),Wk('10–15')]) ]}
-  ];
-  return { 1:P1, 2:P2 };
-}
-
-const TEMPLATE_KEYS = ['tpl_beginner','tpl_intermediate','tpl_advanced'];
-
-const MOCK = (function(){
-  const today = () => new Date().toISOString().slice(0,10);
-  let clients = [];
-  const clone = o => JSON.parse(JSON.stringify(o));
-  let templates = {};
-  TEMPLATE_KEYS.forEach(k => { const s=buildSeed(); templates[k+'|1']=s[1]; templates[k+'|2']=s[2]; });
-  let sLogs = [], setLogs = []; let n = 0; const id = () => 'L' + (++n);
-  let cn = 0; const cid_ = () => 'c'+(++cn);
-  return {
-    getClients: () => clone(clients),
-    addClient: (name, goal) => { const cid=cid_(); clients.push({clientId:cid,name:name||'New client',goal:goal||'',currentPhase:1}); templates[cid+'|1']=[]; templates[cid+'|2']=[]; return cid; },
-    addClientFromTemplate: (name, goal, key) => { const cid=cid_(); clients.push({clientId:cid,name:name||'New client',goal:goal||'',currentPhase:1}); templates[cid+'|1']=clone(templates[key+'|1']||[]); templates[cid+'|2']=clone(templates[key+'|2']||[]); return cid; },
-    setCurrentPhase: (cid, ph) => { const c=clients.find(x=>x.clientId===cid); if(c)c.currentPhase=Number(ph); return true; },
-    getTemplate: (cid, ph) => ({ clientId:cid, phase:Number(ph), sessions: clone(templates[cid+'|'+ph] || []) }),
-    saveTemplate: (cid, ph, sessions) => { templates[cid+'|'+ph]=clone(sessions); return true; },
-    startSession: (cid, ph, sid, sname) => {
-      const open = sLogs.find(l => l.clientId===cid && l.sessionId===sid && l.status==='open');
-      if (open) return MOCK.getLog(open.logId);
-      const logId=id(); sLogs.push({logId,clientId:cid,phase:Number(ph),sessionId:sid,sessionName:sname,date:today(),cardioStage:'',cardioDone:false,status:'open'});
-      return {logId,clientId:cid,phase:Number(ph),sessionId:sid,sessionName:sname,status:'open',cardioStage:'',cardioDone:false,sets:[]};
-    },
-    saveProgress: (logId, p) => { const l=sLogs.find(x=>x.logId===logId); if(l){l.cardioStage=p.cardioStage;l.cardioDone=p.cardioDone;} setLogs=setLogs.filter(s=>s.logId!==logId); (p.sets||[]).forEach(s=>setLogs.push(Object.assign({logId},s))); return true; },
-    getOpenSession: (cid) => { const o=sLogs.filter(l=>l.clientId===cid&&l.status==='open').slice(-1)[0]; return o?MOCK.getLog(o.logId):null; },
-    finishSession: (logId) => { const l=sLogs.find(x=>x.logId===logId); if(l){l.status='done';l.date=today();} return true; },
-    getLog: (logId) => { const l=sLogs.find(x=>x.logId===logId); if(!l)return null; return Object.assign(clone(l),{sets:clone(setLogs.filter(s=>s.logId===logId))}); },
-    getExerciseHistory: (cid, exId) => {
-      const done={}; sLogs.forEach(l=>{if(l.clientId===cid&&l.status==='done')done[l.logId]={date:l.date,sessionName:l.sessionName};});
-      const byLog={}; setLogs.forEach(s=>{if(s.exId===exId&&done[s.logId])(byLog[s.logId]=byLog[s.logId]||[]).push(s);});
-      return Object.keys(byLog).map(lg=>({logId:lg,date:done[lg].date,sessionName:done[lg].sessionName,sets:clone(byLog[lg]).sort((a,b)=>a.setOrder-b.setOrder)})).sort((a,b)=>a.date<b.date?1:-1);
-    }
-  };
-})();
+/* mock backend removed — app runs live against /api (USE_REAL). */
 
 /* ============================================================
    STATE + CONSTANTS
@@ -427,8 +347,36 @@ const ICON_REPEAT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
    RESOLVERS + SAVE
    ============================================================ */
 function curSession(){ return S.template ? S.template.sessions.find(s => s.sessionId === S.sessionId) : null; }
-function exAt(bi, ei){ const s = curSession(); return s.blocks[bi].items[ei]; }
+function exAt(ei){ const s = curSession(); return s.exercises[ei]; }
 function move(arr, i, dir){ const j=i+dir; if(j<0||j>=arr.length) return; const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
+
+/* Flat exercise model: each session holds an ordered exercises[]. groupId
+   (membership) and role (what the group is) are independent — a run of
+   consecutive exercises sharing a groupId renders as one bracketed unit,
+   and a standalone exercise can still carry a role (e.g. a lone pre-exhaust). */
+const ROLES=[
+  {key:'',label:'Standard',tag:''},
+  {key:'superset',label:'Superset',tag:'SUPERSET'},
+  {key:'preexhaust',label:'Pre-exhaust',tag:'PRE-EXHAUST'},
+  {key:'circuit',label:'Circuit',tag:'CIRCUIT'},
+  {key:'giant',label:'Giant set',tag:'GIANT SET'}
+];
+function roleTag(k){ const r=ROLES.find(x=>x.key===k); return r?r.tag:''; }
+function newGroupId(){ return 'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+// Runs of consecutive exercises sharing a non-empty groupId. Standalones are
+// singleton groups (groupId '' never merges).
+function buildGroups(exs){
+  const groups=[]; let cur=null;
+  exs.forEach((e,idx)=>{
+    if(e.groupId && cur && cur.groupId===e.groupId){ cur.items.push(idx); }
+    else { cur={ groupId:e.groupId||'', role:e.role||'', items:[idx] }; groups.push(cur); }
+  });
+  return groups;
+}
+function cleanupSingletons(s){
+  const count={}; s.exercises.forEach(x=>{ if(x.groupId) count[x.groupId]=(count[x.groupId]||0)+1; });
+  s.exercises.forEach(x=>{ if(x.groupId && count[x.groupId]<2){ x.groupId=''; x.role=''; } });
+}
 
 /* Double progression cue. Working sets: hold weight, add reps inside the
    range; once the top of the range is hit, the cue flips to "add weight".
@@ -468,10 +416,10 @@ function composeMax(mx){
   return '';
 }
 function maxOf(exId,si){ const en=S.runEntries[exId+':'+si]; return (en&&en.max)?en.max:null; }
-function setMaxMethod(bi,ei,si,method){ const e=exAt(bi,ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max={method}; scheduleProgressSave(); render(); }
-function setMaxField(bi,ei,si,fld,val){ const e=exAt(bi,ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); (en.max||(en.max={method:''}))[fld]=val; scheduleProgressSave(); }
-function setMaxFieldR(bi,ei,si,fld,val){ setMaxField(bi,ei,si,fld,val); render(); }
-function repeatMax(bi,ei,si){ const e=exAt(bi,ei); const prev=lastSet(e.exId,si); if(!prev||!prev.maxNote) return; let blob=null; try{ blob=JSON.parse(prev.maxNote); }catch(_){ blob=null; } if(!blob) return; const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max=blob; scheduleProgressSave(); render(); }
+function setMaxMethod(ei,si,method){ const e=exAt(ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max={method}; scheduleProgressSave(); render(); }
+function setMaxField(ei,si,fld,val){ const e=exAt(ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); (en.max||(en.max={method:''}))[fld]=val; scheduleProgressSave(); }
+function setMaxFieldR(ei,si,fld,val){ setMaxField(ei,si,fld,val); render(); }
+function repeatMax(ei,si){ const e=exAt(ei); const prev=lastSet(e.exId,si); if(!prev||!prev.maxNote) return; let blob=null; try{ blob=JSON.parse(prev.maxNote); }catch(_){ blob=null; } if(!blob) return; const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max=blob; scheduleProgressSave(); render(); }
 function lastMaxDisplay(exId,si){ const prev=lastSet(exId,si); if(!prev||!prev.maxNote) return ''; try{ const b=JSON.parse(prev.maxNote); return composeMax(b); }catch(_){ return ''; } }
 function progCueMain(exId,si,st,type){
   if(type!=='W') return null;
@@ -502,13 +450,13 @@ function scheduleTemplateSave(){
 function flushTemplateSave(){ if(_tTimer){ clearTimeout(_tTimer); _tTimer=null; gs('saveTemplate', S.clientId, S.phase, S.template.sessions); } }
 function buildLogPayload(){
   const s=curSession(); const sets=[];
-  s.blocks.forEach(b=>b.items.forEach(e=>e.sets.forEach((st,si)=>{
+  s.exercises.forEach(e=>e.sets.forEach((st,si)=>{
     const en=S.runEntries[e.exId+':'+si]||{};
     const type=en.type||st.type;
     const wl=workLoad(e.exId);
     const maxNote=(type==='M' && en.max && en.max.method)?JSON.stringify(en.max):'';
     sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done, workingLoad:wl, maxNote });
-  })));
+  }));
   return { clientId:S.clientId, phase:S.phase, sessionId:s.sessionId, sessionName:s.name, cardioStage:S.cardio.stage, cardioDone:S.cardio.done, cardioCals:S.cardio.cals||'', cardioWhen:(s.cardioPos&&s.cardioPos!=='none')?s.cardioPos:'', sets };
 }
 
@@ -621,14 +569,14 @@ async function finishCurrent(){
 }
 
 /* ---- run interactions ---- */
-function cycleBadge(bi,ei,si){
-  const e=exAt(bi,ei);
+function cycleBadge(ei,si){
+  const e=exAt(ei);
   if(S.edit){ const st=e.sets[si]; st.type=CYCLE[(CYCLE.indexOf(st.type)+1)%3]; scheduleTemplateSave(); }
   else{ const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); const cur=en.type||e.sets[si].type; en.type=CYCLE[(CYCLE.indexOf(cur)+1)%3]; scheduleProgressSave(); }
   render();
 }
-function setCell(bi,ei,si,fld,val){ const e=exAt(bi,ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en[fld]=val; scheduleProgressSave(); }
-function toggleDone(bi,ei,si){ const e=exAt(bi,ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.done=!en.done; scheduleProgressSave(); render(); }
+function setCell(ei,si,fld,val){ const e=exAt(ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en[fld]=val; scheduleProgressSave(); }
+function toggleDone(ei,si){ const e=exAt(ei); const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.done=!en.done; scheduleProgressSave(); render(); }
 function slideCardio(val){
   S.cardio.stage=Number(val); const st=LADDER[S.cardio.stage-1];
   const cs=document.getElementById('cstage'); if(cs) cs.textContent='Stage '+S.cardio.stage+' · '+st.n;
@@ -645,23 +593,32 @@ function renameCur(val){ curSession().name=val; scheduleTemplateSave(); }
 function moveSession(i,dir){ move(S.template.sessions,i,dir); scheduleTemplateSave(); render(); }
 function cyclePriority(i){ const s=S.template.sessions[i]; s.priority=s.priority%4+1; scheduleTemplateSave(); render(); }
 async function delSession(i){ if(!(await modalConfirm('Delete this session?','Delete'))) return; S.template.sessions.splice(i,1); scheduleTemplateSave(); render(); }
-function addSession(){ S.template.sessions.push({sessionId:uid(),name:'New session',priority:1,cardioPos:'none',blocks:[]}); scheduleTemplateSave(); render(); }
-function renameEx(bi,ei,val){ exAt(bi,ei).name=val; scheduleTemplateSave(); }
-function editTarget(bi,ei,si,val){ exAt(bi,ei).sets[si].target=val; scheduleTemplateSave(); }
-function editExField(bi,ei,field,val){ const e=exAt(bi,ei); e[field]=val; scheduleTemplateSave(); }
-function delEx(bi,ei){ const s=curSession(); s.blocks[bi].items.splice(ei,1); if(!s.blocks[bi].items.length) s.blocks.splice(bi,1); scheduleTemplateSave(); render(); }
-function moveBlock(bi,dir){ move(curSession().blocks,bi,dir); scheduleTemplateSave(); render(); }
-async function delBlock(bi){ if(!(await modalConfirm('Remove this block?','Remove'))) return; curSession().blocks.splice(bi,1); scheduleTemplateSave(); render(); }
-function delSet(bi,ei,si){ exAt(bi,ei).sets.splice(si,1); scheduleTemplateSave(); render(); }
-function addSet(bi,ei){ const e=exAt(bi,ei); const last=e.sets[e.sets.length-1]; e.sets.push({type:'W',target:last?last.target:'10–12'}); scheduleTemplateSave(); render(); }
-async function addBlock(kind){
+function addSession(){ S.template.sessions.push({sessionId:uid(),name:'New session',priority:1,cardioPos:'none',exercises:[]}); scheduleTemplateSave(); render(); }
+function renameEx(ei,val){ exAt(ei).name=val; scheduleTemplateSave(); }
+function editTarget(ei,si,val){ exAt(ei).sets[si].target=val; scheduleTemplateSave(); }
+function editExField(ei,field,val){ const e=exAt(ei); e[field]=val; scheduleTemplateSave(); }
+function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); cleanupSingletons(s); scheduleTemplateSave(); render(); }
+function moveEx(ei,dir){ move(curSession().exercises,ei,dir); scheduleTemplateSave(); render(); }
+function delSet(ei,si){ exAt(ei).sets.splice(si,1); scheduleTemplateSave(); render(); }
+function addSet(ei){ const e=exAt(ei); const last=e.sets[e.sets.length-1]; e.sets.push({type:'W',target:last?last.target:'10–12'}); scheduleTemplateSave(); render(); }
+async function addExercise(){
   const name=await modalInput('Exercise name','e.g. Back Squat'); if(!name) return;
-  const ex={exId:uid(),name,sets:[{type:'W',target:'10–12'},{type:'W',target:'10–12'},{type:'W',target:'10–12'}]};
-  if(kind==='single' && S.template.sessions.length) curSession().blocks.push({kind:'single',items:[ex]});
-  else curSession().blocks.push({kind:kind,items:[ex]});
+  curSession().exercises.push({exId:uid(),name,youtube:'',cues:'',groupId:'',role:'',sets:[{type:'W',target:'10–12'},{type:'W',target:'10–12'},{type:'W',target:'10–12'}]});
   scheduleTemplateSave(); render();
 }
-async function addToSS(bi){ const name=await modalInput('Exercise name','add to superset'); if(!name) return; curSession().blocks[bi].items.push({exId:uid(),name,sets:[{type:'W',target:'10–12'},{type:'W',target:'10–12'},{type:'W',target:'10–12'}]}); scheduleTemplateSave(); render(); }
+// Group this exercise with the one above it. If the one above is already in a
+// group, join it; otherwise mint a fresh group across the pair.
+function linkUp(ei){
+  const s=curSession(); if(ei<=0) return;
+  const e=s.exercises[ei], prev=s.exercises[ei-1];
+  if(prev.groupId){ e.groupId=prev.groupId; e.role=prev.role; }
+  else { const g=newGroupId(); const role=prev.role||'superset'; prev.groupId=g; prev.role=role; e.groupId=g; e.role=role; }
+  scheduleTemplateSave(); render();
+}
+function unlinkEx(ei){ const s=curSession(); const e=s.exercises[ei]; e.groupId=''; e.role=''; cleanupSingletons(s); scheduleTemplateSave(); render(); }
+// Role applies to the whole group (all members sharing groupId), or to a
+// standalone exercise on its own.
+function setRole(ei,key){ const s=curSession(); const e=s.exercises[ei]; if(e.groupId){ s.exercises.forEach(x=>{ if(x.groupId===e.groupId) x.role=key; }); } else { e.role=key; } scheduleTemplateSave(); render(); }
 function cardioPos(pos){ curSession().cardioPos=pos; scheduleTemplateSave(); render(); }
 function addCardioBlock(){ curSession().cardioPos='bottom'; scheduleTemplateSave(); render(); }
 function delCardio(){ curSession().cardioPos='none'; scheduleTemplateSave(); render(); }
@@ -678,7 +635,7 @@ async function pickClient(i){
 }
 
 /* ---- history ---- */
-async function openHistory(bi,ei){ const e=exAt(bi,ei); S.history={open:true,name:e.name,data:null}; render(); try{ const data=await gs('getExerciseHistory',S.clientId,e.exId); if(S.history.open) S.history.data=data; }catch(e2){ S.history.data=[]; } render(); }
+async function openHistory(ei){ const e=exAt(ei); S.history={open:true,name:e.name,data:null}; render(); try{ const data=await gs('getExerciseHistory',S.clientId,e.exId); if(S.history.open) S.history.data=data; }catch(e2){ S.history.data=[]; } render(); }
 function closeHistory(){ S.history={open:false}; render(); }
 async function openCardioHistory(){ S.cardioHist={open:true,data:null}; render(); try{ const data=await gs('getCardioHistory',S.clientId); if(S.cardioHist.open) S.cardioHist.data=data; }catch(e2){ S.cardioHist.data=[]; } render(); }
 function closeCardioHistory(){ S.cardioHist={open:false}; render(); }
@@ -786,8 +743,11 @@ function editTile(s,i,n){
       <button class="abtn" onclick="openSession(${i})" title="Edit exercises">${ICON_CHEV}</button>
       <button class="del" onclick="delSession(${i})">${ICON_X}</button></div></div>`;
 }
-function countSets(s){ let n=0; s.blocks.forEach(b=>b.items.forEach(e=>n+=e.sets.length)); return n; }
-function countEx(s){ let n=0; s.blocks.forEach(b=>n+=b.items.length); return n; }
+function countSets(s){ let n=0; s.exercises.forEach(e=>n+=e.sets.length); return n; }
+function countEx(s){ return s.exercises.length; }
+
+function roleSelect(ei,cur){ let o=''; ROLES.forEach(r=>{ o+=`<option value="${r.key}" ${r.key===cur?'selected':''}>${esc(r.label)}</option>`; }); return `<select class="rsel" onchange="setRole(${ei},this.value)">${o}</select>`; }
+function groupBar(firstEi,role){ return `<div class="grp-bar"><span class="grp-hint">GROUP</span>${roleSelect(firstEi,role)}</div>`; }
 
 function sessionHTML(){
   const s=curSession(); if(!s){ S.view='week'; return weekHTML(); }
@@ -797,44 +757,44 @@ function sessionHTML(){
   h+=`<div class="sess-meta">Phase ${S.phase} · ${S.phase===1?'higher rep':'medium rep'}</div>
     <div class="legend"><span><span class="lg-b badge R">R</span> Ramp-up</span><span><span class="lg-b badge W">W</span> Working</span><span><span class="lg-b badge M">M</span> Max</span></div>`;
   if(s.cardioPos==='top') h+=cardioHTML(s,'top');
-  s.blocks.forEach((b,bi)=>{
-    if(b.kind==='superset'){
+  const groups=buildGroups(s.exercises); let gi=0;
+  groups.forEach(grp=>{
+    const grouped=grp.groupId && grp.items.length>1;
+    if(grouped){
+      const letter=KEYS[gi++]||'';
+      const tg=roleTag(grp.role)||'GROUPED';
       h+=`<div class="block ss"><div class="ss-rail"></div>`;
-      if(S.edit) h+=blockEditBar(bi,s.blocks.length,'superset'); else h+=`<div class="ss-tag">SUPERSET <span class="cnt">${b.items.length} exercises · alternate</span></div>`;
-      b.items.forEach((e,ei)=> h+=exHTML(s,bi,ei));
-      if(S.edit) h+=`<button class="ex-add" onclick="addToSS(${bi})">+ add to superset</button>`;
+      if(S.edit) h+=groupBar(grp.items[0],grp.role);
+      else h+=`<div class="ss-tag">${tg} <span class="cnt">${grp.items.length} exercises${grp.role==='superset'?' · alternate':''}</span></div>`;
+      grp.items.forEach((ei,k)=> h+=exHTML(s,ei,letter+(k+1)));
       h+=`</div>`;
     } else {
-      h+=`<div class="block">`; if(S.edit) h+=blockEditBar(bi,s.blocks.length,'single'); h+=exHTML(s,bi,0)+`</div>`;
+      const ei=grp.items[0];
+      h+=`<div class="block">`;
+      if(!S.edit && roleTag(s.exercises[ei].role)) h+=`<div class="ss-tag solo">${roleTag(s.exercises[ei].role)}</div>`;
+      h+=exHTML(s,ei,null)+`</div>`;
     }
   });
   if(s.cardioPos==='bottom') h+=cardioHTML(s,'bottom');
   if(S.edit){
-    h+=`<div class="addbar"><button class="addbtn" onclick="addBlock('single')">+ exercise</button><button class="addbtn" onclick="addBlock('superset')">+ superset</button></div>`;
+    h+=`<div class="addbar"><button class="addbtn" onclick="addExercise()">+ add exercise</button></div>`;
     if(s.cardioPos==='none') h+=`<div class="addbar"><button class="addbtn" onclick="addCardioBlock()">+ cardio block</button></div>`;
+    if(!s.exercises.length) h+=`<div class="hist-empty">No exercises yet. Add some, then group or tag them.</div>`;
   } else {
     h+=`<button class="finish" onclick="finishCurrent()">Finish session</button><div class="foot">Autosaving — close and come back any time.</div>`;
   }
   return h+`</div>`;
 }
-function blockEditBar(bi,n,kind){
-  return `<div class="block-edit"><div class="arrows">
-    <button class="abtn" onclick="moveBlock(${bi},-1)" ${bi===0?'disabled':''}>${ICON_UP}</button>
-    <button class="abtn" onclick="moveBlock(${bi},1)" ${bi===n-1?'disabled':''}>${ICON_DN}</button></div>
-    <span class="ss-tag" style="margin:0">${kind==='superset'?'SUPERSET':'EXERCISE'}</span>
-    <button class="del" onclick="delBlock(${bi})" style="margin-left:auto">${ICON_X}</button></div>`;
-}
-function exHTML(session,bi,ei){
-  const blk=session.blocks[bi]; const e=blk.items[ei];
-  const key=blk.kind==='superset'?(KEYS[bi]+(ei+1)):null;
+function exHTML(session,ei,key){
+  const e=session.exercises[ei]; const grouped=!!e.groupId;
   let rows='';
   if(S.edit){
-    rows+=`<input class="tinput ex-name-input" value="${escA(e.name)}" placeholder="Exercise name" oninput="renameEx(${bi},${ei},this.value)">`;
-    rows+=`<input class="tinput ex-field" value="${escA(e.youtube||'')}" placeholder="YouTube URL (optional)" oninput="editExField(${bi},${ei},'youtube',this.value)">`;
-    rows+=`<textarea class="tinput ex-field ex-cues" placeholder="Cues / notes (optional)" oninput="editExField(${bi},${ei},'cues',this.value)">${esc(e.cues||'')}</textarea>`;
+    rows+=`<input class="tinput ex-name-input" value="${escA(e.name)}" placeholder="Exercise name" oninput="renameEx(${ei},this.value)">`;
+    rows+=`<input class="tinput ex-field" value="${escA(e.youtube||'')}" placeholder="YouTube URL (optional)" oninput="editExField(${ei},'youtube',this.value)">`;
+    rows+=`<textarea class="tinput ex-field ex-cues" placeholder="Cues / notes (optional)" oninput="editExField(${ei},'cues',this.value)">${esc(e.cues||'')}</textarea>`;
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
-    e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${bi},${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${bi},${ei},${si},this.value)"><button class="del" onclick="delSet(${bi},${ei},${si})">${ICON_X}</button></div>`);
-    rows+=`<button class="ex-add" onclick="addSet(${bi},${ei})">+ set</button>`;
+    e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${ei},${si},this.value)"><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
+    rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
     if(e.cues) rows+=`<div class="ex-cues-disp">${esc(e.cues)}</div>`;
@@ -846,37 +806,44 @@ function exHTML(session,bi,ei){
       const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done;
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
-      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${bi},${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${bi},${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${bi},${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${bi},${ei},${si})">${ICON_CHK}</button></div>`;
-      if(type==='M') rows+=maxBuild(bi,ei,si,e);
+      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
+      if(type==='M') rows+=maxBuild(ei,si,e);
       else { const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
-    rows+=`<button class="ex-add" onclick="addSet(${bi},${ei})">+ set</button>`;
+    rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   }
-  const nameCell=S.edit?'':`<span class="ex-name">${esc(e.name)}</span>`;
-  const hist=!S.edit?`<button class="histbtn" onclick="openHistory(${bi},${ei})" title="History">${ICON_HIST}</button>`:'';
-  const delBtn=S.edit?`<button class="del" onclick="delEx(${bi},${ei})">${ICON_X}</button>`:'';
-  return `<div class="ex"><div class="ex-top">${key?`<span class="ex-key">${key}</span>`:''}${nameCell}${hist}${delBtn}</div>${rows}</div>`;
+  const keyTag=key?`<span class="ex-key">${esc(key)}</span>`:'';
+  if(S.edit){
+    const n=session.exercises.length;
+    const arrows=`<div class="arrows"><button class="abtn" onclick="moveEx(${ei},-1)" ${ei===0?'disabled':''}>${ICON_UP}</button><button class="abtn" onclick="moveEx(${ei},1)" ${ei===n-1?'disabled':''}>${ICON_DN}</button></div>`;
+    const link=grouped?`<button class="lnkbtn on" onclick="unlinkEx(${ei})" title="Remove from group">${ICON_LINK}</button>`:(ei>0?`<button class="lnkbtn" onclick="linkUp(${ei})" title="Group with exercise above">${ICON_LINK}</button>`:'');
+    const roleSel=grouped?'':roleSelect(ei,e.role);
+    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${link}${roleSel}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
+    return `<div class="ex">${top}${rows}</div>`;
+  }
+  const hist=`<button class="histbtn" onclick="openHistory(${ei})" title="History">${ICON_HIST}</button>`;
+  return `<div class="ex"><div class="ex-top">${keyTag}<span class="ex-name">${esc(e.name)}</span>${hist}</div>${rows}</div>`;
 }
-function numFieldMax(bi,ei,si,fld,ph,val){ return `<input class="inp mfld" inputmode="decimal" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${bi},${ei},${si},'${fld}',this.value)">`; }
-function txtFieldMax(bi,ei,si,fld,ph,val){ return `<input class="inp mfld wide" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${bi},${ei},${si},'${fld}',this.value)">`; }
-function selFieldMax(bi,ei,si,fld,opts,val){ let o=''; opts.forEach(v=>{ o+=`<option value="${escA(v)}" ${v===val?'selected':''}>${esc(v||'choose…')}</option>`; }); return `<select class="msel mfld" onchange="setMaxFieldR(${bi},${ei},${si},'${fld}',this.value)">${o}</select>`; }
-function maxBuild(bi,ei,si,e){
+function numFieldMax(ei,si,fld,ph,val){ return `<input class="inp mfld" inputmode="decimal" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${ei},${si},'${fld}',this.value)">`; }
+function txtFieldMax(ei,si,fld,ph,val){ return `<input class="inp mfld wide" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${ei},${si},'${fld}',this.value)">`; }
+function selFieldMax(ei,si,fld,opts,val){ let o=''; opts.forEach(v=>{ o+=`<option value="${escA(v)}" ${v===val?'selected':''}>${esc(v||'choose…')}</option>`; }); return `<select class="msel mfld" onchange="setMaxFieldR(${ei},${si},'${fld}',this.value)">${o}</select>`; }
+function maxBuild(ei,si,e){
   const mx=maxOf(e.exId,si)||{method:''}; const m=mx.method||'';
   let opts=''; MAX_METHODS.forEach(o=>{ opts+=`<option value="${escA(o[0])}" ${o[0]===m?'selected':''}>${esc(o[1])}</option>`; });
   let fields='';
-  if(m==='+reps') fields=numFieldMax(bi,ei,si,'reps','extra reps',mx.reps);
-  else if(m==='rest-pause') fields=txtFieldMax(bi,ei,si,'bursts','e.g. 8 +3 +2',mx.bursts);
-  else if(m==='dropset') fields=numFieldMax(bi,ei,si,'dload','drop load',mx.dload)+numFieldMax(bi,ei,si,'dreps','drop reps',mx.dreps);
-  else if(m==='partials') fields=selFieldMax(bi,ei,si,'pos',['','long','middle','short'],mx.pos);
-  else if(m==='slow') fields=numFieldMax(bi,ei,si,'secs','seconds',mx.secs);
-  else if(m==='forced') fields=numFieldMax(bi,ei,si,'n','forced reps',mx.n);
-  else if(m==='cluster') fields=txtFieldMax(bi,ei,si,'detail','detail (optional)',mx.detail);
-  else if(m==='failure') fields=selFieldMax(bi,ei,si,'fail',['','failure','near'],mx.fail)+(mx.fail==='near'?numFieldMax(bi,ei,si,'left','reps left',mx.left):'');
-  else if(m==='other') fields=txtFieldMax(bi,ei,si,'text','what you did',mx.text);
+  if(m==='+reps') fields=numFieldMax(ei,si,'reps','extra reps',mx.reps);
+  else if(m==='rest-pause') fields=txtFieldMax(ei,si,'bursts','e.g. 8 +3 +2',mx.bursts);
+  else if(m==='dropset') fields=numFieldMax(ei,si,'dload','drop load',mx.dload)+numFieldMax(ei,si,'dreps','drop reps',mx.dreps);
+  else if(m==='partials') fields=selFieldMax(ei,si,'pos',['','long','middle','short'],mx.pos);
+  else if(m==='slow') fields=numFieldMax(ei,si,'secs','seconds',mx.secs);
+  else if(m==='forced') fields=numFieldMax(ei,si,'n','forced reps',mx.n);
+  else if(m==='cluster') fields=txtFieldMax(ei,si,'detail','detail (optional)',mx.detail);
+  else if(m==='failure') fields=selFieldMax(ei,si,'fail',['','failure','near'],mx.fail)+(mx.fail==='near'?numFieldMax(ei,si,'left','reps left',mx.left):'');
+  else if(m==='other') fields=txtFieldMax(ei,si,'text','what you did',mx.text);
   const disp=composeMax(mx); const preview=disp?`<div class="max-prev">${esc(disp)}</div>`:'';
   const lastD=lastMaxDisplay(e.exId,si);
-  const repeat=lastD?`<button class="max-rep" onclick="repeatMax(${bi},${ei},${si})">${ICON_REPEAT}<span>last: ${esc(lastD)}</span></button>`:'';
-  return `<div class="maxbuild"><div class="max-row"><select class="msel" onchange="setMaxMethod(${bi},${ei},${si},this.value)">${opts}</select>${fields}</div>${preview}${repeat}</div>`;
+  const repeat=lastD?`<button class="max-rep" onclick="repeatMax(${ei},${si})">${ICON_REPEAT}<span>last: ${esc(lastD)}</span></button>`:'';
+  return `<div class="maxbuild"><div class="max-row"><select class="msel" onchange="setMaxMethod(${ei},${si},this.value)">${opts}</select>${fields}</div>${preview}${repeat}</div>`;
 }
 function cardioHTML(session,pos){
   const stage=S.cardio.stage||1; const done=S.cardio.done; const st=LADDER[stage-1];
