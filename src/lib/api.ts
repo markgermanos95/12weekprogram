@@ -65,6 +65,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
             clientId, phase, sessionId: s.sessionId, sessionOrder: si,
             sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
             blockOrder: bi, blockKind: b.kind, exId, exOrder: ei, exName: e.name,
+            exYoutube: e.youtube || "", exCues: e.cues || "",
             setOrder: ki, setType: set.type, target: set.target,
           });
         });
@@ -88,7 +89,7 @@ export async function getTemplate(clientId: string, phase: number) {
     const s = sessMap[sid], bo = Number(r.blockOrder);
     if (!s._blocks[bo]) s._blocks[bo] = { blockOrder: bo, kind: r.blockKind, _items: {} };
     const b = s._blocks[bo], eo = Number(r.exOrder);
-    if (!b._items[eo]) b._items[eo] = { exId: r.exId, exOrder: eo, name: r.exName, _sets: {} };
+    if (!b._items[eo]) b._items[eo] = { exId: r.exId, exOrder: eo, name: r.exName, youtube: r.exYoutube || "", cues: r.exCues || "", _sets: {} };
     b._items[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target };
   });
   const sessions = Object.values(sessMap)
@@ -102,7 +103,7 @@ export async function getTemplate(clientId: string, phase: number) {
           items: Object.values(b._items)
             .sort((a: any, b: any) => a.exOrder - b.exOrder)
             .map((e: any) => ({
-              exId: e.exId, name: e.name,
+              exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "",
               sets: Object.values(e._sets)
                 .sort((a: any, b: any) => a.setOrder - b.setOrder)
                 .map((st: any) => ({ type: st.type, target: st.target })),

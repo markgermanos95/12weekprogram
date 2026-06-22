@@ -112,6 +112,11 @@
   .ex-top{display:flex;align-items:center;gap:8px;margin-bottom:9px}
   .ex-key{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--faint);flex-shrink:0}
   .ex-name{font-size:15px;font-weight:600;letter-spacing:-.01em;flex:1}
+  .ex-name-input{margin-bottom:6px;font-weight:600}
+  .ex-field{margin-bottom:6px;font-size:13px;font-weight:400}
+  .ex-cues{resize:vertical;min-height:60px;font-size:13px}
+  .ex-yt{display:inline-block;font-size:12px;font-weight:600;color:var(--max);text-decoration:none;margin-bottom:6px}
+  .ex-cues-disp{font-size:13px;color:var(--faint);margin-bottom:8px;white-space:pre-wrap;line-height:1.5}
   .histbtn{appearance:none;border:1px solid var(--line);background:var(--paper);border-radius:7px;width:30px;height:28px;cursor:pointer;color:var(--faint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .histbtn svg{width:15px;height:15px}
   .histbtn:hover{color:var(--ink);border-color:var(--line-strong)}
@@ -540,6 +545,8 @@ async function delSession(i){ if(!(await modalConfirm('Delete this session?','De
 function addSession(){ S.template.sessions.push({sessionId:uid(),name:'New session',priority:1,cardioPos:'none',blocks:[]}); scheduleTemplateSave(); render(); }
 function renameEx(bi,ei,val){ exAt(bi,ei).name=val; scheduleTemplateSave(); }
 function editTarget(bi,ei,si,val){ exAt(bi,ei).sets[si].target=val; scheduleTemplateSave(); }
+function editExField(bi,ei,field,val){ const e=exAt(bi,ei); e[field]=val; scheduleTemplateSave(); }
+function delEx(bi,ei){ const s=curSession(); s.blocks[bi].items.splice(ei,1); if(!s.blocks[bi].items.length) s.blocks.splice(bi,1); scheduleTemplateSave(); render(); }
 function moveBlock(bi,dir){ move(curSession().blocks,bi,dir); scheduleTemplateSave(); render(); }
 async function delBlock(bi){ if(!(await modalConfirm('Remove this block?','Remove'))) return; curSession().blocks.splice(bi,1); scheduleTemplateSave(); render(); }
 function delSet(bi,ei,si){ exAt(bi,ei).sets.splice(si,1); scheduleTemplateSave(); render(); }
@@ -717,10 +724,15 @@ function exHTML(session,bi,ei){
   const key=blk.kind==='superset'?(KEYS[bi]+(ei+1)):null;
   let rows='';
   if(S.edit){
+    rows+=`<input class="tinput ex-name-input" value="${escA(e.name)}" placeholder="Exercise name" oninput="renameEx(${bi},${ei},this.value)">`;
+    rows+=`<input class="tinput ex-field" value="${escA(e.youtube||'')}" placeholder="YouTube URL (optional)" oninput="editExField(${bi},${ei},'youtube',this.value)">`;
+    rows+=`<textarea class="tinput ex-field ex-cues" placeholder="Cues / notes (optional)" oninput="editExField(${bi},${ei},'cues',this.value)">${esc(e.cues||'')}</textarea>`;
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${bi},${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${bi},${ei},${si},this.value)"><button class="del" onclick="delSet(${bi},${ei},${si})">${ICON_X}</button></div>`);
     rows+=`<button class="ex-add" onclick="addSet(${bi},${ei})">+ set</button>`;
   } else {
+    if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
+    if(e.cues) rows+=`<div class="ex-cues-disp">${esc(e.cues)}</div>`;
     rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
@@ -729,9 +741,10 @@ function exHTML(session,bi,ei){
     });
     rows+=`<button class="ex-add" onclick="addSet(${bi},${ei})">+ set</button>`;
   }
-  const nameCell=`<span class="ex-name">${esc(e.name)}</span>`;
+  const nameCell=S.edit?'':`<span class="ex-name">${esc(e.name)}</span>`;
   const hist=!S.edit?`<button class="histbtn" onclick="openHistory(${bi},${ei})" title="History">${ICON_HIST}</button>`:'';
-  return `<div class="ex"><div class="ex-top">${key?`<span class="ex-key">${key}</span>`:''}${nameCell}${hist}</div>${rows}</div>`;
+  const delBtn=S.edit?`<button class="del" onclick="delEx(${bi},${ei})">${ICON_X}</button>`:'';
+  return `<div class="ex"><div class="ex-top">${key?`<span class="ex-key">${key}</span>`:''}${nameCell}${hist}${delBtn}</div>${rows}</div>`;
 }
 function cardioHTML(session,pos){
   const stage=S.cardio.stage||1; const done=S.cardio.done; const st=LADDER[stage-1];
