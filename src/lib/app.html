@@ -113,9 +113,12 @@
   .lnkbtn svg{width:14px;height:14px}
   .lnkbtn:hover{color:var(--ink);border-color:var(--ink)}
   .lnkbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .rsel{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--ink);border:1px solid var(--line-strong);border-radius:7px;background:var(--card);padding:6px 6px;cursor:pointer;max-width:118px}
-  .rsel:focus{outline:none;border-color:var(--ink)}
-  .grp-bar{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .role-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .rchip{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line-strong);border-radius:999px;background:var(--card);padding:5px 10px;cursor:pointer;line-height:1}
+  .rchip:hover{color:var(--ink);border-color:var(--ink)}
+  .rchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .grp-bar{display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+  .grp-bar .role-chips{margin-bottom:0}
   .grp-hint{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--faint)}
 
   .ex{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-bottom:8px}
@@ -354,14 +357,23 @@ function move(arr, i, dir){ const j=i+dir; if(j<0||j>=arr.length) return; const 
    (membership) and role (what the group is) are independent — a run of
    consecutive exercises sharing a groupId renders as one bracketed unit,
    and a standalone exercise can still carry a role (e.g. a lone pre-exhaust). */
-const ROLES=[
-  {key:'',label:'Standard',tag:''},
+// Roles are multi-select labels stored as a CSV in the exercise's `role`
+// field (e.g. "superset,preexhaust"). No schema change — the column already
+// holds a string; an old single value parses as a one-item list.
+const ROLE_OPTS=[
   {key:'superset',label:'Superset',tag:'SUPERSET'},
   {key:'preexhaust',label:'Pre-exhaust',tag:'PRE-EXHAUST'},
   {key:'circuit',label:'Circuit',tag:'CIRCUIT'},
-  {key:'giant',label:'Giant set',tag:'GIANT SET'}
+  {key:'giant',label:'Giant set',tag:'GIANT SET'},
+  {key:'dropset',label:'Drop set',tag:'DROP SET'},
+  {key:'restpause',label:'Rest-pause',tag:'REST-PAUSE'}
 ];
-function roleTag(k){ const r=ROLES.find(x=>x.key===k); return r?r.tag:''; }
+function roleList(csv){ return String(csv||'').split(',').map(s=>s.trim()).filter(Boolean); }
+function hasRole(csv,key){ return roleList(csv).indexOf(key)>=0; }
+function toggleRoleCsv(csv,key){ const set=roleList(csv); const i=set.indexOf(key); if(i>=0) set.splice(i,1); else set.push(key); return set.join(','); }
+// Tags in canonical ROLE_OPTS order regardless of stored order.
+function roleTagsFor(csv){ const set=roleList(csv); return ROLE_OPTS.filter(o=>set.indexOf(o.key)>=0).map(o=>o.tag); }
+function roleTagLine(csv){ return roleTagsFor(csv).join(' · '); }
 function newGroupId(){ return 'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 // Runs of consecutive exercises sharing a non-empty groupId. Standalones are
 // singleton groups (groupId '' never merges).
@@ -373,9 +385,21 @@ function buildGroups(exs){
   });
   return groups;
 }
-function cleanupSingletons(s){
-  const count={}; s.exercises.forEach(x=>{ if(x.groupId) count[x.groupId]=(count[x.groupId]||0)+1; });
-  s.exercises.forEach(x=>{ if(x.groupId && count[x.groupId]<2){ x.groupId=''; x.role=''; } });
+// Keeps grouping coherent after any reorder/edit: dissolves singleton groups,
+// and if a groupId ends up split into two non-adjacent runs (e.g. a member was
+// moved out), the second run gets a fresh id so they don't render as one unit.
+function normalizeGroups(s){
+  const ex=s.exercises; const seen={}; let i=0;
+  while(i<ex.length){
+    const gid=ex[i].groupId;
+    if(!gid){ i++; continue; }
+    let j=i; while(j+1<ex.length && ex[j+1].groupId===gid) j++;
+    const runLen=j-i+1;
+    if(runLen<2){ for(let k=i;k<=j;k++){ ex[k].groupId=''; ex[k].role=''; } }
+    else if(seen[gid]){ const nid=newGroupId(); for(let k=i;k<=j;k++) ex[k].groupId=nid; }
+    else seen[gid]=true;
+    i=j+1;
+  }
 }
 
 /* Double progression cue. Working sets: hold weight, add reps inside the
@@ -597,8 +621,8 @@ function addSession(){ S.template.sessions.push({sessionId:uid(),name:'New sessi
 function renameEx(ei,val){ exAt(ei).name=val; scheduleTemplateSave(); }
 function editTarget(ei,si,val){ exAt(ei).sets[si].target=val; scheduleTemplateSave(); }
 function editExField(ei,field,val){ const e=exAt(ei); e[field]=val; scheduleTemplateSave(); }
-function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); cleanupSingletons(s); scheduleTemplateSave(); render(); }
-function moveEx(ei,dir){ move(curSession().exercises,ei,dir); scheduleTemplateSave(); render(); }
+function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); normalizeGroups(s); scheduleTemplateSave(); render(); }
+function moveEx(ei,dir){ const s=curSession(); move(s.exercises,ei,dir); normalizeGroups(s); scheduleTemplateSave(); render(); }
 function delSet(ei,si){ exAt(ei).sets.splice(si,1); scheduleTemplateSave(); render(); }
 function addSet(ei){ const e=exAt(ei); const last=e.sets[e.sets.length-1]; e.sets.push({type:'W',target:last?last.target:'10–12'}); scheduleTemplateSave(); render(); }
 async function addExercise(){
@@ -615,10 +639,15 @@ function linkUp(ei){
   else { const g=newGroupId(); const role=prev.role||'superset'; prev.groupId=g; prev.role=role; e.groupId=g; e.role=role; }
   scheduleTemplateSave(); render();
 }
-function unlinkEx(ei){ const s=curSession(); const e=s.exercises[ei]; e.groupId=''; e.role=''; cleanupSingletons(s); scheduleTemplateSave(); render(); }
-// Role applies to the whole group (all members sharing groupId), or to a
-// standalone exercise on its own.
-function setRole(ei,key){ const s=curSession(); const e=s.exercises[ei]; if(e.groupId){ s.exercises.forEach(x=>{ if(x.groupId===e.groupId) x.role=key; }); } else { e.role=key; } scheduleTemplateSave(); render(); }
+function unlinkEx(ei){ const s=curSession(); const e=s.exercises[ei]; e.groupId=''; e.role=''; normalizeGroups(s); scheduleTemplateSave(); render(); }
+// Toggle one label on/off. Applies to the whole group (members sharing
+// groupId) or to a standalone exercise. Multiple labels can stack.
+function toggleRole(ei,key){
+  const s=curSession(); const e=s.exercises[ei]; const next=toggleRoleCsv(e.role,key);
+  if(e.groupId){ s.exercises.forEach(x=>{ if(x.groupId===e.groupId) x.role=next; }); }
+  else { e.role=next; }
+  scheduleTemplateSave(); render();
+}
 function cardioPos(pos){ curSession().cardioPos=pos; scheduleTemplateSave(); render(); }
 function addCardioBlock(){ curSession().cardioPos='bottom'; scheduleTemplateSave(); render(); }
 function delCardio(){ curSession().cardioPos='none'; scheduleTemplateSave(); render(); }
@@ -746,8 +775,10 @@ function editTile(s,i,n){
 function countSets(s){ let n=0; s.exercises.forEach(e=>n+=e.sets.length); return n; }
 function countEx(s){ return s.exercises.length; }
 
-function roleSelect(ei,cur){ let o=''; ROLES.forEach(r=>{ o+=`<option value="${r.key}" ${r.key===cur?'selected':''}>${esc(r.label)}</option>`; }); return `<select class="rsel" onchange="setRole(${ei},this.value)">${o}</select>`; }
-function groupBar(firstEi,role){ return `<div class="grp-bar"><span class="grp-hint">GROUP</span>${roleSelect(firstEi,role)}</div>`; }
+function roleChips(ei,csv){
+  return `<div class="role-chips">`+ROLE_OPTS.map(o=>`<button class="rchip ${hasRole(csv,o.key)?'on':''}" onclick="toggleRole(${ei},'${o.key}')">${esc(o.label)}</button>`).join('')+`</div>`;
+}
+function groupBar(firstEi,role){ return `<div class="grp-bar"><span class="grp-hint">GROUP</span>${roleChips(firstEi,role)}</div>`; }
 
 function sessionHTML(){
   const s=curSession(); if(!s){ S.view='week'; return weekHTML(); }
@@ -762,16 +793,17 @@ function sessionHTML(){
     const grouped=grp.groupId && grp.items.length>1;
     if(grouped){
       const letter=KEYS[gi++]||'';
-      const tg=roleTag(grp.role)||'GROUPED';
+      const tg=roleTagLine(grp.role)||'GROUPED';
+      const alt=hasRole(grp.role,'superset')?' · alternate':'';
       h+=`<div class="block ss"><div class="ss-rail"></div>`;
       if(S.edit) h+=groupBar(grp.items[0],grp.role);
-      else h+=`<div class="ss-tag">${tg} <span class="cnt">${grp.items.length} exercises${grp.role==='superset'?' · alternate':''}</span></div>`;
+      else h+=`<div class="ss-tag">${tg} <span class="cnt">${grp.items.length} exercises${alt}</span></div>`;
       grp.items.forEach((ei,k)=> h+=exHTML(s,ei,letter+(k+1)));
       h+=`</div>`;
     } else {
       const ei=grp.items[0];
       h+=`<div class="block">`;
-      if(!S.edit && roleTag(s.exercises[ei].role)) h+=`<div class="ss-tag solo">${roleTag(s.exercises[ei].role)}</div>`;
+      if(!S.edit){ const tl=roleTagLine(s.exercises[ei].role); if(tl) h+=`<div class="ss-tag solo">${tl}</div>`; }
       h+=exHTML(s,ei,null)+`</div>`;
     }
   });
@@ -817,9 +849,9 @@ function exHTML(session,ei,key){
     const n=session.exercises.length;
     const arrows=`<div class="arrows"><button class="abtn" onclick="moveEx(${ei},-1)" ${ei===0?'disabled':''}>${ICON_UP}</button><button class="abtn" onclick="moveEx(${ei},1)" ${ei===n-1?'disabled':''}>${ICON_DN}</button></div>`;
     const link=grouped?`<button class="lnkbtn on" onclick="unlinkEx(${ei})" title="Remove from group">${ICON_LINK}</button>`:(ei>0?`<button class="lnkbtn" onclick="linkUp(${ei})" title="Group with exercise above">${ICON_LINK}</button>`:'');
-    const roleSel=grouped?'':roleSelect(ei,e.role);
-    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${link}${roleSel}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
-    return `<div class="ex">${top}${rows}</div>`;
+    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
+    const chips=grouped?'':roleChips(ei,e.role);
+    return `<div class="ex">${top}${chips}${rows}</div>`;
   }
   const hist=`<button class="histbtn" onclick="openHistory(${ei})" title="History">${ICON_HIST}</button>`;
   return `<div class="ex"><div class="ex-top">${keyTag}<span class="ex-name">${esc(e.name)}</span>${hist}</div>${rows}</div>`;
