@@ -4,9 +4,10 @@
 // Next.js API routes instead of from inside the sheet itself.
 
 import { google } from "googleapis";
+import { randomBytes } from "crypto";
 
 export const TABS: Record<string, string[]> = {
-  clients: ["clientId", "name", "goal", "currentPhase", "createdAt"],
+  clients: ["clientId", "name", "goal", "currentPhase", "createdAt", "accessToken"],
   template: [
     "clientId", "phase", "sessionId", "sessionOrder", "sessionName", "priority", "cardioPos",
     "blockOrder", "blockKind", "exId", "exOrder", "exName", "setOrder", "setType", "target",
@@ -33,8 +34,15 @@ function sheetsClient() {
 }
 
 export function uid_(): string {
-  // Same shape as Apps Script's uid_(): 10-char hex-ish id.
+  // Same shape as Apps Script's uid_(): 10-char hex-ish id. Fine for row IDs,
+  // not for anything security-sensitive (see accessToken_ below).
   return [...Array(10)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+
+export function accessToken_(): string {
+  // 32 random hex chars — this goes in client URLs, so it has to be
+  // unguessable, not just "different from other rows."
+  return randomBytes(16).toString("hex");
 }
 
 let _ensured = false;

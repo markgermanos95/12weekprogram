@@ -67,6 +67,9 @@
   .rail.p3{background:var(--line-strong)}
   .rail.p4{background:var(--line-strong);opacity:.5}
   .scard-body{flex:1;min-width:0}
+  .linkbtn{appearance:none;width:30px;height:30px;flex-shrink:0;border:1px solid var(--line-strong);background:transparent;border-radius:7px;color:var(--faint);cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:6px}
+  .linkbtn svg{width:15px;height:15px}
+  .linkbtn:hover{color:var(--ink);border-color:var(--ink)}
   .scard-top{display:flex;align-items:center;gap:8px;margin-bottom:5px}
   .ptag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 6px;border-radius:5px;border:0}
   .ptag.p1{background:var(--ink);color:#fff}
@@ -194,6 +197,10 @@
   .mbtn.danger{background:var(--max);color:#fff;border-color:var(--max)}
 
   .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;gap:12px;color:var(--faint);font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+  .login-wrap{display:flex;align-items:center;justify-content:center;height:90vh;padding:20px}
+  .login-card{width:100%;max-width:320px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .login-t{font-weight:600;font-size:16px;margin-bottom:14px}
+  .login-err{color:var(--max);font-size:13px;margin-top:8px}
   .spin{width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
 </style>
@@ -203,22 +210,46 @@
 
 <script>
 /* ============================================================
-   DATA LAYER — talks to Code.gs in Apps Script, or an in-memory
-   mock when opened standalone (preview). Same file either way.
+   DATA LAYER — coach calls go through /api/coach/ (cookie-gated,
+   set by logging in). Client calls go through /api/client/ (no
+   login — a long random token in the URL is the access key).
    ============================================================ */
 const USE_REAL = true;
 
-/* Client gating: ?client=ID serves one client in locked client-mode.
-   Read straight from the URL — no server templating needed now. */
-const CLIENT_ID_FROM_URL = new URLSearchParams(location.search).get('client') || '';
-const CLIENT_MODE = !!CLIENT_ID_FROM_URL;
+/* Client gating: ?client=TOKEN serves one client in locked client-mode.
+   This is a long unguessable token, not the client's row ID. */
+const CLIENT_TOKEN_FROM_URL = new URLSearchParams(location.search).get('client') || '';
+const CLIENT_MODE = !!CLIENT_TOKEN_FROM_URL;
+
+// Function args where the first argument is currently a clientId need that
+// swapped for the token server-side expects; args where the first argument
+// is a logId need the token prepended instead. Keeps every existing call
+// site in this file unchanged — only gs() itself needs to know this.
+const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory']);
+const CLIENT_PREPEND = new Set(['saveProgress','finishSession','getLog']);
+
+class LoginRequired extends Error {}
 
 async function gs(method){
   const args = Array.prototype.slice.call(arguments, 1);
-  const r = await fetch('/api/run/' + method, {
+  let path, body;
+  if (CLIENT_MODE){
+    path = '/api/client/' + method;
+    if (CLIENT_REPLACE_FIRST.has(method)) args[0] = CLIENT_TOKEN_FROM_URL;
+    else if (CLIENT_PREPEND.has(method)) args.unshift(CLIENT_TOKEN_FROM_URL);
+    body = args;
+  } else {
+    path = '/api/coach/' + method;
+    body = args;
+  }
+  const r = await fetch(path, {
     method: 'POST', headers: {'content-type':'application/json'},
-    body: JSON.stringify({ args })
+    body: JSON.stringify({ args: body })
   });
+  if (r.status === 401){
+    if (!CLIENT_MODE) throw new LoginRequired();
+    throw new Error('This link is no longer valid.');
+  }
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
@@ -338,7 +369,7 @@ const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
   log:null, runEntries:{}, cardio:{stage:1,done:false}, open:null,
-  clientsOpen:false, history:{open:false}, infoOpen:false, modal:null
+  clientsOpen:false, history:{open:false}, infoOpen:false, modal:null, loginError:''
 };
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -352,6 +383,8 @@ const ICON_DN  ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const ICON_X   ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
 const ICON_HIST='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/><path d="M12 8v4l3 2"/></svg>';
 const ICON_INFO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
+const ICON_LOGOUT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
+const ICON_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l1.5-1.5a5 5 0 0 0-7.07-7.07L10 5.88"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.5 1.5a5 5 0 0 0 7.07 7.07L14 18.12"/></svg>';
 
 /* ============================================================
    RESOLVERS + SAVE
@@ -386,17 +419,27 @@ function buildLogPayload(){
 async function boot(){
   S.loading=true; render();
   try{
-    S.clients = await gs('getClients');
     if(CLIENT_MODE){
-      const c = S.clients.find(x=>x.clientId===CLIENT_ID_FROM_URL);
+      const c = await gs('resolveClientToken', CLIENT_TOKEN_FROM_URL);
       if(!c){ S.loading=false; app.innerHTML=`<div class="loading">PROGRAM NOT FOUND<br><span style="color:var(--line-strong)">Check your link</span></div>`; return; }
       S.clients=[c]; S.clientId=c.clientId; S.client=c; S.phase=Number(c.currentPhase)||1; S.edit=false; S.isTemplate=false;
       await loadTemplate();
       S.open = await gs('getOpenSession', S.clientId);
       S.loading=false; S.view='week'; render(); return;
     }
+    S.clients = await gs('getClients');
     S.loading=false; S.view='home'; render();
-  }catch(e){ setStat('load failed'); S.loading=false; render(); }
+  }catch(e){
+    if (e instanceof LoginRequired){ S.loading=false; S.view='login'; render(); return; }
+    setStat('load failed'); S.loading=false; render();
+  }
+}
+async function doLogin(password){
+  try{
+    const r = await fetch('/api/login', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ password }) });
+    if(!r.ok){ S.loginError='Wrong password'; render(); return; }
+    S.loginError=''; await boot();
+  }catch(e){ S.loginError='Something went wrong — try again'; render(); }
 }
 async function loadTemplate(){ S.template = await gs('getTemplate', S.clientId, S.phase); }
 
@@ -428,6 +471,16 @@ async function newClient(){
 }
 function openInfo(){ S.infoOpen=true; render(); }
 function closeInfo(){ S.infoOpen=false; render(); }
+async function copyClientLink(i){
+  const c=S.clients[i]; if(!c||!c.accessToken){ setStat('no link yet — reload'); return; }
+  const url = location.origin + '/?client=' + c.accessToken;
+  try{ await navigator.clipboard.writeText(url); setStat('link copied'); }
+  catch(e){ await modalInput('Copy this link', url); }
+}
+async function doLogout(){
+  try{ await fetch('/api/logout', { method:'POST' }); }catch(e){}
+  location.reload();
+}
 
 async function switchPhase(ph){ if(CLIENT_MODE) return; ph=Number(ph); if(ph===S.phase) return; flushTemplateSave(); S.phase=ph; if(!S.isTemplate){ try{ await gs('setCurrentPhase',S.clientId,ph); }catch(e){} } await loadTemplate(); render(); }
 function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTemplateSave(); S.edit=!S.edit; render(); }
@@ -552,9 +605,10 @@ function hdOpen(){
 
 function homeHTML(){
   const info=`<button class="iconbtn" onclick="openInfo()" title="How it works">${ICON_INFO}</button>`;
+  const logout=`<button class="iconbtn" onclick="doLogout()" title="Log out">${ICON_LOGOUT}</button>`;
   let h=`<div class="hd"><div class="hd-top">
     <div><div class="client" style="cursor:default">Coaching</div><div class="meta">${S.clients.length} client${S.clients.length===1?'':'s'}</div></div>
-    <div class="hd-tools"><div class="trow">${info}</div></div>
+    <div class="hd-tools"><div class="trow">${info}${logout}</div></div>
   </div><div class="savestat" id="savestat"></div></div><div class="wrap">`;
   h+=`<div class="group-lbl">Templates<span class="ln"></span></div>`;
   TEMPLATES.forEach((t,i)=>{
@@ -567,7 +621,9 @@ function homeHTML(){
   S.clients.forEach((c,i)=>{
     h+=`<div class="scard tap" onclick="openClientHome(${i})"><div class="rail"></div><div class="scard-body">
       <div class="scard-top"><span class="scard-name">${esc(c.name)}</span></div>
-      <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Phase ${c.currentPhase||1}</span></div></div><div class="chev">${ICON_CHEV}</div></div>`;
+      <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Phase ${c.currentPhase||1}</span></div></div>
+      <button class="linkbtn" onclick="event.stopPropagation();copyClientLink(${i})" title="Copy their personal link">${ICON_LINK}</button>
+      <div class="chev">${ICON_CHEV}</div></div>`;
   });
   h+=`<div class="addbar"><button class="addbtn" onclick="newClient()">+ new client</button></div>`;
   h+=`<div class="foot">${USE_REAL?'SYNCED TO SHEETS':'PREVIEW · IN-MEMORY (deploy for live sync)'}</div></div>`;
@@ -741,10 +797,26 @@ function infoOverlay(){
   </div></div>`;
 }
 
+function loginHTML(){
+  return `<div class="login-wrap">
+    <div class="login-card">
+      <div class="login-t">Coach login</div>
+      <input class="mfield" id="loginfield" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
+      ${S.loginError ? `<div class="login-err">${esc(S.loginError)}</div>` : ''}
+      <button class="mbtn go" style="width:100%;margin-top:10px" onclick="submitLogin()">Log in</button>
+    </div>
+  </div>`;
+}
+function submitLogin(){
+  const f=document.getElementById('loginfield');
+  doLogin(f ? f.value : '');
+}
+
 function render(){
   if(S.loading){ app.innerHTML=`<div class="loading"><div class="spin"></div>LOADING</div>`; return; }
   let h;
-  if(S.view==='home') h=homeHTML();
+  if(S.view==='login') h=loginHTML();
+  else if(S.view==='home') h=homeHTML();
   else if(S.view==='session') h=sessionHTML();
   else h=weekHTML();
   if(S.clientsOpen) h+=clientsOverlay();
@@ -753,6 +825,7 @@ function render(){
   if(S.modal) h+=modalOverlay();
   app.innerHTML=h;
   if(S.modal && S.modal.kind==='input'){ const f=document.getElementById('modalfield'); if(f) f.focus(); }
+  if(S.view==='login'){ const f=document.getElementById('loginfield'); if(f) f.focus(); }
 }
 
 boot();

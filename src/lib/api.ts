@@ -2,7 +2,7 @@
 // shapes, same Google Sheet — only the underlying read/write calls changed
 // (SpreadsheetApp -> Sheets REST API, via sheets.ts).
 
-import { readRows_, writeRows_, appendRows_, uid_ } from "./sheets";
+import { readRows_, writeRows_, appendRows_, uid_, accessToken_ } from "./sheets";
 import { buildSeed, SeedSession } from "./seed";
 
 const truthy = (v: any) => v === true || v === "true" || v === "TRUE";
@@ -11,21 +11,36 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 /* ---------- clients ---------- */
 
+// Existing clients created before access tokens existed won't have one yet.
+// Fill in any missing tokens once, in place, rather than requiring a manual
+// migration step.
+async function ensureClientTokens_() {
+  const rows = await readRows_("clients");
+  let changed = false;
+  rows.forEach((c) => {
+    if (!c.accessToken) { c.accessToken = accessToken_(); changed = true; }
+  });
+  if (changed) await writeRows_("clients", rows);
+  return rows;
+}
+
 export async function getClients() {
   await seedIfEmpty_();
-  const rows = await readRows_("clients");
+  const rows = await ensureClientTokens_();
   return rows.map((c) => ({
     clientId: c.clientId,
     name: c.name,
     goal: c.goal,
     currentPhase: Number(c.currentPhase) || 1,
+    accessToken: c.accessToken,
   }));
 }
 
 export async function addClient(name: string, goal: string) {
   const clientId = uid_();
   await appendRows_("clients", [
-    { clientId, name: name || "New client", goal: goal || "", currentPhase: 1, createdAt: nowISO() },
+    { clientId, name: name || "New client", goal: goal || "", currentPhase: 1,
+      createdAt: nowISO(), accessToken: accessToken_() },
   ]);
   return clientId;
 }
@@ -224,7 +239,8 @@ export async function seedIfEmpty_() {
 export async function addClientFromTemplate(name: string, goal: string, templateKey: string) {
   const clientId = uid_();
   await appendRows_("clients", [
-    { clientId, name: name || "New client", goal: goal || "", currentPhase: 1, createdAt: nowISO() },
+    { clientId, name: name || "New client", goal: goal || "", currentPhase: 1,
+      createdAt: nowISO(), accessToken: accessToken_() },
   ]);
   const exMap: Record<string, string> = {};
   const copied = (await readRows_("template")).filter((r) => r.clientId === templateKey).map((r) => {
@@ -238,12 +254,77 @@ export async function addClientFromTemplate(name: string, goal: string, template
   return clientId;
 }
 
-/* ---------- dispatcher map ---------- */
-// Every function callable from the browser via /api/run/[fn]. Mirrors the
-// set of functions Apps Script exposed automatically via google.script.run.
+/* ---------- client-token access (no coach login required) ---------- */
+// The browser never sends a raw clientId for client-mode calls — only the
+// long random token from its URL. These wrappers resolve token -> clientId
+// server-side and ignore/override anything the caller claims, so a client
+// can never act as a different client even by guessing IDs.
 
-export const fns: Record<string, (...args: any[]) => Promise<any>> = {
+async function clientIdForToken_(token: string): Promise<string> {
+  const rows = await readRows_("clients");
+  const c = rows.find((r) => r.accessToken === token);
+  if (!c) throw new Error("invalid or expired link");
+  return c.clientId;
+}
+
+export async function resolveClientToken(token: string) {
+  const rows = await readRows_("clients");
+  const c = rows.find((r) => r.accessToken === token);
+  if (!c) return null;
+  return { clientId: c.clientId, name: c.name, goal: c.goal, currentPhase: Number(c.currentPhase) || 1 };
+}
+
+export async function getTemplateForToken(token: string, phase: number) {
+  return getTemplate(await clientIdForToken_(token), phase);
+}
+export async function startSessionForToken(token: string, phase: number, sessionId: string, sessionName: string) {
+  return startSession(await clientIdForToken_(token), phase, sessionId, sessionName);
+}
+export async function getOpenSessionForToken(token: string) {
+  return getOpenSession(await clientIdForToken_(token));
+}
+export async function getExerciseHistoryForToken(token: string, exId: string) {
+  return getExerciseHistory(await clientIdForToken_(token), exId);
+}
+// saveProgress / finishSession / getLog act on a logId, not a clientId
+// directly — confirm that log actually belongs to this token's client
+// before touching it, so a guessed/leaked logId can't cross clients.
+async function assertOwnsLog_(token: string, logId: string) {
+  const clientId = await clientIdForToken_(token);
+  const log = (await readRows_("sessionLogs")).find((r) => r.logId === logId);
+  if (!log || log.clientId !== clientId) throw new Error("not your session");
+}
+export async function saveProgressForToken(token: string, logId: string, payload: any) {
+  await assertOwnsLog_(token, logId);
+  return saveProgress(logId, payload);
+}
+export async function finishSessionForToken(token: string, logId: string) {
+  await assertOwnsLog_(token, logId);
+  return finishSession(logId);
+}
+export async function getLogForToken(token: string, logId: string) {
+  await assertOwnsLog_(token, logId);
+  return getLog(logId);
+}
+
+/* ---------- dispatcher maps ---------- */
+// Coach functions require the coach login cookie (checked in the route).
+// Client functions only require a valid per-client token, passed in the
+// request body — never a cookie, never a bare clientId from the browser.
+
+export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
   getClients, addClient, setCurrentPhase, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, addClientFromTemplate,
+};
+
+export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
+  resolveClientToken,
+  getTemplate: getTemplateForToken,
+  startSession: startSessionForToken,
+  saveProgress: saveProgressForToken,
+  getOpenSession: getOpenSessionForToken,
+  finishSession: finishSessionForToken,
+  getLog: getLogForToken,
+  getExerciseHistory: getExerciseHistoryForToken,
 };

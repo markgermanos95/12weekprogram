@@ -42,13 +42,18 @@ allowed to edit the sheet from outside."
    sharing a sheet with a person — you're just sharing it with a robot.)
 7. Copy the Sheet ID from its URL:
    `docs.google.com/spreadsheets/d/`**`THIS_PART`**`/edit`
+8. Pick a **coach password** — anything, this is just for you. That's
+   `COACH_PASSWORD`.
+9. Generate a random secret for `SESSION_SECRET` (run `openssl rand -hex 32`,
+   or just mash the keyboard for 40+ characters — nobody ever types this
+   one in, it just signs your login cookie).
 
 ## Step 2 — run it locally first
 
 ```bash
 npm install
 cp .env.local.example .env.local
-# edit .env.local with the 3 values from Step 1
+# edit .env.local with the 5 values from Step 1
 npm run dev
 ```
 
@@ -58,7 +63,14 @@ are found) — same as `doGet()` did. If you're pointing this at a sheet that
 already has your real client data, nothing gets overwritten; it only adds
 what's missing.
 
-Client links work the same way: `localhost:3000/?client=THEIR_ID`.
+You'll land on a login screen — enter your `COACH_PASSWORD` to get in.
+
+**Client links:** each client now gets a private, unguessable link instead
+of a plain `?client=ID`. On the coach home page, every client card has a
+small link icon — tap it to copy their personal link to your clipboard,
+ready to send them. Existing clients get a link generated automatically
+the first time the home page loads after this update.
+
 
 ## Step 3 — GitHub
 
@@ -71,32 +83,34 @@ git commit -m "coaching app on vercel"
 Make an empty repo on github.com (don't initialize it with a README), then:
 
 ```bash
-git remote add origin https://github.com/YOU/coaching-app.git
+git remote add origin https://github.com/YOU/12weekprogram.git
 git branch -M main
 git push -u origin main
 ```
 
 ## Step 4 — Vercel
 
-1. vercel.com → **Add New → Project → Import** your `coaching-app` repo.
-2. **Environment Variables** — add the same 3 from `.env.local`:
-   `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`.
+1. vercel.com → **Add New → Project → Import** your `12weekprogram` repo.
+2. **Environment Variables** — add all 5 from `.env.local`:
+   `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`,
+   `COACH_PASSWORD`, `SESSION_SECRET`.
    (For `GOOGLE_PRIVATE_KEY`, paste the same value — Vercel's env var box
    handles the `\n` characters fine as plain text.)
 3. **Deploy.**
 
 From here on: `git push` → Vercel rebuilds and redeploys automatically.
 
-## What's deliberately unchanged
+## Security
 
-- **Security model**: same as today's Apps Script deployment — anyone with
-  the URL can call the functions (no login, no per-client token). That's an
-  existing, already-flagged gap, not something this introduces. Worth fixing
-  before you'd sell client access, but it's a separate, deliberate next step
-  — not bundled into this hosting move since you didn't ask for it here.
-- **Data model**: still the same 4-tab Google Sheet. If you ever do want a
-  real database (Postgres/Supabase or otherwise), that's a distinct decision
-  to make on its own, not a side effect of moving host.
+- Coach pages require login (your `COACH_PASSWORD`), set as a signed cookie.
+- Each client gets a unique, unguessable link instead of a plain ID — one
+  client can't view or touch another client's data, even by guessing.
+- The browser never holds your Google credentials — every Sheets read/write
+  happens server-side.
+- Not covered yet: rate limiting, an "I forgot my password" flow, or
+  rotating a client's link if it ever leaks. None of that is urgent for a
+  single coach with a known client list — worth revisiting if you start
+  selling access at scale.
 
 ## A genuine limitation worth knowing
 
