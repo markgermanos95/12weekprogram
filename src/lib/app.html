@@ -45,6 +45,9 @@
 
   .back{display:flex;align-items:center;gap:6px;background:transparent;border:0;font-family:var(--grotesk);font-size:13px;font-weight:500;color:var(--faint);cursor:pointer;padding:0;margin-bottom:10px}
   .back svg{width:14px;height:14px}
+  .logbtn{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:9px;font-family:var(--grotesk);font-size:13px;font-weight:500;color:var(--faint);cursor:pointer;padding:9px 13px;margin-bottom:16px}
+  .logbtn svg{width:15px;height:15px}
+  .logbtn:hover{color:var(--ink);border-color:var(--line-strong)}
   .wrap{padding:14px 18px}
   .note{font-size:13px;color:var(--faint);margin:2px 0 18px;line-height:1.5}
   .note b{color:var(--ink);font-weight:600}
@@ -275,7 +278,7 @@ const CLIENT_MODE = !!CLIENT_TOKEN_FROM_URL;
 // swapped for the token server-side expects; args where the first argument
 // is a logId need the token prepended instead. Keeps every existing call
 // site in this file unchanged — only gs() itself needs to know this.
-const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getLastSession','getCardioHistory']);
+const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getHistory','getLastSession','getCardioHistory']);
 const CLIENT_PREPEND = new Set(['saveProgress','finishSession','getLog']);
 
 class LoginRequired extends Error {}
@@ -328,7 +331,7 @@ const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
   log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null,
-  clientsOpen:false, history:{open:false}, cardioHist:{open:false}, infoOpen:false, modal:null, loginError:''
+  clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, modal:null, loginError:''
 };
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -577,7 +580,7 @@ function hydrate(log){
   });
   S.cardio={ stage:Number(log.cardioStage)||1, done:!!log.cardioDone, cals:log.cardioCals||'' };
 }
-async function backToWeek(){ S.view='week'; S.sessionId=null; if(!S.isTemplate){ try{ S.open=await gs('getOpenSession',S.clientId); }catch(e){ S.open=null; } } render(); window.scrollTo(0,0); }
+async function backToWeek(){ flushTemplateSave(); S.view='week'; S.sessionId=null; if(!S.isTemplate){ try{ S.open=await gs('getOpenSession',S.clientId); }catch(e){ S.open=null; } } render(); window.scrollTo(0,0); }
 async function resumeOpen(){
   if(!S.open) return;
   if(Number(S.open.phase)!==S.phase){ S.phase=Number(S.open.phase); await loadTemplate(); }
@@ -668,6 +671,9 @@ async function openHistory(ei){ const e=exAt(ei); S.history={open:true,name:e.na
 function closeHistory(){ S.history={open:false}; render(); }
 async function openCardioHistory(){ S.cardioHist={open:true,data:null}; render(); try{ const data=await gs('getCardioHistory',S.clientId); if(S.cardioHist.open) S.cardioHist.data=data; }catch(e2){ S.cardioHist.data=[]; } render(); }
 function closeCardioHistory(){ S.cardioHist={open:false}; render(); }
+// Session-log history — the whole client's finished sessions, newest first.
+async function openSessionHistory(){ S.sessHist={open:true,data:null}; render(); try{ const data=await gs('getHistory',S.clientId); if(S.sessHist.open) S.sessHist.data=data; }catch(e2){ S.sessHist.data=[]; } render(); }
+function closeSessionHistory(){ S.sessHist={open:false}; render(); }
 
 /* ---- modal ---- */
 function modalInput(title,placeholder){ return new Promise(res=>{ S.modal={kind:'input',title,placeholder:placeholder||'',res}; render(); }); }
@@ -735,6 +741,7 @@ function weekHTML(){
   if(!CLIENT_MODE) h+=`<button class="back" onclick="goHome()">${ICON_BACK} Home</button>`;
   if(S.open && !S.edit) h+=`<div class="resume" onclick="resumeOpen()"><div style="flex:1"><div class="resume-t">Resume in-progress session</div><div class="resume-s">${esc(S.open.sessionName)} · pick up where you left off</div></div><div class="chev">${ICON_CHEV}</div></div>`;
   h+=`<div class="note">Sessions are ordered by priority — that's also the drop order. Start at the top and work down; the lower tiers are optional when time and energy allow. <span class="link" onclick="openInfo()">How it works ›</span></div>`;
+  if(!S.isTemplate && !S.edit) h+=`<button class="logbtn" onclick="openSessionHistory()">${ICON_HIST}<span>Training log</span></button>`;
   if(S.edit){
     h+=`<div class="group-lbl">Reorder · rename · re-tag<span class="ln"></span></div>`;
     p.sessions.forEach((s,i)=> h+=editTile(s,i,p.sessions.length));
@@ -940,6 +947,19 @@ function cardioHistoryOverlay(){
     <div class="sheet-h">Cardio history <button class="x" onclick="closeCardioHistory()">${ICON_X}</button></div>
     <div class="hist-list">${body}</div></div></div>`;
 }
+function sessionHistoryOverlay(){
+  const H=S.sessHist; let body='';
+  if(H.data===null) body=`<div class="hist-empty">Loading…</div>`;
+  else if(!H.data.length) body=`<div class="hist-empty">No finished sessions yet.</div>`;
+  else H.data.forEach(en=>{
+    const cardio=en.cardioDone?`<span class="cwhen">CARDIO</span>`:'';
+    body+=`<div class="hist-entry"><div class="hist-d">${esc(en.date)}${cardio}</div>
+      <div class="chrow"><span class="chcal">${esc(en.sessionName)}</span><span class="chstage">Phase ${esc(en.phase)}</span></div></div>`;
+  });
+  return `<div class="overlay" onclick="closeSessionHistory()"><div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-h">Training log <button class="x" onclick="closeSessionHistory()">${ICON_X}</button></div>
+    <div class="hist-list">${body}</div></div></div>`;
+}
 function modalOverlay(){
   const m=S.modal;
   if(m.kind==='choice'){
@@ -996,6 +1016,7 @@ function render(){
   if(S.clientsOpen) h+=clientsOverlay();
   if(S.history && S.history.open) h+=historyOverlay();
   if(S.cardioHist && S.cardioHist.open) h+=cardioHistoryOverlay();
+  if(S.sessHist && S.sessHist.open) h+=sessionHistoryOverlay();
   if(S.infoOpen) h+=infoOverlay();
   if(S.modal) h+=modalOverlay();
   app.innerHTML=h;

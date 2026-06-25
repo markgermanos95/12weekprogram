@@ -54,19 +54,41 @@ export async function setCurrentPhase(clientId: string, phase: number) {
 
 /* ---------- template flatten / unflatten ---------- */
 
+// The template tab is stored one-row-per-set. A session with no exercises, or
+// an exercise with no sets, would otherwise flatten to *zero* rows and vanish
+// on the next read — so we emit a structural placeholder for those empty
+// parents: a blank `exId` marks "session exists, no exercises", a blank
+// `setType` marks "exercise exists, no sets". getTemplate honours both.
+// Placeholders are transient — the next save with real content replaces them.
 function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
   const rows: Record<string, any>[] = [];
   sessions.forEach((s, si) => {
-    (s.exercises || []).forEach((e: any, eo: number) => {
+    const sBase = {
+      clientId, phase, sessionId: s.sessionId, sessionOrder: si,
+      sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
+    };
+    const exercises = s.exercises || [];
+    if (!exercises.length) {
+      rows.push({
+        ...sBase, exOrder: 0, groupId: "", role: "",
+        exId: "", exName: "", exYoutube: "", exCues: "",
+        setOrder: "", setType: "", target: "",
+      });
+      return;
+    }
+    exercises.forEach((e: any, eo: number) => {
       const exId = e.exId || uid_();
-      (e.sets || []).forEach((set: any, ki: number) => {
-        rows.push({
-          clientId, phase, sessionId: s.sessionId, sessionOrder: si,
-          sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
-          exOrder: eo, groupId: e.groupId || "", role: e.role || "",
-          exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "",
-          setOrder: ki, setType: set.type, target: set.target,
-        });
+      const eBase = {
+        ...sBase, exOrder: eo, groupId: e.groupId || "", role: e.role || "",
+        exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "",
+      };
+      const sets = e.sets || [];
+      if (!sets.length) {
+        rows.push({ ...eBase, setOrder: "", setType: "", target: "" });
+        return;
+      }
+      sets.forEach((set: any, ki: number) => {
+        rows.push({ ...eBase, setOrder: ki, setType: set.type, target: set.target });
       });
     });
   });
@@ -84,12 +106,14 @@ export async function getTemplate(clientId: string, phase: number) {
       sessionId: sid, order: Number(r.sessionOrder), name: r.sessionName,
       priority: Number(r.priority), cardioPos: r.cardioPos, _ex: {},
     };
+    if (!r.exId) return; // session placeholder — session exists, no exercises
     const s = sessMap[sid], eo = Number(r.exOrder);
     if (!s._ex[eo]) s._ex[eo] = {
       exId: r.exId, exOrder: eo, name: r.exName,
       youtube: r.exYoutube || "", cues: r.exCues || "",
       groupId: r.groupId || "", role: r.role || "", _sets: {},
     };
+    if (!r.setType) return; // exercise placeholder — exercise exists, no sets
     s._ex[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target };
   });
   const sessions = Object.values(sessMap)
@@ -288,8 +312,10 @@ export async function addClientFromTemplate(name: string, goal: string, template
   const copied = (await readRows_("template")).filter((r) => r.clientId === templateKey).map((r) => {
     const o = { ...r };
     o.clientId = clientId;
-    if (!exMap[r.exId]) exMap[r.exId] = uid_();
-    o.exId = exMap[r.exId];
+    if (r.exId) { // leave placeholder rows (blank exId) untouched
+      if (!exMap[r.exId]) exMap[r.exId] = uid_();
+      o.exId = exMap[r.exId];
+    }
     return o;
   });
   if (copied.length) await appendRows_("template", copied);
@@ -334,6 +360,9 @@ export async function getLastSessionForToken(token: string, sessionId: string) {
 export async function getCardioHistoryForToken(token: string) {
   return getCardioHistory(await clientIdForToken_(token));
 }
+export async function getHistoryForToken(token: string, limit?: number) {
+  return getHistory(await clientIdForToken_(token), limit);
+}
 // saveProgress / finishSession / getLog act on a logId, not a clientId
 // directly — confirm that log actually belongs to this token's client
 // before touching it, so a guessed/leaked logId can't cross clients.
@@ -375,6 +404,7 @@ export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
   finishSession: finishSessionForToken,
   getLog: getLogForToken,
   getExerciseHistory: getExerciseHistoryForToken,
+  getHistory: getHistoryForToken,
   getLastSession: getLastSessionForToken,
   getCardioHistory: getCardioHistoryForToken,
 };
