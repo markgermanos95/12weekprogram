@@ -48,6 +48,12 @@
   .logbtn{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:9px;font-family:var(--grotesk);font-size:13px;font-weight:500;color:var(--faint);cursor:pointer;padding:9px 13px;margin-bottom:16px}
   .logbtn svg{width:15px;height:15px}
   .logbtn:hover{color:var(--ink);border-color:var(--line-strong)}
+  .hiw-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .hiw-row .logbtn{margin-bottom:0;flex:1;justify-content:center}
+  .hiw-session{margin-top:-2px}
+  .prline{padding:1px 2px 8px 41px;display:flex;align-items:center;gap:7px}
+  .prbadge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--max);color:#fff;padding:2px 7px;border-radius:5px}
+  .prtext{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--max);text-transform:uppercase;letter-spacing:.04em}
   .wrap{padding:14px 18px}
   .note{font-size:13px;color:var(--faint);margin:2px 0 18px;line-height:1.5}
   .note b{color:var(--ink);font-weight:600}
@@ -278,7 +284,7 @@ const CLIENT_MODE = !!CLIENT_TOKEN_FROM_URL;
 // swapped for the token server-side expects; args where the first argument
 // is a logId need the token prepended instead. Keeps every existing call
 // site in this file unchanged — only gs() itself needs to know this.
-const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getHistory','getLastSession','getCardioHistory']);
+const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getHistory','getExerciseBests','getLastSession','getCardioHistory']);
 const CLIENT_PREPEND = new Set(['saveProgress','finishSession','getLog']);
 
 class LoginRequired extends Error {}
@@ -330,8 +336,8 @@ const TEMPLATES = [
 const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
-  log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null,
-  clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, modal:null, loginError:''
+  log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null, bests:{},
+  clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, infoCtx:'week', modal:null, loginError:''
 };
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -448,6 +454,15 @@ function setMaxField(ei,si,fld,val){ const e=exAt(ei); const k=e.exId+':'+si; co
 function setMaxFieldR(ei,si,fld,val){ setMaxField(ei,si,fld,val); render(); }
 function repeatMax(ei,si){ const e=exAt(ei); const prev=lastSet(e.exId,si); if(!prev||!prev.maxNote) return; let blob=null; try{ blob=JSON.parse(prev.maxNote); }catch(_){ blob=null; } if(!blob) return; const k=e.exId+':'+si; const en=S.runEntries[k]||(S.runEntries[k]={}); en.max=blob; scheduleProgressSave(); render(); }
 function lastMaxDisplay(exId,si){ const prev=lastSet(exId,si); if(!prev||!prev.maxNote) return ''; try{ const b=JSON.parse(prev.maxNote); return composeMax(b); }catch(_){ return ''; } }
+// New PR when a working/max set beats the client's stored best for the exercise
+// (heavier load, or the same top load for more reps). Needs prior history to beat.
+function isPR(exId,type,reps,load){
+  if(type!=='W'&&type!=='M') return false;
+  const b=S.bests&&S.bests[exId]; if(!b) return false;
+  const l=parseFloat(load); if(isNaN(l)) return false;
+  const r=parseInt(reps,10)||0;
+  return l>b.load || (l===b.load && r>b.reps);
+}
 function progCueMain(exId,si,st,type){
   if(type!=='W') return null;
   const prev=lastSet(exId,si);
@@ -543,7 +558,7 @@ async function newClient(){
   const i=S.clients.findIndex(c=>c.clientId===id);
   if(i>=0) await openClientHome(i);
 }
-function openInfo(){ S.infoOpen=true; render(); }
+function openInfo(ctx){ S.infoCtx=ctx||'week'; S.infoOpen=true; render(); }
 function closeInfo(){ S.infoOpen=false; render(); }
 async function copyClientLink(i){
   const c=S.clients[i]; if(!c||!c.accessToken){ setStat('no link yet — reload'); return; }
@@ -561,13 +576,14 @@ function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTem
 
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
-  S.sessionId=s.sessionId; S.view='session'; S.last=null;
+  S.sessionId=s.sessionId; S.view='session'; S.last=null; S.bests={};
   if(S.isTemplate){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; render(); window.scrollTo(0,0); return; }
   try{
     const log=await gs('startSession', S.clientId, S.phase, s.sessionId, s.name); S.log=log; hydrate(log);
     try{ S.last=await gs('getLastSession', S.clientId, s.sessionId); }catch(e){ S.last=null; }
+    try{ S.bests=await gs('getExerciseBests', S.clientId); }catch(e){ S.bests={}; }
   }
-  catch(e){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; S.last=null; }
+  catch(e){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; S.last=null; S.bests={}; }
   render(); window.scrollTo(0,0);
 }
 function hydrate(log){
@@ -740,8 +756,11 @@ function weekHTML(){
   let h=hdOpen()+`</div><div class="phase-label">Phase ${S.phase} · <b>${phLabel}</b> · ${phWk}</div><div class="wrap">`;
   if(!CLIENT_MODE) h+=`<button class="back" onclick="goHome()">${ICON_BACK} Home</button>`;
   if(S.open && !S.edit) h+=`<div class="resume" onclick="resumeOpen()"><div style="flex:1"><div class="resume-t">Resume in-progress session</div><div class="resume-s">${esc(S.open.sessionName)} · pick up where you left off</div></div><div class="chev">${ICON_CHEV}</div></div>`;
-  h+=`<div class="note">Sessions are ordered by priority — that's also the drop order. Start at the top and work down; the lower tiers are optional when time and energy allow. <span class="link" onclick="openInfo()">How it works ›</span></div>`;
-  if(!S.isTemplate && !S.edit) h+=`<button class="logbtn" onclick="openSessionHistory()">${ICON_HIST}<span>Training log</span></button>`;
+  if(!S.edit){
+    h+=`<div class="hiw-row"><button class="logbtn" onclick="openInfo('priority')">${ICON_INFO}<span>How it works</span></button>`;
+    if(!S.isTemplate) h+=`<button class="logbtn" onclick="openSessionHistory()">${ICON_HIST}<span>Training log</span></button>`;
+    h+=`</div>`;
+  }
   if(S.edit){
     h+=`<div class="group-lbl">Reorder · rename · re-tag<span class="ln"></span></div>`;
     p.sessions.forEach((s,i)=> h+=editTile(s,i,p.sessions.length));
@@ -794,6 +813,7 @@ function sessionHTML(){
   else h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><span class="sess-name">${esc(s.name)}</span></div>`;
   h+=`<div class="sess-meta">Phase ${S.phase} · ${S.phase===1?'higher rep':'medium rep'}</div>
     <div class="legend"><span><span class="lg-b badge R">R</span> Ramp-up</span><span><span class="lg-b badge W">W</span> Working</span><span><span class="lg-b badge M">M</span> Max</span></div>`;
+  if(!S.edit) h+=`<button class="logbtn hiw-session" onclick="openInfo('sets')">${ICON_INFO}<span>How it works</span></button>`;
   if(s.cardioPos==='top') h+=cardioHTML(s,'top');
   const groups=buildGroups(s.exercises); let gi=0;
   groups.forEach(grp=>{
@@ -846,6 +866,7 @@ function exHTML(session,ei,key){
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
       rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
+      if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
       else { const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
@@ -977,17 +998,26 @@ function modalOverlay(){
 }
 function infoOverlay(){
   const key=(t,name,desc)=>`<div class="info-key"><span class="badge sm ${t}">${t}</span><div class="kx"><b>${name}</b> — ${desc}</div></div>`;
-  return `<div class="overlay" onclick="closeInfo()"><div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-h">How it works <button class="x" onclick="closeInfo()">${ICON_X}</button></div>
+  const secPriority=`
+    <div class="info-sec">Priority ranks<span class="ln"></span></div>
+    <div class="info-item">Sessions are ranked by priority, and that ranking is also the <b>drop order</b> — start at the top and work down.</div>
+    <div class="info-item"><span class="it-h">Priority 1 · the spine</span>Hit these every week (1–2× each). Even if P1 is all you manage, you've done the core of the program.</div>
+    <div class="info-item"><span class="it-h">Priority 2–4 · optional</span>Add them when time and energy allow. When you're short, cuts come off the bottom — drop P4 first, then P3, then P2.</div>`;
+  const secWeekly=`
     <div class="info-sec">Weekly effort<span class="ln"></span></div>
     <div class="info-item"><span class="it-h">Going hard</span>Hit each Priority 1 session 3× this week. Add Priority 2–4 on top if you've got the gas.</div>
     <div class="info-item"><span class="it-h">Solid work</span>Hit each Priority 1 twice, plus a Priority 2/3/4 session or two when time allows.</div>
-    <div class="info-item"><span class="it-h">Minimum effective</span>Hit each Priority 1 once. That's the floor that keeps you progressing — anything above is a bonus.</div>
+    <div class="info-item"><span class="it-h">Minimum effective</span>Hit each Priority 1 once. That's the floor that keeps you progressing — anything above is a bonus.</div>`;
+  const secSets=`
     <div class="info-sec">Set types<span class="ln"></span></div>
     ${key('R','Ramp-up','light, building toward your working weight. Stay well short of failure (~5+ reps in reserve). Primes the movement, not a hard set.')}
     ${key('W','Working','your main effort. Hard but controlled — leave about 1–3 reps in reserve.')}
     ${key('M','Max effort','the set that drives the adaptation. Take it to or within a rep of failure (~0–1 in reserve).')}
-    <div class="info-item" style="margin-top:4px">Tap a set's badge to cycle R → W → M.</div>
+    <div class="info-item" style="margin-top:4px">Tap a set's badge to cycle R → W → M.</div>`;
+  const body = S.infoCtx==='sets' ? (secSets+secPriority+secWeekly) : (secPriority+secWeekly+secSets);
+  return `<div class="overlay" onclick="closeInfo()"><div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-h">How it works <button class="x" onclick="closeInfo()">${ICON_X}</button></div>
+    ${body}
   </div></div>`;
 }
 

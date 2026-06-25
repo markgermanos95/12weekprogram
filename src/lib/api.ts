@@ -235,6 +235,28 @@ export async function getExerciseHistory(clientId: string, exId: string) {
   return out;
 }
 
+// Per-exercise personal bests across all finished sessions, for the PR badge.
+// Best = heaviest load ever (W/M sets only — ramp-ups excluded), then most
+// reps at that top load. Keyed by exId -> { load, reps } (numbers). A set beats
+// it by going heavier, or matching the top load for more reps.
+export async function getExerciseBests(clientId: string) {
+  const done: Record<string, boolean> = {};
+  (await readRows_("sessionLogs")).forEach((l) => {
+    if (l.clientId === clientId && l.status === "done") done[l.logId] = true;
+  });
+  const best: Record<string, { load: number; reps: number }> = {};
+  (await readRows_("setLogs")).forEach((s) => {
+    if (!done[s.logId] || s.setType === "R") return;
+    const load = parseFloat(s.load);
+    if (isNaN(load)) return;
+    const reps = parseInt(s.reps, 10) || 0;
+    const b = best[s.exId];
+    if (!b || load > b.load) best[s.exId] = { load, reps };
+    else if (load === b.load && reps > b.reps) b.reps = reps;
+  });
+  return best;
+}
+
 export async function getHistory(clientId: string, limit?: number) {
   let logs = (await readRows_("sessionLogs")).filter((r) => r.clientId === clientId && r.status === "done");
   logs.sort((a, b) => +new Date(b.date) - +new Date(a.date));
@@ -363,6 +385,9 @@ export async function getCardioHistoryForToken(token: string) {
 export async function getHistoryForToken(token: string, limit?: number) {
   return getHistory(await clientIdForToken_(token), limit);
 }
+export async function getExerciseBestsForToken(token: string) {
+  return getExerciseBests(await clientIdForToken_(token));
+}
 // saveProgress / finishSession / getLog act on a logId, not a clientId
 // directly — confirm that log actually belongs to this token's client
 // before touching it, so a guessed/leaked logId can't cross clients.
@@ -392,7 +417,7 @@ export async function getLogForToken(token: string, logId: string) {
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
   getClients, addClient, setCurrentPhase, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
-  getExerciseHistory, getHistory, addClientFromTemplate, getLastSession, getCardioHistory,
+  getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getCardioHistory,
 };
 
 export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
@@ -405,6 +430,7 @@ export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
   getLog: getLogForToken,
   getExerciseHistory: getExerciseHistoryForToken,
   getHistory: getHistoryForToken,
+  getExerciseBests: getExerciseBestsForToken,
   getLastSession: getLastSessionForToken,
   getCardioHistory: getCardioHistoryForToken,
 };
