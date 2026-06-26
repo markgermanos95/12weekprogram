@@ -325,22 +325,24 @@ const KEY_TIER: Record<string, string> = {
   tpl_advanced: "advanced", tpl_elite: "elite",
 };
 
-// Additive, idempotent seeding. A brand-new tier (Elite, or a fresh sheet) is
-// seeded across all three phases; an existing tier only gets a phase it has
-// never had (e.g. the new power Phase 3) — existing phases the coach may have
-// edited are NEVER overwritten.
+// Version-gated reseed. Bumping SEED_VERSION triggers a ONE-TIME rebuild of the
+// tpl_* templates: every tpl_ row is wiped and re-seeded from buildSeed, and a
+// hidden `__seedver__` marker row records the version so it never runs again
+// until the next bump. Real clients (non-tpl_ rows) are never touched, and once
+// seeded the coach owns the templates — no further auto-writes.
+const SEED_VERSION = 3;
 export async function seedIfEmpty_() {
   const all = await readRows_("template");
-  const hasKey = (k: string) => all.some((r) => r.clientId === k);
-  const hasPhase = (k: string, p: number) => all.some((r) => r.clientId === k && Number(r.phase) === p);
-  let add: Record<string, any>[] = [];
+  const verRow = all.find((r) => r.clientId === "__seedver__");
+  const ver = verRow ? Number(verRow.phase) : 0;
+  if (ver >= SEED_VERSION) return;
+  const keep = all.filter((r) => String(r.clientId).indexOf("tpl_") !== 0 && r.clientId !== "__seedver__");
+  let seeds: Record<string, any>[] = [];
   for (const k of TEMPLATE_KEYS) {
     const seed = buildSeed(KEY_TIER[k]);
-    ([1, 2, 3] as const).forEach((p) => {
-      if (!hasKey(k) || !hasPhase(k, p)) add = add.concat(flattenTemplate_(k, p, (seed as any)[p]));
-    });
+    ([1, 2, 3] as const).forEach((p) => { seeds = seeds.concat(flattenTemplate_(k, p, (seed as any)[p])); });
   }
-  if (add.length) await writeRows_("template", all.concat(add));
+  await writeRows_("template", keep.concat(seeds, [{ clientId: "__seedver__", phase: SEED_VERSION }]));
 }
 
 export async function addClientFromTemplate(name: string, goal: string, templateKey: string) {
