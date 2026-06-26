@@ -1,12 +1,10 @@
-// 12WP starter programs — four tiers × three phases, authored via a coach
-// draft→critique→revise workflow + head-coach holistic pass, then edited here.
-// Beginner/Intermediate are full-body (P1 juiciest compounds · P2 important
-// secondary · P3 peripheral iso (limbs) · P4 central iso (torso & hips)).
-// Advanced is Legs + Push+Pull (both P1) · P2 posterior/volume · P3 arms pump.
-// Elite is First–Fourth, fully hybrid. Phases: P1 hypertrophy, P2 strength,
-// P3 power — the power character escalating by tier (intent → bridge → real →
-// hybrid). RIR rides the working-set cue; coachCue carries power/technique
-// intent (shown in place of the rep-chase cue). Draft programming — edit freely.
+// 12WP starter programs — four tiers x three phases, SELECTED from the rated
+// exercise library (src/lib/exercises.data.ts) via a library-driven
+// author->critique->revise workflow + head-coach holistic pass + escalation fixes.
+// Beginner/Intermediate full-body (P1 compounds / P2 secondary / P3 limbs /
+// P4 torso-hips); Advanced Legs + Push+Pull (both P1) + P2 + P3; Elite First-Fourth
+// fully hybrid. Phases: P1 hypertrophy, P2 strength, P3 power (character escalating
+// by tier). Every pick is library-rated and tier-gated. Draft programming - edit freely.
 
 export type SeedSet = { type: 'R' | 'W' | 'M'; target: string };
 export type SeedExercise = { name: string; sets: SeedSet[]; groupId?: string; role?: string; rir?: string; coachCue?: string };
@@ -20,12 +18,12 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
   "beginner": {
     "1": [
       {
-        "name": "Full body A",
+        "name": "Full Body A",
         "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Leg Press",
+            "name": "Hack Squat (Machine)",
             "group": "",
             "role": "",
             "rir": "2",
@@ -79,7 +77,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Lat Pulldown",
+            "name": "Machine Lat Pulldown",
             "group": "",
             "role": "",
             "rir": "2",
@@ -91,20 +89,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "8–12"
               }
             ]
           },
           {
-            "name": "Seated Cable Row",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
             "rir": "2",
@@ -116,122 +114,30 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
                 "type": "M",
-                "target": "10–15"
-              }
-            ]
-          },
-          {
-            "name": "Dumbbell Romanian Deadlift",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               }
             ]
           }
         ]
       },
       {
-        "name": "Full body B",
+        "name": "Full Body B",
         "priority": 2,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Dumbbell Walking Lunge",
+            "name": "Dumbbell Romanian Deadlift",
             "group": "",
             "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "M",
-                "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Seated Dumbbell Shoulder Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "M",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Incline Dumbbell Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Chest-Supported Dumbbell Row",
-            "group": "",
-            "role": "",
-            "rir": "1",
+            "rir": "2",
             "coachCue": "",
             "sets": [
               {
@@ -256,40 +162,115 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "name": "Seated Leg Curl",
             "group": "",
             "role": "",
-            "rir": "1",
+            "rir": "2",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "R",
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Incline Machine Press",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Machine Shoulder Press",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Seated Cable Row (Neutral Grip)",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
               }
             ]
           }
         ]
       },
       {
-        "name": "Arms & calves",
+        "name": "Full Body C",
         "priority": 3,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Dumbbell Biceps Curl",
+            "name": "EZ-Bar Preacher Curl",
             "group": "",
             "role": "",
             "rir": "2",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "R",
+                "target": "12"
               },
               {
                 "type": "W",
@@ -302,15 +283,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Cable Triceps Pushdown",
+            "name": "Overhead Cable Extension (Rope)",
             "group": "",
             "role": "",
             "rir": "2",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "R",
+                "target": "12"
               },
               {
                 "type": "W",
@@ -323,7 +304,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Dumbbell Lateral Raise",
+            "name": "Machine Lateral Raise",
             "group": "",
             "role": "",
             "rir": "2",
@@ -331,15 +312,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "12–20"
+                "target": "15–20"
               },
               {
                 "type": "W",
-                "target": "12–20"
+                "target": "15–20"
               },
               {
-                "type": "W",
-                "target": "12–20"
+                "type": "M",
+                "target": "15–20"
               }
             ]
           },
@@ -352,20 +333,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "12–20"
+                "target": "15–20"
               },
               {
                 "type": "W",
-                "target": "12–20"
+                "target": "15–20"
               },
               {
-                "type": "W",
-                "target": "12–20"
+                "type": "M",
+                "target": "15–20"
               }
             ]
           },
           {
-            "name": "Standing Calf Raise",
+            "name": "Standing Calf Raise (Machine)",
             "group": "",
             "role": "",
             "rir": "2",
@@ -388,12 +369,12 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         ]
       },
       {
-        "name": "Core & glutes",
+        "name": "Full Body D",
         "priority": 4,
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Barbell Hip Thrust",
+            "name": "Machine Hip Thrust",
             "group": "",
             "role": "",
             "rir": "2",
@@ -401,24 +382,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "R",
-                "target": "10"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "12–15"
               }
             ]
           },
           {
-            "name": "Cable Crunch",
+            "name": "Machine Crunch",
             "group": "",
             "role": "",
             "rir": "2",
@@ -426,15 +403,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "12–20"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "12–20"
+                "target": "12–15"
               },
               {
-                "type": "W",
-                "target": "12–20"
+                "type": "M",
+                "target": "12–15"
               }
             ]
           },
@@ -443,20 +420,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Brace hard, resist the rotation — slow and controlled, both sides.",
+            "coachCue": "Anti-rotation hold: resist the twist, brace hard, 3s pause each rep.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10–12 each side"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10–12 each side"
               }
             ]
           },
           {
-            "name": "Back Extension",
+            "name": "Horizontal Back Extension",
             "group": "",
             "role": "",
             "rir": "2",
@@ -471,25 +448,8 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "12–15"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Dead Bug",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Flat lower back into the floor, slow opposite arm and leg — no arching.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
               }
             ]
           }
@@ -498,12 +458,12 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
     ],
     "2": [
       {
-        "name": "Full body A",
+        "name": "Full Body A",
         "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Goblet Squat",
+            "name": "Hack Squat (Machine)",
             "group": "",
             "role": "",
             "rir": "1",
@@ -515,19 +475,19 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
                 "target": "5"
               },
               {
                 "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
+                "target": "5–8"
               },
               {
                 "type": "M",
-                "target": "6–8"
+                "target": "5–8"
               }
             ]
           },
@@ -544,11 +504,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "5–8"
+                "target": "6"
               },
               {
                 "type": "W",
@@ -561,7 +517,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Lat Pulldown",
+            "name": "Machine Lat Pulldown",
             "group": "",
             "role": "",
             "rir": "1",
@@ -573,24 +529,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "R",
-                "target": "5"
+                "target": "6"
               },
               {
                 "type": "W",
-                "target": "6–10"
-              },
-              {
-                "type": "W",
-                "target": "6–10"
+                "target": "6–8"
               },
               {
                 "type": "M",
-                "target": "6–10"
+                "target": "6–8"
               }
             ]
           },
           {
-            "name": "Seated Cable Row",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
             "rir": "1",
@@ -601,19 +553,26 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "8"
               },
               {
-                "type": "W",
-                "target": "6–10"
+                "type": "R",
+                "target": "6"
               },
               {
                 "type": "W",
-                "target": "6–10"
+                "target": "6–8"
               },
               {
                 "type": "M",
-                "target": "6–10"
+                "target": "6–8"
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        "name": "Full Body B",
+        "priority": 2,
+        "cardioPos": "none",
+        "exercises": [
           {
             "name": "Dumbbell Romanian Deadlift",
             "group": "",
@@ -626,123 +585,16 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "8"
               },
               {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Full body B",
-        "priority": 2,
-        "cardioPos": "none",
-        "exercises": [
-          {
-            "name": "Dumbbell Walking Lunge",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
                 "type": "R",
                 "target": "6"
               },
               {
                 "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "Seated Dumbbell Shoulder Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
                 "target": "6–8"
               },
               {
                 "type": "M",
                 "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Incline Dumbbell Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "W",
-                "target": "6–10"
-              },
-              {
-                "type": "W",
-                "target": "6–10"
-              }
-            ]
-          },
-          {
-            "name": "Chest-Supported Dumbbell Row",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
               }
             ]
           },
@@ -754,36 +606,111 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "8–12"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "8–10"
               },
               {
                 "type": "M",
-                "target": "8–12"
+                "target": "8–10"
+              }
+            ]
+          },
+          {
+            "name": "Incline Machine Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
+              }
+            ]
+          },
+          {
+            "name": "Machine Shoulder Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "M",
+                "target": "6–8"
+              }
+            ]
+          },
+          {
+            "name": "Seated Cable Row (Neutral Grip)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "M",
+                "target": "6–8"
               }
             ]
           }
         ]
       },
       {
-        "name": "Arms & calves",
+        "name": "Full Body C",
         "priority": 3,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Dumbbell Biceps Curl",
+            "name": "EZ-Bar Preacher Curl",
             "group": "",
             "role": "",
             "rir": "1",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "8–12"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
@@ -796,15 +723,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Cable Triceps Pushdown",
+            "name": "Overhead Cable Extension (Rope)",
             "group": "",
             "role": "",
             "rir": "1",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "8–12"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
@@ -817,7 +744,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Dumbbell Lateral Raise",
+            "name": "Machine Lateral Raise",
             "group": "",
             "role": "",
             "rir": "1",
@@ -825,15 +752,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "M",
+                "target": "12–15"
               }
             ]
           },
@@ -846,20 +773,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "M",
+                "target": "12–15"
               }
             ]
           },
           {
-            "name": "Standing Calf Raise",
+            "name": "Seated Calf Raise (Machine)",
             "group": "",
             "role": "",
             "rir": "1",
@@ -867,27 +794,27 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "10–12"
               },
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "10–12"
               },
               {
                 "type": "M",
-                "target": "8–12"
+                "target": "10–12"
               }
             ]
           }
         ]
       },
       {
-        "name": "Core & glutes",
+        "name": "Full Body D",
         "priority": 4,
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Barbell Hip Thrust",
+            "name": "Machine Hip Thrust",
             "group": "",
             "role": "",
             "rir": "1",
@@ -895,11 +822,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
+                "target": "10"
               },
               {
                 "type": "W",
@@ -920,15 +843,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "10–12"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "10–12"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "10–12"
               }
             ]
           },
@@ -937,20 +860,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Brace hard, resist the rotation — slow and controlled, both sides.",
+            "coachCue": "Anti-rotation hold: heavier load this phase, brace and resist the twist, 3s pause.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "8–10 each side"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "8–10 each side"
               }
             ]
           },
           {
-            "name": "Back Extension",
+            "name": "Horizontal Back Extension",
             "group": "",
             "role": "",
             "rir": "1",
@@ -965,25 +888,8 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "10–12"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Dead Bug",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Flat lower back into the floor, slow opposite arm and leg — no arching.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
               }
             ]
           }
@@ -992,24 +898,24 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
     ],
     "3": [
       {
-        "name": "Full body A",
+        "name": "Full Body A",
         "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Goblet Squat",
+            "name": "Hack Squat (Machine)",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Sit down under control, then stand up FAST and tall — drive through the floor, ~60%, no failure.",
+            "coachCue": "Explosive intent: control down, then DRIVE up as fast as you can. Same weight as phase 1, speed is the goal.",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "8"
               },
               {
                 "type": "R",
-                "target": "5"
+                "target": "6"
               },
               {
                 "type": "W",
@@ -1030,11 +936,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Control the lower, then punch it out fast — explosive press, ~60%, no failure.",
+            "coachCue": "Explosive press: lower under control, then punch the handles out fast. Stop each set with 2-3 crisp reps left, never grind.",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "8"
               },
               {
                 "type": "W",
@@ -1051,15 +957,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Lat Pulldown",
+            "name": "Machine Lat Pulldown",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Pull the bar to your chest fast and hard, control it back up slow — drive with intent.",
+            "coachCue": "Explosive pull: snap the bar down hard and fast, control it back up. Keep every rep sharp.",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "8"
               },
               {
                 "type": "W",
@@ -1076,15 +982,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Seated Cable Row",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Snap the handle to you fast, slow return — explosive pull, leave reps in the tank.",
+            "coachCue": "Explosive row: drive the elbows back fast, controlled return. Crisp reps, leave 2-3 in the tank.",
             "sets": [
               {
-                "type": "W",
-                "target": "6–8"
+                "type": "R",
+                "target": "8"
               },
               {
                 "type": "W",
@@ -1093,115 +999,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "W",
                 "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Dumbbell Romanian Deadlift",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
+                "target": "6–8"
               }
             ]
           }
         ]
       },
       {
-        "name": "Full body B",
+        "name": "Full Body B",
         "priority": 2,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Dumbbell Walking Lunge",
+            "name": "Dumbbell Romanian Deadlift",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Step and lower under control, then drive up off the front leg FAST and tall — ~60%, explosive, no failure.",
+            "coachCue": "Explosive hip snap: slow stretch down, then drive the hips through fast to lockout. Keep the back flat.",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "8"
               },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Seated Dumbbell Shoulder Press",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Control down, press up fast and hard — explosive intent, ~60%, stop short of failure.",
-            "sets": [
-              {
-                "type": "R",
-                "target": "6"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Incline Dumbbell Press",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Lower slow, drive the dumbbells up fast — punch them to the top, leave reps in reserve.",
-            "sets": [
-              {
-                "type": "R",
-                "target": "6"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Chest-Supported Dumbbell Row",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Row the dumbbells up fast, lower under control — explosive pull, ~60%.",
-            "sets": [
               {
                 "type": "W",
                 "target": "6–8"
@@ -1224,36 +1046,111 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "10–12"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
                 "target": "10–12"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Dumbbell Push Press",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Dip and drive: use the legs to launch the dumbbells overhead fast, control them down. Pure speed, light load.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              }
+            ]
+          },
+          {
+            "name": "Incline Machine Press",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Explosive press: control down, punch up fast. Stop with 2-3 sharp reps in reserve.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              }
+            ]
+          },
+          {
+            "name": "Seated Cable Row (Neutral Grip)",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Explosive row: snap the handle to the stomach fast, slow return. Keep reps crisp.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
               }
             ]
           }
         ]
       },
       {
-        "name": "Arms & calves",
+        "name": "Full Body C",
         "priority": 3,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Dumbbell Biceps Curl",
+            "name": "EZ-Bar Preacher Curl",
             "group": "",
             "role": "",
             "rir": "2",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "10–12"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
@@ -1266,15 +1163,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Cable Triceps Pushdown",
+            "name": "Overhead Cable Extension (Rope)",
             "group": "",
             "role": "",
             "rir": "2",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "10–12"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
@@ -1287,7 +1184,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Dumbbell Lateral Raise",
+            "name": "Machine Lateral Raise",
             "group": "",
             "role": "",
             "rir": "2",
@@ -1295,15 +1192,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15–20"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15–20"
               },
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "M",
+                "target": "15–20"
               }
             ]
           },
@@ -1316,73 +1213,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15–20"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15–20"
               },
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "M",
+                "target": "15–20"
               }
             ]
           },
           {
-            "name": "Standing Calf Raise",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Drive up onto the toes fast and powerful, control the stretch down — explosive bounce-free reps.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Core & glutes",
-        "priority": 4,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Barbell Hip Thrust",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Drive the hips up FAST and squeeze the glutes hard at the top, lower under control — ~60%, explosive.",
-            "sets": [
-              {
-                "type": "R",
-                "target": "6"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Cable Crunch",
+            "name": "Standing Calf Raise (Machine)",
             "group": "",
             "role": "",
             "rir": "2",
@@ -1390,15 +1234,85 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "12–15"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Full Body D",
+        "priority": 4,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Dumbbell Jump Squat",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Light dumbbells: sink to a quarter squat and jump as high as you can. Land soft, reset each rep. All-out speed.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              }
+            ]
+          },
+          {
+            "name": "Machine Hip Thrust",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Explosive lockout: drive the hips up fast and hard, control the descent. Squeeze at the top.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              }
+            ]
+          },
+          {
+            "name": "Machine Crunch",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
               }
             ]
           },
@@ -1407,53 +1321,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Brace hard, resist the rotation — slow and controlled, both sides.",
+            "coachCue": "Anti-rotation hold: brace and resist the twist, 3s pause each rep.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10–12 each side"
               },
               {
                 "type": "W",
-                "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Back Extension",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
-              }
-            ]
-          },
-          {
-            "name": "Dead Bug",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Flat lower back into the floor, slow opposite arm and leg — no arching.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
+                "target": "10–12 each side"
               }
             ]
           }
@@ -1464,12 +1340,12 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
   "intermediate": {
     "1": [
       {
-        "name": "Full Body A — Squat Focus",
+        "name": "Lower A — Squat Pattern",
         "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Barbell Back Squat",
+            "name": "High-Bar Back Squat",
             "group": "",
             "role": "",
             "rir": "2",
@@ -1477,7 +1353,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "R",
-                "target": "5"
+                "target": "6"
               },
               {
                 "type": "R",
@@ -1502,11 +1378,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Control the stretch — feel the hamstrings load",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "8"
               },
               {
                 "type": "W",
@@ -1523,29 +1399,8 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Walking Lunge",
-            "group": "leg-ss",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Standing Calf Raise",
-            "group": "leg-ss",
+            "name": "Pendulum Squat",
+            "group": "sup-quad",
             "role": "superset",
             "rir": "2",
             "coachCue": "",
@@ -1561,47 +1416,60 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "M",
                 "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Seated Leg Curl",
+            "group": "sup-quad",
+            "role": "superset",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Standing Calf Raise (Machine)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Pause the stretch, full squeeze at top",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "15–20"
               }
             ]
           }
         ]
       },
       {
-        "name": "Full Body B — Horizontal Push/Pull",
-        "priority": 2,
+        "name": "Upper A — Push",
+        "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Barbell Bench Press",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "M",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Barbell Bent-Over Row",
+            "name": "Incline Barbell Bench Press",
             "group": "",
             "role": "",
             "rir": "2",
@@ -1612,6 +1480,10 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "6"
               },
               {
+                "type": "R",
+                "target": "5"
+              },
+              {
                 "type": "W",
                 "target": "8–12"
               },
@@ -1626,57 +1498,149 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Incline Dumbbell Press",
-            "group": "hp-ss",
-            "role": "superset",
+            "name": "Weighted Chest Dip",
+            "group": "",
+            "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Lean forward, deep bottom stretch",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
           {
-            "name": "Lat Pulldown",
-            "group": "hp-ss",
-            "role": "superset",
+            "name": "Barbell Overhead Press",
+            "group": "",
+            "role": "",
             "rir": "2",
+            "coachCue": "Brace hard, drive the bar to a locked-out overhead",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "M",
+                "target": "8–10"
+              }
+            ]
+          },
+          {
+            "name": "Machine Lateral Raise",
+            "group": "sup-push",
+            "role": "superset",
+            "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–20"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–20"
+              },
+              {
+                "type": "M",
+                "target": "12–20"
+              }
+            ]
+          },
+          {
+            "name": "Overhead Cable Extension (Rope)",
+            "group": "sup-push",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Full overhead stretch each rep",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
               }
             ]
           }
         ]
       },
       {
-        "name": "Full Body C — Arms & Delts (Giant Sets)",
-        "priority": 3,
+        "name": "Lower B — Hinge & Posterior",
+        "priority": 2,
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Seated Dumbbell Shoulder Press",
-            "group": "arm-giant",
+            "name": "Barbell Hip Thrust",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Pause and squeeze hard at lockout",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Torso forward, sink into the front-leg stretch",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "45° Hyperextension",
+            "group": "sup-post",
             "role": "superset",
             "rir": "2",
             "coachCue": "",
@@ -1692,198 +1656,164 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "M",
                 "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Leg Extension",
+            "group": "sup-post",
+            "role": "superset",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "M",
+                "target": "15–20"
+              }
+            ]
+          },
+          {
+            "name": "Seated Calf Raise (Machine)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Pause the stretch every rep",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "15–20"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Upper B — Pull & Arms",
+        "priority": 2,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Chest-Supported T-Bar Row",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Full stretch at the bottom, drive elbows back",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Neutral-Grip Lat Pulldown",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
               }
             ]
           },
           {
             "name": "Incline Dumbbell Curl",
-            "group": "arm-giant",
+            "group": "sup-arm",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Let the arm hang back into full stretch",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10–15"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10–15"
               },
               {
                 "type": "M",
-                "target": "12–15"
+                "target": "10–15"
               }
             ]
           },
           {
-            "name": "Overhead Cable Triceps Extension",
-            "group": "arm-giant",
+            "name": "Cable Rear Delt Fly",
+            "group": "sup-arm",
             "role": "superset",
-            "rir": "2",
+            "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15–20"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15–20"
               },
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "M",
+                "target": "15–20"
               }
             ]
           },
           {
             "name": "Cable Lateral Raise",
-            "group": "delt-ss",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "M",
-                "target": "15–20"
-              }
-            ]
-          },
-          {
-            "name": "Reverse Pec Deck",
-            "group": "delt-ss",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "W",
-                "target": "15–20"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Full Body D — Core & Posterior Chain",
-        "priority": 4,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Hip Thrust",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Lead with the elbow, constant tension",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–20"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–20"
               },
               {
                 "type": "M",
-                "target": "10–15"
-              }
-            ]
-          },
-          {
-            "name": "Back Extension",
-            "group": "core-ss",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Hanging Knee Raise",
-            "group": "core-ss",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
                 "target": "12–20"
-              },
-              {
-                "type": "W",
-                "target": "12–20"
-              },
-              {
-                "type": "W",
-                "target": "12–20"
-              }
-            ]
-          },
-          {
-            "name": "Cable Pallof Press",
-            "group": "ab-ss",
-            "role": "superset",
-            "rir": "",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Cable Crunch",
-            "group": "ab-ss",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "M",
-                "target": "15–20"
               }
             ]
           }
@@ -1892,12 +1822,12 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
     ],
     "2": [
       {
-        "name": "Full Body A — Squat Focus",
+        "name": "Lower A — Squat Pattern",
         "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Barbell Back Squat",
+            "name": "High-Bar Back Squat",
             "group": "",
             "role": "",
             "rir": "1",
@@ -1917,15 +1847,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "4–6"
+                "target": "5–6"
               },
               {
                 "type": "W",
-                "target": "4–6"
+                "target": "5–6"
               },
               {
                 "type": "M",
-                "target": "4–6"
+                "target": "5–6"
               }
             ]
           },
@@ -1934,33 +1864,29 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Load the stretch, no bounce",
             "sets": [
               {
                 "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
-                "target": "4"
+                "target": "6"
               },
               {
                 "type": "W",
-                "target": "5–8"
+                "target": "6–8"
               },
               {
                 "type": "W",
-                "target": "5–8"
+                "target": "6–8"
               },
               {
                 "type": "M",
-                "target": "5–8"
+                "target": "6–8"
               }
             ]
           },
           {
-            "name": "Bulgarian Split Squat",
-            "group": "leg-ss",
+            "name": "Hack Squat (Machine)",
+            "group": "sup-quad",
             "role": "superset",
             "rir": "1",
             "coachCue": "",
@@ -1980,19 +1906,40 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Standing Calf Raise",
-            "group": "leg-ss",
+            "name": "Seated Leg Curl",
+            "group": "sup-quad",
             "role": "superset",
             "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Standing Calf Raise (Machine)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Pause the bottom stretch",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
               },
               {
                 "type": "M",
@@ -2003,8 +1950,8 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         ]
       },
       {
-        "name": "Full Body B — Horizontal Push/Pull",
-        "priority": 2,
+        "name": "Upper A — Push",
+        "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
@@ -2028,214 +1975,24 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "4–6"
+                "target": "5–6"
               },
               {
                 "type": "W",
-                "target": "4–6"
+                "target": "5–6"
               },
               {
                 "type": "M",
-                "target": "4–6"
+                "target": "5–6"
               }
             ]
           },
           {
-            "name": "Weighted Pull-Up",
+            "name": "Incline Dumbbell Bench Press",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "5–8"
-              },
-              {
-                "type": "W",
-                "target": "5–8"
-              },
-              {
-                "type": "M",
-                "target": "5–8"
-              }
-            ]
-          },
-          {
-            "name": "Seated Cable Row",
-            "group": "hp-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "M",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Weighted Dip",
-            "group": "hp-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Full Body C — Arms & Delts (Giant Sets)",
-        "priority": 3,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Seated Barbell Overhead Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Barbell Curl",
-            "group": "arm-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "M",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Close-Grip Bench Press",
-            "group": "arm-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "M",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Cable Lateral Raise",
-            "group": "delt-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Face Pull",
-            "group": "delt-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Full Body D — Core & Posterior Chain",
-        "priority": 4,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Hip Thrust",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
+            "coachCue": "Deep stretch at the bottom",
             "sets": [
               {
                 "type": "R",
@@ -2243,21 +2000,137 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "6–10"
+                "target": "6–8"
               },
               {
                 "type": "W",
-                "target": "6–10"
+                "target": "6–8"
               },
               {
                 "type": "M",
-                "target": "6–10"
+                "target": "6–8"
               }
             ]
           },
           {
-            "name": "Weighted Back Extension",
-            "group": "core-ss",
+            "name": "Seated Dumbbell Shoulder Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Press to a hard lockout, control the negative",
+            "sets": [
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "M",
+                "target": "6–8"
+              }
+            ]
+          },
+          {
+            "name": "Lean-Away Lateral Raise",
+            "group": "sup-push",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Lean away, stretch at the bottom",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Skullcrusher (EZ Bar, to forehead)",
+            "group": "sup-push",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Lower past the forehead for the stretch",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Lower B — Hinge & Posterior",
+        "priority": 2,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Barbell Hip Thrust",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Hard lockout squeeze, pause",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "M",
+                "target": "6–8"
+              }
+            ]
+          },
+          {
+            "name": "Smith Bulgarian Split Squat",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Sink deep into the front-leg stretch",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "M",
+                "target": "8–10"
+              }
+            ]
+          },
+          {
+            "name": "Glute-Ham Raise",
+            "group": "sup-post",
             "role": "superset",
             "rir": "1",
             "coachCue": "",
@@ -2277,53 +2150,32 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Hanging Leg Raise",
-            "group": "core-ss",
+            "name": "Leg Extension",
+            "group": "sup-post",
             "role": "superset",
             "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
-              }
-            ]
-          },
-          {
-            "name": "Weighted Cable Crunch",
-            "group": "ab-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
+                "target": "12–15"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "12–15"
               }
             ]
           },
           {
-            "name": "Cable Pallof Press",
-            "group": "ab-ss",
-            "role": "superset",
-            "rir": "",
-            "coachCue": "",
+            "name": "Seated Calf Raise (Machine)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Pause every stretch",
             "sets": [
               {
                 "type": "W",
@@ -2332,6 +2184,126 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "W",
                 "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Upper B — Pull & Arms",
+        "priority": 2,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Barbell Bent-Over Row",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Strict torso angle, drive to the lower ribs",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "M",
+                "target": "6–8"
+              }
+            ]
+          },
+          {
+            "name": "Wide-Grip Lat Pulldown",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "M",
+                "target": "8–10"
+              }
+            ]
+          },
+          {
+            "name": "EZ-Bar Preacher Curl",
+            "group": "sup-arm",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Full lockout of the elbow at the stretch",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Reverse Pec Deck",
+            "group": "sup-arm",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Cable Lateral Raise",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Constant tension, controlled",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
               }
             ]
           }
@@ -2340,7 +2312,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
     ],
     "3": [
       {
-        "name": "Full Body A — Squat Focus",
+        "name": "Lower A — Squat Speed & Jumps",
         "priority": 1,
         "cardioPos": "none",
         "exercises": [
@@ -2349,7 +2321,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Step off, reset, full intent on every jump — land soft and tall, full recovery between sets. Quality over fatigue.",
+            "coachCue": "Max-intent jump, step down, full reset between reps",
             "sets": [
               {
                 "type": "W",
@@ -2370,11 +2342,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Speed Barbell Back Squat",
+            "name": "High-Bar Back Squat",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "~55–65% — drive out of the hole as fast as you can, controlled descent. Max bar speed, not max weight. Full rest between sets.",
+            "coachCue": "Speed work ~55–65% — explode out of the hole, every rep fast",
             "sets": [
               {
                 "type": "R",
@@ -2400,11 +2372,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
           },
           {
             "name": "Romanian Deadlift",
-            "group": "leg-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Controlled stretch, drive hips fast",
             "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
               {
                 "type": "W",
                 "target": "6–8"
@@ -2420,19 +2396,61 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Standing Calf Raise",
-            "group": "leg-ss",
+            "name": "Pendulum Squat",
+            "group": "sup-quad",
             "role": "superset",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Seated Leg Curl",
+            "group": "sup-quad",
+            "role": "superset",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Standing Calf Raise (Machine)",
+            "group": "",
+            "role": "",
             "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10–12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10–12"
               },
               {
                 "type": "M",
@@ -2443,16 +2461,16 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         ]
       },
       {
-        "name": "Full Body B — Horizontal Push/Pull",
-        "priority": 2,
+        "name": "Upper A — Push Speed & Throws",
+        "priority": 1,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Med-Ball Chest Pass (Explosive)",
+            "name": "Medicine Ball Chest Pass",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Fire the ball off the chest as hard as you can — full intent, reset between throws. Power, not endurance.",
+            "coachCue": "Explosive throw, reset and fire each rep at max intent",
             "sets": [
               {
                 "type": "W",
@@ -2473,11 +2491,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Speed Barbell Bench Press",
+            "name": "Barbell Bench Press",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "~55–65% — touch and drive the bar up explosively, control the lower. Max bar speed. Full rest between sets.",
+            "coachCue": "Speed bench ~55–65% — drive the bar up as fast as possible",
             "sets": [
               {
                 "type": "R",
@@ -2502,126 +2520,172 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Weighted Pull-Up",
-            "group": "hp-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Incline Dumbbell Press",
-            "group": "hp-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Full Body C — Arms & Delts (Giant Sets)",
-        "priority": 3,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Push Press",
+            "name": "Incline Dumbbell Bench Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Dip and drive the bar up off the legs explosively — ~60%, full rest. Speed off the floor of the dip.",
+            "rir": "2",
+            "coachCue": "Deep stretch, controlled down, fast up",
             "sets": [
               {
-                "type": "R",
-                "target": "5"
+                "type": "W",
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "3–5"
+                "target": "8–10"
               },
               {
-                "type": "W",
-                "target": "3–5"
-              },
-              {
-                "type": "W",
-                "target": "3–5"
+                "type": "M",
+                "target": "8–10"
               }
             ]
           },
           {
-            "name": "EZ-Bar Curl",
-            "group": "arm-ss",
+            "name": "Seated Cable Fly (Chest-Supported)",
+            "group": "sup-push",
             "role": "superset",
             "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "12–15"
               },
               {
                 "type": "M",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Overhead Cable Triceps Extension",
-            "group": "arm-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "M",
-                "target": "8–12"
+                "target": "12–15"
               }
             ]
           },
           {
             "name": "Cable Lateral Raise",
-            "group": "delt-ss",
+            "group": "sup-push",
             "role": "superset",
             "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "M",
+                "target": "12–20"
+              }
+            ]
+          },
+          {
+            "name": "Overhead Cable Extension (Rope)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Full overhead stretch",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Lower B — Hinge Power & Swings",
+        "priority": 2,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Kettlebell Swing (Two-Hand)",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Snap the hips hard — float the bell with glute drive, not arms",
+            "sets": [
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6"
+              }
+            ]
+          },
+          {
+            "name": "Barbell Hip Thrust",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Submaximal — drive to lockout as explosively as possible",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              }
+            ]
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Sink the stretch, drive up with intent",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "W",
+                "target": "8–10"
+              },
+              {
+                "type": "M",
+                "target": "8–10"
+              }
+            ]
+          },
+          {
+            "name": "45° Hyperextension",
+            "group": "sup-post",
+            "role": "superset",
+            "rir": "2",
             "coachCue": "",
             "sets": [
               {
@@ -2633,16 +2697,16 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "12–15"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "12–15"
               }
             ]
           },
           {
-            "name": "Face Pull",
-            "group": "delt-ss",
+            "name": "Leg Extension",
+            "group": "sup-post",
             "role": "superset",
-            "rir": "1",
+            "rir": "2",
             "coachCue": "",
             "sets": [
               {
@@ -2654,7 +2718,28 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "12–15"
               },
               {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Seated Calf Raise (Machine)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Pause the stretch",
+            "sets": [
+              {
                 "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
                 "target": "12–15"
               }
             ]
@@ -2662,38 +2747,46 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         ]
       },
       {
-        "name": "Full Body D — Core & Posterior Chain",
-        "priority": 4,
+        "name": "Upper B — Pull Power & Arms",
+        "priority": 2,
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Med-Ball Slam (Explosive)",
+            "name": "Hang High Pull",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Reach tall, slam the ball down with everything you've got — full intent each rep, reset between. Power, not a burn-out.",
+            "coachCue": "Violent hip extension, pull elbows high — reset each rep",
             "sets": [
               {
                 "type": "W",
-                "target": "5"
+                "target": "3"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "3"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
               }
             ]
           },
           {
-            "name": "Hip Thrust",
-            "group": "core-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
+            "name": "Chest-Supported T-Bar Row",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Full stretch, drive elbows back hard",
             "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
               {
                 "type": "W",
                 "target": "8–10"
@@ -2709,10 +2802,10 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Back Extension",
-            "group": "core-ss",
-            "role": "superset",
-            "rir": "1",
+            "name": "Neutral-Grip Lat Pulldown",
+            "group": "",
+            "role": "",
+            "rir": "2",
             "coachCue": "",
             "sets": [
               {
@@ -2722,40 +2815,19 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "W",
                 "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Hanging Leg Raise",
-            "group": "ab-ss",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "10–12"
               }
             ]
           },
           {
-            "name": "Cable Pallof Press",
-            "group": "ab-ss",
+            "name": "Incline Dumbbell Curl",
+            "group": "sup-arm",
             "role": "superset",
-            "rir": "",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Full stretch at the bottom",
             "sets": [
               {
                 "type": "W",
@@ -2764,6 +2836,52 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "W",
                 "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rear Delt Fly",
+            "group": "sup-arm",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "M",
+                "target": "15–20"
+              }
+            ]
+          },
+          {
+            "name": "Cable Lateral Raise",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Constant tension",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "M",
+                "target": "12–20"
               }
             ]
           }
@@ -2779,11 +2897,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Back Squat",
+            "name": "High-Bar Back Squat",
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Brace hard against the bar, sit straight down between the hips, drive the floor away — full depth every rep.",
             "sets": [
               {
                 "type": "R",
@@ -2812,7 +2930,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Push hips back, feel the hamstring stretch — bar stays close.",
             "sets": [
               {
                 "type": "R",
@@ -2827,21 +2945,21 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "8–12"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "8–12"
               }
             ]
           },
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Hack Squat (Machine)",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: double drop, strip ~25% and ~25% again, each to failure.",
             "sets": [
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
@@ -2849,6 +2967,10 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
+                "target": "10–15"
+              },
+              {
+                "type": "M",
                 "target": "10–15"
               }
             ]
@@ -2857,8 +2979,8 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "name": "Seated Leg Curl",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Final set: rest-pause — failure, 15s breath, go again, twice.",
             "sets": [
               {
                 "type": "W",
@@ -2869,17 +2991,17 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "12–20"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "12–20"
               }
             ]
           },
           {
-            "name": "Seated Calf Raise",
+            "name": "Standing Calf Raise (Machine)",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials from the bottom stretch to failure.",
             "sets": [
               {
                 "type": "W",
@@ -2890,7 +3012,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "12–20"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "12–20"
               }
             ]
@@ -2903,19 +3025,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Barbell Bench Press",
+            "name": "Incline Dumbbell Bench Press",
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Deep stretch at the bottom, drive through the clavicular chest.",
             "sets": [
               {
                 "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
-                "target": "5"
+                "target": "8"
               },
               {
                 "type": "W",
@@ -2932,27 +3050,27 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Chest-Supported Row",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Final set: lengthened partials from the stretched bottom to failure.",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "8–12"
               },
               {
                 "type": "M",
-                "target": "10–12"
+                "target": "8–12"
               }
             ]
           },
@@ -2961,11 +3079,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Full dead-hang stretch each rep; add belt load as reps climb.",
             "sets": [
               {
-                "type": "W",
-                "target": "8–12"
+                "type": "R",
+                "target": "5"
               },
               {
                 "type": "W",
@@ -2973,6 +3091,10 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
                 "target": "8–12"
               }
             ]
@@ -2982,11 +3104,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Brace the core, press in a tight arc to lockout — don't let the dumbbells drift forward.",
             "sets": [
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "R",
+                "target": "8"
               },
               {
                 "type": "W",
@@ -2999,89 +3121,106 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Dumbbell Lateral Raise",
-            "group": "shoulderArmsP1",
+            "name": "Bayesian Cable Curl",
+            "group": "arms1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Step forward so the cable pulls the arm behind you — load the deep stretch on the long head, strict.",
             "sets": [
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "10–15"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "10–15"
               },
               {
-                "type": "W",
-                "target": "15–20"
+                "type": "M",
+                "target": "10–15"
               }
             ]
           },
           {
-            "name": "EZ-Bar Curl",
-            "group": "shoulderArmsP1",
+            "name": "Overhead Cable Extension (Rope)",
+            "group": "arms1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Reach long overhead for the stretch; superset straight off the curl.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10–15"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10–15"
               },
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "M",
+                "target": "10–15"
               }
             ]
           }
         ]
       },
       {
-        "name": "Posterior + Pull (Volume)",
+        "name": "Upper Volume (Back & Chest Focus)",
         "priority": 2,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Trap-Bar Deadlift",
+            "name": "T-Bar Row",
             "group": "",
             "role": "",
-            "rir": "1",
-            "coachCue": "",
+            "rir": "2",
+            "coachCue": "Chest pinned to the bench — pure lat/mid-back, no body english.",
             "sets": [
               {
                 "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
-                "target": "5"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "10–15"
               },
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "10–15"
               },
               {
                 "type": "M",
-                "target": "8–12"
+                "target": "10–15"
               }
             ]
           },
           {
-            "name": "Incline Dumbbell Press",
+            "name": "Seated Cable Fly (Chest-Supported)",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Final set: drop set — failure, lower the stack one pin, go again.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "M",
+                "target": "12–20"
+              }
+            ]
+          },
+          {
+            "name": "Cable Pullover",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Constant tension through the deep overhead stretch — drive with the lats, not the arms.",
             "sets": [
               {
                 "type": "W",
@@ -3092,59 +3231,59 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "10–15"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "10–15"
               }
             ]
           },
           {
-            "name": "Single-Arm Dumbbell Row",
+            "name": "Cable Lean-Away Shrug",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Lean away from the stack for the loaded stretch — shrug straight up, no roll.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–20"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "12–20"
               },
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "M",
+                "target": "12–20"
               }
             ]
           },
           {
-            "name": "Face Pull",
-            "group": "rearP1",
+            "name": "Cable Lateral Raise",
+            "group": "delts1",
             "role": "superset",
-            "rir": "1",
-            "coachCue": "",
+            "rir": "0",
+            "coachCue": "Lead with the elbow, raise to shoulder height — control the lower, no swing.",
             "sets": [
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12–20"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12–20"
               },
               {
-                "type": "W",
-                "target": "15–20"
+                "type": "M",
+                "target": "12–20"
               }
             ]
           },
           {
             "name": "Reverse Pec Deck",
-            "group": "rearP1",
+            "group": "delts1",
             "role": "superset",
-            "rir": "1",
-            "coachCue": "",
+            "rir": "0",
+            "coachCue": "Superset off the laterals — squeeze rear delts, no momentum.",
             "sets": [
               {
                 "type": "W",
@@ -3155,7 +3294,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "15–20"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "15–20"
               }
             ]
@@ -3163,91 +3302,104 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         ]
       },
       {
-        "name": "Arms + Delts + Calves (Pump)",
+        "name": "Arms & Core Pump",
         "priority": 3,
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Dumbbell Lateral Raise",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "W",
-                "target": "15–20"
-              },
-              {
-                "type": "W",
-                "target": "15–20"
-              }
-            ]
-          },
-          {
             "name": "Incline Dumbbell Curl",
-            "group": "armsP1b",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Rope Triceps Pushdown",
-            "group": "armsP1b",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Standing Calf Raise",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Arms hang back for the stretch — don't swing the elbows forward.",
             "sets": [
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "EZ-Bar Skullcrusher (Behind Head)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Lower behind the head for the long-head stretch; control the eccentric.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rope Hammer Curl",
+            "group": "arms2",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Neutral grip for the brachialis — pull the rope apart at the top.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Single-Arm Cable Pushdown",
+            "group": "arms2",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Superset off the curl — lock the elbow, full squeeze.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Cable Crunch",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Round the spine down, crunch the ribs to the pelvis.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "W",
+                "target": "12–20"
+              },
+              {
+                "type": "M",
+                "target": "12–20"
               }
             ]
           }
@@ -3261,296 +3413,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Back Squat",
+            "name": "High-Bar Back Squat",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "4–6"
-              },
-              {
-                "type": "W",
-                "target": "4–6"
-              },
-              {
-                "type": "M",
-                "target": "4–6"
-              }
-            ]
-          },
-          {
-            "name": "Romanian Deadlift",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Hack Squat",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "6"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "Lying Leg Curl",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "Seated Calf Raise",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
-              },
-              {
-                "type": "W",
-                "target": "10–15"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Push + Pull",
-        "priority": 1,
-        "cardioPos": "none",
-        "exercises": [
-          {
-            "name": "Barbell Bench Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "4–6"
-              },
-              {
-                "type": "W",
-                "target": "4–6"
-              },
-              {
-                "type": "M",
-                "target": "4–6"
-              }
-            ]
-          },
-          {
-            "name": "Pendlay Row",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Weighted Pull-Up",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Standing Overhead Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Dumbbell Lateral Raise",
-            "group": "shoulderArmsP2",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Barbell Curl",
-            "group": "shoulderArmsP2",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Posterior + Pull (Volume)",
-        "priority": 2,
-        "cardioPos": "none",
-        "exercises": [
-          {
-            "name": "Trap-Bar Deadlift",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
+            "coachCue": "Heavier now — brace hard, sit between the hips, drive.",
             "sets": [
               {
                 "type": "R",
@@ -3575,253 +3442,36 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Incline Dumbbell Press",
+            "name": "Stiff-Leg Deadlift",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              },
-              {
-                "type": "W",
-                "target": "8–12"
-              }
-            ]
-          },
-          {
-            "name": "T-Bar Row",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
+            "coachCue": "Knees near-locked, bar from the floor — longest hamstring range under load.",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "5–8"
               },
               {
                 "type": "M",
-                "target": "8–10"
+                "target": "5–8"
               }
             ]
           },
           {
-            "name": "Face Pull",
-            "group": "rearP2",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Reverse Pec Deck",
-            "group": "rearP2",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Arms + Delts + Calves (Pump)",
-        "priority": 3,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Dumbbell Lateral Raise",
+            "name": "Pendulum Squat",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Preacher Curl",
-            "group": "armsP2b",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Lying EZ-Bar Triceps Extension",
-            "group": "armsP2b",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Standing Calf Raise",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "3": [
-      {
-        "name": "Legs",
-        "priority": 1,
-        "cardioPos": "none",
-        "exercises": [
-          {
-            "name": "Box Jump",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Explode off the floor, land soft and tall on the box. Reset every rep — quality over fatigue, full recovery between sets.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Speed Back Squat",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "~55–65% bar. Drive up as fast as humanly possible, control the descent. Stop the set if speed drops — full rest between sets.",
-            "sets": [
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Leg Press",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "coachCue": "Final set: rest-pause — failure, short breath, push again twice.",
             "sets": [
               {
                 "type": "R",
@@ -3845,29 +3495,29 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "name": "Lying Leg Curl",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: double drop, strip the stack twice, each to failure.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "8–12"
               },
               {
-                "type": "W",
-                "target": "10–15"
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
           {
-            "name": "Standing Calf Raise",
+            "name": "Seated Calf Raise (Machine)",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials from full stretch to failure.",
             "sets": [
               {
                 "type": "W",
@@ -3878,7 +3528,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "10–15"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "10–15"
               }
             ]
@@ -3891,73 +3541,394 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Speed Bench Press",
+            "name": "Incline Barbell Bench Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Heavier and lower rep — tight arch, controlled touch, explode up.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
+              }
+            ]
+          },
+          {
+            "name": "Barbell Bent-Over Row",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Flat back, pull to the lower ribs — heavy and strict.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
+              }
+            ]
+          },
+          {
+            "name": "Weighted Chin-Up",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Add load — full stretch at the bottom, chin clears the bar.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "W",
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
+              }
+            ]
+          },
+          {
+            "name": "Barbell Overhead Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Strict press — brace, drive the bar past the forehead, lock out.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              }
+            ]
+          },
+          {
+            "name": "Preacher Curl (EZ)",
+            "group": "arms1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Arms pinned to the pad — full stretch at the bottom, no bounce off the elbows.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Close-Grip Bench Press",
+            "group": "arms1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Heavy tricep press, superset off the preacher — elbows tucked.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Upper Volume (Back & Chest Focus)",
+        "priority": 2,
+        "cardioPos": "none",
+        "exercises": [
+          {
+            "name": "Machine Row (Converging)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Converging path — drive elbows back, squeeze the mid-back hard.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "W",
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
+              }
+            ]
+          },
+          {
+            "name": "Weighted Chest Dip",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Lean forward, sink deep for the sternal stretch; belt-load it.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6–10"
+              },
+              {
+                "type": "W",
+                "target": "6–10"
+              },
+              {
+                "type": "M",
+                "target": "6–10"
+              }
+            ]
+          },
+          {
+            "name": "Machine Pullover",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Final set: drop set — hold tension through the stretch, then strip and go.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–15"
+              },
+              {
+                "type": "W",
+                "target": "10–15"
+              },
+              {
+                "type": "M",
+                "target": "10–15"
+              }
+            ]
+          },
+          {
+            "name": "Behind-Body Cable Lateral Raise",
+            "group": "delts1",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Cable behind the body for the deep stretch on the side delt.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rear Delt Fly",
+            "group": "delts1",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Superset off the laterals — wide arc, lead with the elbows.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Arms & Core Pump",
+        "priority": 3,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Spider Curl",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Chest on the incline, arms vertical — strict peak squeeze.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "EZ-Bar Overhead Extension",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Deep overhead stretch on the long head; control the lower.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "W",
+                "target": "10–12"
+              },
+              {
+                "type": "M",
+                "target": "10–12"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rope Hammer Curl",
+            "group": "arms2",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Neutral grip for the brachialis — pull the rope apart at the top.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Overhead Machine Extension",
+            "group": "arms2",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Superset off the hammer curl — stretch loaded, push to lockout.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Hanging Leg Raise",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Curl the pelvis up, no swing — lower under control.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10–15"
+              },
+              {
+                "type": "W",
+                "target": "10–15"
+              },
+              {
+                "type": "M",
+                "target": "10–15"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "name": "Legs",
+        "priority": 1,
+        "cardioPos": "none",
+        "exercises": [
+          {
+            "name": "Power Clean",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "~50–60% bar. Lower under control, then fire it off the chest as fast as possible. Stop if speed dies — full rest between sets.",
+            "coachCue": "Violent triple extension off the floor, catch in the power position. Reset each rep — quality over grind.",
             "sets": [
               {
                 "type": "R",
                 "target": "3"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Plyometric Push-Up",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Push hard enough to leave the floor. Land soft, absorb, explode again — max intent, no grinding, reset between reps.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "4"
-              },
-              {
-                "type": "W",
-                "target": "4"
-              },
-              {
-                "type": "W",
-                "target": "4"
-              },
-              {
-                "type": "W",
-                "target": "4"
-              }
-            ]
-          },
-          {
-            "name": "Push Press",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Dip and drive the legs, punch the bar overhead. ~70%, full recovery — speed and lockout, not a grind.",
-            "sets": [
-              {
                 "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "target": "2"
               },
               {
                 "type": "W",
@@ -3974,11 +3945,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Hang High Pull",
+            "name": "Speed Squat",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Explode from the hang, lead with the elbows, pull the bar to chest height. Light and fast — it's a speed lift, full rest.",
+            "coachCue": "~55–65% — drive out of the hole with maximal bar speed, then REST 2–3 min before the jump. Heavy intent primes the jump.",
             "sets": [
               {
                 "type": "W",
@@ -3999,12 +3970,41 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Weighted Pull-Up",
+            "name": "Trap Bar Jump",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Contrast off the speed squat after full rest — light load, jump for max height, soft landing.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Romanian Deadlift",
             "group": "",
             "role": "",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Keep the hinge pattern strong — controlled stretch, snap the hips through.",
             "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
               {
                 "type": "W",
                 "target": "6–8"
@@ -4020,97 +4020,200 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Incline Dumbbell Press",
+            "name": "Standing Calf Raise (Machine)",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials from the stretch to failure.",
             "sets": [
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "10–15"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "10–15"
               },
               {
-                "type": "W",
-                "target": "8–10"
+                "type": "M",
+                "target": "10–15"
               }
             ]
           }
         ]
       },
       {
-        "name": "Posterior + Pull (Volume)",
+        "name": "Push + Pull",
+        "priority": 1,
+        "cardioPos": "none",
+        "exercises": [
+          {
+            "name": "Push Press",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Dip and drive — transfer leg power overhead, lock out fast. Heavy speed work, reset each rep.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3–5"
+              },
+              {
+                "type": "W",
+                "target": "3–5"
+              },
+              {
+                "type": "W",
+                "target": "3–5"
+              }
+            ]
+          },
+          {
+            "name": "Speed Bench",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "~50–60% pressed with explosive intent, then REST 2–3 min before the throw. Speed press primes the ballistic.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Medicine Ball Chest Pass",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Contrast off the speed bench after full rest — full release, throw it as hard as you can.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              }
+            ]
+          },
+          {
+            "name": "Hang High Pull",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Triple extension into a high pull, elbows lead — explosive, no catch.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "4–5"
+              },
+              {
+                "type": "W",
+                "target": "4–5"
+              },
+              {
+                "type": "W",
+                "target": "4–5"
+              }
+            ]
+          },
+          {
+            "name": "Weighted Pull-Up",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "Hold the vertical-pull strength — full stretch, pull explosively off the bottom.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "W",
+                "target": "6–8"
+              },
+              {
+                "type": "M",
+                "target": "6–8"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Upper Volume (Hypertrophy Maintain)",
         "priority": 2,
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Trap-Bar Jump",
+            "name": "Chest-Supported Dumbbell Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Load light, jump as high as you can each rep — full triple extension, reset between reps. Power, not fatigue.",
+            "rir": "1",
+            "coachCue": "Chest pinned — row to the hip, full stretch at the bottom.",
             "sets": [
               {
                 "type": "R",
-                "target": "3"
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
           {
-            "name": "Trap-Bar Deadlift",
+            "name": "Incline Machine Press",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Final set: lengthened partials from the stretched bottom to failure.",
             "sets": [
               {
                 "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Chest-Supported Row",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–12"
+                "target": "8"
               },
               {
                 "type": "W",
@@ -4119,36 +4222,19 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               {
                 "type": "W",
                 "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
           {
-            "name": "Rotational Med-Ball Throw",
+            "name": "Cable Pullover",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Wind up and fire the ball into the wall as hard as you can. Each rep is a max-effort throw — reset and repeat.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "5"
-              },
-              {
-                "type": "W",
-                "target": "5"
-              }
-            ]
-          },
-          {
-            "name": "Face Pull",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Constant tension through the deep overhead stretch — lats only.",
             "sets": [
               {
                 "type": "W",
@@ -4159,99 +4245,141 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "target": "12–15"
               },
               {
-                "type": "W",
+                "type": "M",
                 "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Behind-Body Cable Lateral Raise",
+            "group": "delts1",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Cable behind the body for the deep stretch on the side delt.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "M",
+                "target": "15–20"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rear Delt Fly",
+            "group": "delts1",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Superset off the laterals — wide arc, controlled squeeze, no swing.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "W",
+                "target": "15–20"
+              },
+              {
+                "type": "M",
+                "target": "15–20"
               }
             ]
           }
         ]
       },
       {
-        "name": "Arms + Delts + Calves (Pump)",
+        "name": "Arms, Calves & Core Pump",
         "priority": 3,
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Dumbbell Lateral Raise",
+            "name": "Reclined Cable Curl",
+            "group": "arms1",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Reclined for the deep stretch on the long head; strict.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Single-Arm Overhead Cable Extension",
+            "group": "arms1",
+            "role": "superset",
+            "rir": "0",
+            "coachCue": "Superset off the curl — long overhead stretch, per side.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "W",
+                "target": "12–15"
+              },
+              {
+                "type": "M",
+                "target": "12–15"
+              }
+            ]
+          },
+          {
+            "name": "Seated Calf Raise (Machine)",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Last set: drop set — failure, strip the stack, lengthened partials to finish.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12–20"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12–20"
               },
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "M",
+                "target": "12–20"
               }
             ]
           },
           {
-            "name": "Hammer Curl",
-            "group": "armsP3b",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              }
-            ]
-          },
-          {
-            "name": "Rope Triceps Pushdown",
-            "group": "armsP3b",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              }
-            ]
-          },
-          {
-            "name": "Seated Calf Raise",
+            "name": "Ab Wheel Rollout",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Brace hard, roll out long for the stretch — don't let the hips sag.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "8–12"
               },
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "M",
+                "target": "8–12"
               }
             ]
           }
@@ -4264,122 +4392,147 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "First",
         "priority": 1,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Trap Bar Jump Squat",
+            "name": "Hang Power Clean",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Explode off the floor, leave the ground — ~25% of squat, reset every rep, full recovery between sets.",
+            "coachCue": "Explode through the floor — triple extension, fast under the bar. Quality over grind, reset each rep.",
             "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "High-Bar Back Squat",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
               {
                 "type": "R",
                 "target": "5"
               },
               {
                 "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Back Squat",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
                 "target": "8"
               },
               {
-                "type": "R",
-                "target": "6"
-              },
-              {
                 "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "8–10"
+                "target": "8"
               }
             ]
           },
           {
-            "name": "Bulgarian Split Squat",
-            "group": "A",
+            "name": "Stiff-Leg Deadlift",
+            "group": "sup1",
             "role": "superset",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Push hips back, feel the stretch through the hamstring, control the lower.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
-                "type": "M",
-                "target": "10–12"
+                "type": "W",
+                "target": "10"
               }
             ]
           },
           {
-            "name": "Lying Leg Curl",
-            "group": "A",
+            "name": "Pendulum Squat",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Final set: double drop — strip ~20% twice, push each to failure in the stretch.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "12–15"
+                "target": "12"
               }
             ]
           },
           {
-            "name": "Standing Calf Raise",
+            "name": "Barbell Hip Thrust",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Drive the hips tall, squeeze the glutes hard at lockout. Last set: drop set, full contraction each rep.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "12–15 + lengthened partials"
+                "target": "12"
+              }
+            ]
+          },
+          {
+            "name": "Donkey Calf Raise",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Final set: drop set, pause-stretch every rep at the bottom.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15"
+              },
+              {
+                "type": "W",
+                "target": "15"
+              },
+              {
+                "type": "M",
+                "target": "12"
               }
             ]
           }
@@ -4391,12 +4544,16 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Plyo Push-Up (off boxes)",
+            "name": "Plyometric (Clap) Push-Up",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Drive through the floor, hands leave the surface — land soft, reset. Speed over reps, full rest.",
+            "coachCue": "Drive off the floor, full air under the hands. Max intent, no grinding — reset between reps.",
             "sets": [
+              {
+                "type": "W",
+                "target": "4"
+              },
               {
                 "type": "W",
                 "target": "4"
@@ -4420,107 +4577,107 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "sets": [
               {
                 "type": "R",
-                "target": "8"
-              },
-              {
-                "type": "R",
                 "target": "6"
               },
               {
-                "type": "W",
-                "target": "8–10"
+                "type": "R",
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "8–10"
+                "target": "8"
               }
             ]
           },
           {
-            "name": "Standing Dumbbell Overhead Press",
-            "group": "B",
+            "name": "Weighted Chest Dip",
+            "group": "sup1",
             "role": "superset",
             "rir": "2",
-            "coachCue": "",
+            "coachCue": "Forward lean, sink into the deep stretch at the bottom.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
-                "type": "M",
-                "target": "10–12"
+                "type": "W",
+                "target": "10"
               }
             ]
           },
           {
-            "name": "Weighted Dip",
-            "group": "B",
+            "name": "Seated Cable Fly (Chest-Supported)",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Final set: lengthened partials to failure at the stretched, open position.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "15"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "15"
               },
               {
                 "type": "M",
-                "target": "10–12 + drop set"
+                "target": "12"
               }
             ]
           },
           {
-            "name": "Cable Lateral Raise",
+            "name": "Behind-the-Body Cable Lateral Raise",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: double drop in the stretched, behind-the-body position.",
             "sets": [
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "15"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "15"
               },
               {
                 "type": "M",
-                "target": "15–20 + lengthened partials"
+                "target": "15"
               }
             ]
           },
           {
-            "name": "Cable Triceps Pushdown",
+            "name": "Skullcrusher to Behind Head (EZ Bar)",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: rest-pause from the deep overhead stretch.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "15"
               },
               {
                 "type": "M",
-                "target": "12–15"
+                "target": "12"
               }
             ]
           }
@@ -4529,118 +4686,143 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "Third",
         "priority": 3,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Kettlebell Swing",
+            "name": "Medicine Ball Slam",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Snap the hips, float the bell — it's a hinge not a squat. Explosive, crisp, full rest.",
+            "coachCue": "Reach tall, drive the ball through the floor as hard as you can. Pure intent.",
             "sets": [
               {
                 "type": "W",
-                "target": "6"
-              },
-              {
-                "type": "W",
-                "target": "6"
-              },
-              {
-                "type": "W",
-                "target": "6"
-              }
-            ]
-          },
-          {
-            "name": "Conventional Deadlift",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "5"
-              },
-              {
-                "type": "R",
                 "target": "5"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "5"
               },
               {
-                "type": "M",
-                "target": "6–8"
+                "type": "W",
+                "target": "5"
               }
             ]
           },
           {
             "name": "Weighted Pull-Up",
-            "group": "C",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "Chest-Supported Row",
-            "group": "C",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "M",
-                "target": "10–12 + rest-pause"
-              }
-            ]
-          },
-          {
-            "name": "Face Pull",
             "group": "",
             "role": "",
             "rir": "2",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "15–20"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "15–20"
+                "target": "8"
+              }
+            ]
+          },
+          {
+            "name": "Seal Row",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "2",
+            "coachCue": "Full dead-hang stretch at the bottom, no body english.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10"
+              }
+            ]
+          },
+          {
+            "name": "Cross-Body Single-Arm Lat Pulldown",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Final set: lengthened partials to failure across the body in the stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "12"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rear Delt Fly",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: drop set, squeeze hard at peak each rep.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15"
+              },
+              {
+                "type": "W",
+                "target": "15"
+              },
+              {
+                "type": "M",
+                "target": "15"
+              }
+            ]
+          },
+          {
+            "name": "Glute-Ham Raise",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure at the bottom stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "M",
+                "target": "8"
               }
             ]
           }
@@ -4649,135 +4831,139 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "Fourth",
         "priority": 4,
-        "cardioPos": "top",
+        "cardioPos": "bottom",
         "exercises": [
           {
             "name": "Push Press",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Dip, drive, punch overhead — let the legs throw it. Crisp lockout, control down, full rest.",
+            "coachCue": "Dip and drive — leg drive launches the bar, punch through the top. Fast, no grinding.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Seated Dumbbell Shoulder Press",
+            "group": "",
+            "role": "",
+            "rir": "2",
+            "coachCue": "",
             "sets": [
               {
                 "type": "R",
-                "target": "5"
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Single-Arm Dumbbell Row",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
                 "type": "M",
-                "target": "10–12"
+                "target": "10"
               }
             ]
           },
           {
-            "name": "Incline Dumbbell Curl",
-            "group": "D",
+            "name": "Cable Lateral Raise",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Final set: drop set, no swing, constant tension.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "15"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "15"
               },
               {
                 "type": "M",
-                "target": "10–12 + lengthened partials"
+                "target": "15"
               }
             ]
           },
           {
-            "name": "Overhead Cable Triceps Extension",
-            "group": "D",
+            "name": "Bayesian Cable Curl",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure from the stretched behind-body position.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "12–15 + lengthened partials"
+                "target": "10"
               }
             ]
           },
           {
-            "name": "Dumbbell Lateral Raise",
+            "name": "EZ-Bar Overhead Extension (Seated/Standing)",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure deep behind the head.",
             "sets": [
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "15–20 + drop set"
+                "target": "10"
               }
             ]
           },
           {
-            "name": "Hanging Leg Raise",
+            "name": "Cable Crunch",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: rest-pause, full crunch through the abs.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "15"
               },
               {
                 "type": "W",
-                "target": "10–15"
+                "target": "15"
               },
               {
                 "type": "M",
-                "target": "10–15"
+                "target": "15"
               }
             ]
           }
@@ -4788,126 +4974,155 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "First",
         "priority": 1,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Trap Bar Jump Squat",
+            "name": "Power Clean",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Explode off the floor, leave the ground — ~30%, reset every rep, full recovery.",
+            "coachCue": "From the floor — violent triple extension, drop and catch tight. Heavier than last phase, still fast.",
             "sets": [
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              }
+            ]
+          },
+          {
+            "name": "High-Bar Back Squat",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "5"
+              },
               {
                 "type": "R",
                 "target": "4"
               },
               {
-                "type": "W",
+                "type": "R",
                 "target": "3"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5"
+              },
+              {
+                "type": "M",
+                "target": "5"
               }
             ]
           },
           {
-            "name": "Back Squat",
+            "name": "Stiff-Leg Deadlift",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Knees soft and locked, longest hamstring range — own the stretch under load.",
             "sets": [
               {
                 "type": "R",
                 "target": "6"
               },
               {
-                "type": "R",
-                "target": "4"
-              },
-              {
-                "type": "R",
-                "target": "3"
+                "type": "W",
+                "target": "6"
               },
               {
                 "type": "W",
-                "target": "4–6"
-              },
-              {
-                "type": "W",
-                "target": "4–6"
+                "target": "6"
               },
               {
                 "type": "M",
-                "target": "4–6"
+                "target": "6"
               }
             ]
           },
           {
-            "name": "Bulgarian Split Squat",
-            "group": "A",
+            "name": "Hack Squat (Machine)",
+            "group": "sup1",
             "role": "superset",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Final set: double drop — strip and push each to failure deep in the stretch.",
             "sets": [
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "8–10"
+                "target": "8"
               }
             ]
           },
           {
-            "name": "Seated Leg Curl",
-            "group": "A",
+            "name": "Barbell Hip Thrust",
+            "group": "sup1",
             "role": "superset",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Drive explosively to lockout, squeeze the glutes hard. Last set: rest-pause past failure.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "10–12 + lengthened partials"
+                "target": "8"
               }
             ]
           },
           {
-            "name": "Standing Calf Raise",
+            "name": "Seated Calf Raise (Machine)",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Last set: drop set, full pause-stretch at the bottom.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "10–12 + lengthened partials"
+                "target": "10"
               }
             ]
           }
@@ -4919,12 +5134,20 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Plyo Push-Up (off boxes)",
+            "name": "Barbell Bench Press Throw (Smith)",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Drive hard, hands off the surface, land soft and reset. Pure speed, full rest.",
+            "coachCue": "Throw the bar off the chest, catch soft. Max bar speed, light load — speed is the goal.",
             "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
               {
                 "type": "W",
                 "target": "3"
@@ -4940,7 +5163,309 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Flat Barbell Bench Press",
+            "name": "Barbell Bench Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "",
+            "sets": [
+              {
+                "type": "R",
+                "target": "5"
+              },
+              {
+                "type": "R",
+                "target": "4"
+              },
+              {
+                "type": "R",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "5"
+              },
+              {
+                "type": "M",
+                "target": "5"
+              }
+            ]
+          },
+          {
+            "name": "Incline Dumbbell Bench Press",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Deep stretch on the upper chest, control the bottom.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8"
+              },
+              {
+                "type": "M",
+                "target": "8"
+              }
+            ]
+          },
+          {
+            "name": "Pec Deck Fly",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Final set: drop set, hold the stretched open position one count each rep.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "10"
+              }
+            ]
+          },
+          {
+            "name": "Lean-Away Lateral Raise",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure from the bottom stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "12"
+              }
+            ]
+          },
+          {
+            "name": "Weighted Triceps Dip",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Upright torso, sink into the deep bottom stretch. Last set: lengthened partials to failure.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8"
+              },
+              {
+                "type": "M",
+                "target": "6"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Third",
+        "priority": 3,
+        "cardioPos": "none",
+        "exercises": [
+          {
+            "name": "Hang High Pull",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Explode the hips, pull elbows high and fast. Max acceleration on the bar.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Pendlay Row",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Strict flat torso, dead-stop each rep, explode to the chest.",
+            "sets": [
+              {
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "5"
+              },
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "M",
+                "target": "6"
+              }
+            ]
+          },
+          {
+            "name": "Weighted Chin-Up",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Full dead-hang stretch at the bottom, drive elbows down.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6"
+              },
+              {
+                "type": "M",
+                "target": "6"
+              }
+            ]
+          },
+          {
+            "name": "Single-Arm Seated Cable Row",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Final set: drop set, let the torso open for max stretch each rep.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "M",
+                "target": "10"
+              }
+            ]
+          },
+          {
+            "name": "Chest-Supported Dumbbell Rear Delt Fly",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure, no momentum.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "12"
+              }
+            ]
+          },
+          {
+            "name": "Seated Leg Curl",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: rest-pause from the deep stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "M",
+                "target": "10"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Fourth",
+        "priority": 4,
+        "cardioPos": "bottom",
+        "exercises": [
+          {
+            "name": "Push Jerk",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "Dip, drive, drop under the bar fast and punch to lockout. Speed and timing, not a grind.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              },
+              {
+                "type": "W",
+                "target": "2"
+              }
+            ]
+          },
+          {
+            "name": "Barbell Overhead Press",
             "group": "",
             "role": "",
             "rir": "1",
@@ -4952,351 +5477,82 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "R",
-                "target": "4"
-              },
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "5–6"
-              },
-              {
-                "type": "W",
-                "target": "5–6"
-              },
-              {
-                "type": "M",
-                "target": "5–6"
-              }
-            ]
-          },
-          {
-            "name": "Standing Barbell Overhead Press",
-            "group": "B",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
                 "target": "5"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "6"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "6"
               },
               {
                 "type": "M",
-                "target": "6–8"
+                "target": "5"
               }
             ]
           },
           {
-            "name": "Weighted Dip",
-            "group": "B",
+            "name": "Behind-the-Body Cable Lateral Raise",
+            "group": "sup1",
             "role": "superset",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Final set: double drop in the deep stretched position.",
             "sets": [
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "8–10 + rest-pause"
+                "target": "12"
               }
             ]
           },
           {
-            "name": "Cable Lateral Raise",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "M",
-                "target": "12–15 + lengthened partials"
-              }
-            ]
-          },
-          {
-            "name": "Close-Grip Bench Press",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Third",
-        "priority": 3,
-        "cardioPos": "bottom",
-        "exercises": [
-          {
-            "name": "Hang Power Clean",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Violent hip snap, pull yourself under — catch tall. Quality reps, reset each, full rest. ~65%, strong and crisp.",
-            "sets": [
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Conventional Deadlift",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "R",
-                "target": "4"
-              },
-              {
-                "type": "R",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3–5"
-              },
-              {
-                "type": "W",
-                "target": "3–5"
-              },
-              {
-                "type": "M",
-                "target": "3–5"
-              }
-            ]
-          },
-          {
-            "name": "Weighted Pull-Up",
-            "group": "C",
+            "name": "Incline Dumbbell Curl",
+            "group": "sup1",
             "role": "superset",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Last set: lengthened partials to failure at full stretch behind the body.",
             "sets": [
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "10"
               },
               {
                 "type": "M",
-                "target": "6–8"
+                "target": "8"
               }
             ]
           },
           {
-            "name": "Pendlay Row",
-            "group": "C",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "M",
-                "target": "6–8"
-              }
-            ]
-          },
-          {
-            "name": "Face Pull",
+            "name": "Skullcrusher to Behind Head (EZ Bar)",
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Last set: lengthened partials to failure, lower behind the head for max stretch.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "10"
               },
               {
                 "type": "M",
-                "target": "12–15"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Fourth",
-        "priority": 4,
-        "cardioPos": "top",
-        "exercises": [
-          {
-            "name": "Push Press",
-            "group": "",
-            "role": "",
-            "rir": "",
-            "coachCue": "Dip, drive, punch — legs throw it overhead. ~70%, crisp lockout, full rest.",
-            "sets": [
-              {
-                "type": "R",
-                "target": "4"
-              },
-              {
-                "type": "W",
-                "target": "2"
-              },
-              {
-                "type": "W",
-                "target": "2"
-              },
-              {
-                "type": "W",
-                "target": "2"
-              }
-            ]
-          },
-          {
-            "name": "Single-Arm Dumbbell Row",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "EZ-Bar Curl",
-            "group": "D",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "Lying EZ-Bar Triceps Extension",
-            "group": "D",
-            "role": "superset",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10 + drop set"
-              }
-            ]
-          },
-          {
-            "name": "Dumbbell Lateral Raise",
-            "group": "",
-            "role": "",
-            "rir": "1",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "M",
-                "target": "12–15 + lengthened partials"
+                "target": "8"
               }
             ]
           },
@@ -5305,19 +5561,19 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "",
+            "coachCue": "Controlled, no swing, curl the pelvis up.",
             "sets": [
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "8–12"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "8–12"
+                "target": "10"
               }
             ]
           }
@@ -5328,114 +5584,155 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "First",
         "priority": 1,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Back Squat (Speed / Dynamic Effort)",
-            "group": "F",
-            "role": "superset",
-            "rir": "",
-            "coachCue": "Sit, then drive up as fast as humanly possible — ~55%, bar speed is the lift. Full rest between pairs.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Seated Box Jump",
-            "group": "F",
-            "role": "superset",
-            "rir": "",
-            "coachCue": "Contrast pair — sit on the box, explode up from a dead stop after the speed squat. Maximal intent, land soft, full rest.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Romanian Deadlift",
+            "name": "Trap-Bar Jump",
             "group": "",
             "role": "",
-            "rir": "2",
+            "rir": "",
+            "coachCue": "Load the hips, jump as high as you can off the floor. Max intent, full reset each rep.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Dynamic-Effort Speed Squat",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "~55-65% — sit, then explode up as fast as humanly possible. Speed is the whole point.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Front Squat",
+            "group": "",
+            "role": "",
+            "rir": "1",
             "coachCue": "",
             "sets": [
               {
                 "type": "R",
-                "target": "6"
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "5"
               },
               {
                 "type": "M",
-                "target": "8–10"
+                "target": "5"
               }
             ]
           },
           {
-            "name": "Walking Lunge",
-            "group": "G",
+            "name": "Smith Bulgarian Split Squat",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure deep in the front-leg stretch.",
             "sets": [
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "10–12"
+                "target": "10"
               },
               {
                 "type": "M",
-                "target": "10–12"
+                "target": "10"
               }
             ]
           },
           {
-            "name": "Lying Leg Curl",
-            "group": "G",
+            "name": "Barbell Hip Thrust",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Drive tall, hard glute squeeze at lockout. Last set: drop set, full contraction each rep.",
             "sets": [
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "12"
               },
               {
                 "type": "M",
-                "target": "12–15 + lengthened partials"
+                "target": "12"
+              }
+            ]
+          },
+          {
+            "name": "Standing Calf Raise (Machine)",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: drop set, pause-stretch each rep.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "12"
               }
             ]
           }
@@ -5447,136 +5744,144 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Bench Press (Speed / Dynamic Effort)",
-            "group": "H",
-            "role": "superset",
-            "rir": "",
-            "coachCue": "~50%, drive the bar off the chest as fast as possible — bar speed is the lift. Full rest between pairs.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Plyo Push-Up (off boxes)",
-            "group": "H",
-            "role": "superset",
-            "rir": "",
-            "coachCue": "Contrast pair — explode after the speed bench, hands off the surface, land soft. Maximal, full rest.",
-            "sets": [
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              }
-            ]
-          },
-          {
-            "name": "Incline Barbell Bench Press",
+            "name": "Medicine Ball Chest Pass",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "",
+            "coachCue": "Fire the ball off the chest as fast as you can. Pure speed, full reset.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "4"
+              },
+              {
+                "type": "W",
+                "target": "4"
+              },
+              {
+                "type": "W",
+                "target": "4"
+              },
+              {
+                "type": "W",
+                "target": "4"
+              }
+            ]
+          },
+          {
+            "name": "Dynamic-Effort Speed Bench",
+            "group": "",
+            "role": "",
+            "rir": "",
+            "coachCue": "~55-65% — touch and explode, max bar speed off the chest. Speed work, not a grind.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
+                "target": "3"
+              }
+            ]
+          },
+          {
+            "name": "Incline Machine Press",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: double drop to failure.",
             "sets": [
               {
                 "type": "R",
                 "target": "6"
               },
               {
-                "type": "R",
-                "target": "4"
+                "type": "W",
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "6–8"
+                "target": "8"
               }
             ]
           },
           {
-            "name": "Standing Dumbbell Overhead Press",
-            "group": "I",
+            "name": "Deep-Stretch Dumbbell Press",
+            "group": "sup1",
             "role": "superset",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "1",
+            "coachCue": "Sink into the deep bottom stretch, slow the eccentric.",
             "sets": [
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "8–10"
+                "target": "10"
               },
               {
                 "type": "M",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "Weighted Dip",
-            "group": "I",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10 + drop set"
+                "target": "10"
               }
             ]
           },
           {
             "name": "Cable Lateral Raise",
-            "group": "",
-            "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Final set: drop set, constant tension, no swing.",
             "sets": [
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "15"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "15"
               },
               {
                 "type": "M",
-                "target": "15–20 + lengthened partials"
+                "target": "15"
+              }
+            ]
+          },
+          {
+            "name": "Single-Arm Overhead Cable Extension",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: lengthened partials to failure from the deep overhead stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "10"
               }
             ]
           }
@@ -5585,17 +5890,21 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "Third",
         "priority": 3,
-        "cardioPos": "bottom",
+        "cardioPos": "none",
         "exercises": [
           {
-            "name": "Jump Shrug",
+            "name": "Snatch-Grip High Pull",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "From the hang, violent triple extension — shrug hard, rise to the toes. ~60%, crisp, reset each rep, full rest.",
+            "coachCue": "Wide grip, explode the hips, rip the bar high and fast. Max acceleration.",
             "sets": [
               {
-                "type": "R",
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
                 "target": "3"
               },
               {
@@ -5613,94 +5922,111 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Trap Bar Deadlift",
+            "name": "Medicine Ball Slam",
             "group": "",
             "role": "",
-            "rir": "2",
-            "coachCue": "",
+            "rir": "",
+            "coachCue": "Tall reach, slam the ball through the floor with everything. Pure intent.",
             "sets": [
               {
-                "type": "R",
+                "type": "W",
                 "target": "5"
               },
               {
-                "type": "R",
-                "target": "3"
+                "type": "W",
+                "target": "5"
               },
               {
                 "type": "W",
-                "target": "5–6"
-              },
-              {
-                "type": "W",
-                "target": "5–6"
-              },
-              {
-                "type": "M",
-                "target": "5–6"
+                "target": "5"
               }
             ]
           },
           {
             "name": "Weighted Pull-Up",
-            "group": "J",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "W",
-                "target": "8–10"
-              },
-              {
-                "type": "M",
-                "target": "8–10"
-              }
-            ]
-          },
-          {
-            "name": "Chest-Supported Row",
-            "group": "J",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "M",
-                "target": "10–12 + rest-pause"
-              }
-            ]
-          },
-          {
-            "name": "Face Pull",
             "group": "",
             "role": "",
-            "rir": "2",
+            "rir": "1",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "15–20"
+                "type": "R",
+                "target": "6"
               },
               {
                 "type": "W",
-                "target": "15–20"
+                "target": "6"
+              },
+              {
+                "type": "W",
+                "target": "6"
               },
               {
                 "type": "M",
-                "target": "15–20"
+                "target": "6"
+              }
+            ]
+          },
+          {
+            "name": "Chest-Supported T-Bar Row",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Last set: drop set, full protracted stretch at the bottom.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "W",
+                "target": "10"
+              },
+              {
+                "type": "M",
+                "target": "10"
+              }
+            ]
+          },
+          {
+            "name": "Machine Pullover",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Final set: lengthened partials to failure through the deep stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "12"
+              }
+            ]
+          },
+          {
+            "name": "Cable Rear Delt Fly",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Last set: drop set, peak squeeze each rep.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "15"
+              },
+              {
+                "type": "W",
+                "target": "15"
+              },
+              {
+                "type": "M",
+                "target": "15"
               }
             ]
           }
@@ -5709,17 +6035,21 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
       {
         "name": "Fourth",
         "priority": 4,
-        "cardioPos": "top",
+        "cardioPos": "bottom",
         "exercises": [
           {
             "name": "Push Press",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Dip, drive, punch overhead — legs throw it. ~65%, explosive and crisp, full lockout, full rest.",
+            "coachCue": "Leg drive launches the bar, punch through to lockout. Fast and explosive, no grind.",
             "sets": [
               {
-                "type": "R",
+                "type": "W",
+                "target": "3"
+              },
+              {
+                "type": "W",
                 "target": "3"
               },
               {
@@ -5737,11 +6067,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Overhead Med-Ball Slam",
+            "name": "Medicine Ball Rotational Throw",
             "group": "",
             "role": "",
             "rir": "",
-            "coachCue": "Reach tall, drive the ball into the floor with everything — full-body whip. Maximal intent, reset each rep.",
+            "coachCue": "Rotate through the hips, fire the ball off the wall as fast as you can. Both sides.",
             "sets": [
               {
                 "type": "W",
@@ -5758,65 +6088,90 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Incline Dumbbell Curl",
-            "group": "K",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "W",
-                "target": "10–12"
-              },
-              {
-                "type": "M",
-                "target": "10–12 + lengthened partials"
-              }
-            ]
-          },
-          {
-            "name": "Overhead Cable Triceps Extension",
-            "group": "K",
-            "role": "superset",
-            "rir": "2",
-            "coachCue": "",
-            "sets": [
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "W",
-                "target": "12–15"
-              },
-              {
-                "type": "M",
-                "target": "12–15 + lengthened partials"
-              }
-            ]
-          },
-          {
-            "name": "Seated Calf Raise",
+            "name": "Seated Dumbbell Shoulder Press",
             "group": "",
             "role": "",
-            "rir": "2",
+            "rir": "1",
             "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "12–15"
+                "type": "R",
+                "target": "8"
               },
               {
                 "type": "W",
-                "target": "12–15"
+                "target": "8"
+              },
+              {
+                "type": "W",
+                "target": "8"
               },
               {
                 "type": "M",
-                "target": "12–15 + lengthened partials"
+                "target": "8"
+              }
+            ]
+          },
+          {
+            "name": "Reclined Cable Curl",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Last set: drop set from the deep stretched, reclined position.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "10"
+              }
+            ]
+          },
+          {
+            "name": "Overhead Machine Extension (Loaded-Stretch Machine)",
+            "group": "sup1",
+            "role": "superset",
+            "rir": "1",
+            "coachCue": "Last set: double drop to failure in the stretch.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "10"
+              }
+            ]
+          },
+          {
+            "name": "Ab Wheel Rollout",
+            "group": "",
+            "role": "",
+            "rir": "1",
+            "coachCue": "Slow extension to full stretch, brace hard, don't let the hips sag.",
+            "sets": [
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "W",
+                "target": "12"
+              },
+              {
+                "type": "M",
+                "target": "10"
               }
             ]
           }
@@ -5827,28 +6182,17 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
 };
 
 const PREFIX: Record<string, string> = { beginner: 'be', intermediate: 'in', advanced: 'ad', elite: 'el' };
-
 let _g = 0;
-// Convert authored data to the app's shape: assign a sessionId, and turn each
-// consecutive run of exercises sharing a non-empty "group" label into one
-// superset groupId.
 function toSession(raw: RawSession, tier: string, phase: number, idx: number): SeedSession {
   let curLabel = '\u0000', curGid = '';
   const exercises: SeedExercise[] = raw.exercises.map((e) => {
     let groupId = '';
-    if (e.group) {
-      if (e.group !== curLabel) { curGid = 'sg' + (++_g); curLabel = e.group; }
-      groupId = curGid;
-    } else { curLabel = '\u0000'; }
+    if (e.group) { if (e.group !== curLabel) { curGid = 'sg' + (++_g); curLabel = e.group; } groupId = curGid; } else { curLabel = '\u0000'; }
     return { name: e.name, sets: e.sets, groupId, role: e.role || '', rir: e.rir || '', coachCue: e.coachCue || '' };
   });
   return { sessionId: PREFIX[tier] + phase + String.fromCharCode(97 + idx), name: raw.name, priority: raw.priority, cardioPos: raw.cardioPos, exercises };
 }
 export function buildSeed(tier: string): SeedPhases {
   const p = PROGRAMS[tier] || {};
-  return {
-    1: (p['1'] || []).map((s, i) => toSession(s, tier, 1, i)),
-    2: (p['2'] || []).map((s, i) => toSession(s, tier, 2, i)),
-    3: (p['3'] || []).map((s, i) => toSession(s, tier, 3, i)),
-  };
+  return { 1: (p['1'] || []).map((s, i) => toSession(s, tier, 1, i)), 2: (p['2'] || []).map((s, i) => toSession(s, tier, 2, i)), 3: (p['3'] || []).map((s, i) => toSession(s, tier, 3, i)) };
 }
