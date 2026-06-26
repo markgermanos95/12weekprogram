@@ -1,147 +1,151 @@
-// Faithful port of buildSeed_() from Code.gs (Apps Script), updated to the
-// flat exercise model: each session has an ordered exercises[]; supersets are
-// just consecutive exercises that share a groupId and carry role 'superset'.
+// Per-tier starter programs. Beginner/Intermediate run full-body; Advanced/Elite
+// run a push/pull/legs split. Every tier carries three phases — P1 higher-rep,
+// P2 medium-rep, P3 power-output (coach-cued). Flat exercise model: each session
+// is an ordered exercises[]; supersets are consecutive exercises sharing a
+// groupId and role 'superset'. Draft content — built to be edited.
 
 export type SeedSet = { type: 'R' | 'W' | 'M'; target: string };
-export type SeedExercise = { name: string; sets: SeedSet[]; groupId?: string; role?: string };
+export type SeedExercise = { name: string; sets: SeedSet[]; groupId?: string; role?: string; rir?: string; coachCue?: string };
 export type SeedSession = {
   sessionId: string; name: string; priority: number;
   cardioPos: 'top' | 'bottom' | 'none'; exercises: SeedExercise[];
 };
+export type SeedPhases = { 1: SeedSession[]; 2: SeedSession[]; 3: SeedSession[] };
 
-export function buildSeed(): { 1: SeedSession[]; 2: SeedSession[] } {
-  const R = (t: string): SeedSet => ({ type: 'R', target: t });
-  const W = (t: string): SeedSet => ({ type: 'W', target: t });
-  const M = (t: string): SeedSet => ({ type: 'M', target: t });
+const R = (t: string): SeedSet => ({ type: 'R', target: t });
+const W = (t: string): SeedSet => ({ type: 'W', target: t });
+const M = (t: string): SeedSet => ({ type: 'M', target: t });
 
-  let g = 0;
-  const gid = () => 'sg' + (++g);
-  // single(): one standalone exercise. ss(): a superset group (>=2 exercises
-  // sharing a fresh groupId, role 'superset'). Both return arrays so a session
-  // is just the concatenation of its blocks into one flat exercises[].
-  const single = (name: string, sets: SeedSet[]): SeedExercise[] => [{ name, sets, groupId: '', role: '' }];
-  const ss = (items: { name: string; sets: SeedSet[] }[]): SeedExercise[] => {
-    const id = gid();
-    return items.map((it) => ({ name: it.name, sets: it.sets, groupId: id, role: 'superset' }));
+// Rep targets by phase — compound vs isolation.
+const repC = (p: number) => (p === 1 ? '10–12' : p === 2 ? '6–8' : '3–5');
+const repI = (p: number) => (p === 1 ? '15–20' : p === 2 ? '10–12' : '8–10');
+const POWER_CUE = 'Power — drive the bar fast, ~55–65% 1RM, full recovery (2–3 min)';
+
+let _g = 0;
+const gid = () => 'sg' + (++_g);
+
+// A compound lift. P1/P2: phase ramp + 3 working sets (+ optional max), with a
+// working-set RIR target that rides into the cue. P3: explosive power work
+// (5×3) carrying the coach cue instead of the rep-chase guidance.
+function compound(name: string, p: number, max = false): SeedExercise {
+  if (p === 3) {
+    return {
+      name, groupId: '', role: '', coachCue: POWER_CUE,
+      sets: [R('~40% × 5'), R('~55% × 3'), W('3'), W('3'), W('3'), W('3'), W('3')],
+    };
+  }
+  const w = repC(p);
+  return {
+    name, groupId: '', role: '', rir: p === 1 ? '2' : '1',
+    sets: [R('light × 8'), R('~70% × 5'), W(w), W(w), W(w), ...(max ? [M(w)] : [])],
   };
-  const sess = (
-    sessionId: string, name: string, priority: number,
-    cardioPos: 'top' | 'bottom' | 'none', blocks: SeedExercise[][]
-  ): SeedSession => ({ sessionId, name, priority, cardioPos, exercises: ([] as SeedExercise[]).concat(...blocks) });
-
-  const P1 = [
-    sess('p1a', 'Legs', 1, 'top', [
-      single('Leg Press', [R('~50% × 8'), R('~70% × 6'), W('12–15'), W('12–15'), W('12–15'), M('12–15')]),
-      ss([
-        { name: 'Romanian Deadlift', sets: [R('light × 8'), W('12–15'), W('12–15'), W('12–15')] },
-        { name: 'Seated Leg Curl', sets: [W('12–15'), W('12–15'), W('12–15')] }
-      ]),
-      single('Walking Lunge', [W('12–15'), W('12–15'), W('12–15')]),
-      single('Standing Calf Raise', [W('15–20'), W('15–20'), W('15–20'), M('15–20')])
-    ]),
-    sess('p1b', 'Push + Pull', 1, 'none', [
-      single('Incline DB Press', [R('light × 8'), W('12–15'), W('12–15'), W('12–15'), M('12–15')]),
-      single('Lat Pulldown', [R('light × 8'), W('12–15'), W('12–15'), W('12–15')]),
-      ss([
-        { name: 'Cable Fly', sets: [W('15–20'), W('15–20'), W('15–20')] },
-        { name: 'Face Pull', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ]),
-      ss([
-        { name: 'Triceps Pushdown', sets: [W('15–20'), W('15–20'), W('15–20')] },
-        { name: 'DB Curl', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ])
-    ]),
-    sess('p1c', 'Full-body Pump', 2, 'bottom', [
-      single('Goblet Squat', [R('light × 8'), W('12–15'), W('12–15'), W('12–15')]),
-      ss([
-        { name: 'Chest-supported Row', sets: [W('12–15'), W('12–15'), W('12–15')] },
-        { name: 'Push-up', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ]),
-      ss([
-        { name: 'Lateral Raise', sets: [W('15–20'), W('15–20'), W('15–20')] },
-        { name: 'Hammer Curl', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ])
-    ]),
-    sess('p1e', 'Compound Pump', 3, 'none', [
-      ss([
-        { name: 'Leg Press', sets: [W('15–20'), W('15–20'), W('15–20')] },
-        { name: 'Lying Leg Curl', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ]),
-      ss([
-        { name: 'Chest Press Machine', sets: [W('12–15'), W('12–15'), W('12–15')] },
-        { name: 'Lat Pulldown', sets: [W('12–15'), W('12–15'), W('12–15')] }
-      ]),
-      single('Romanian Deadlift', [W('12–15'), W('12–15'), W('12–15')])
-    ]),
-    sess('p1d', 'Isolation Pump', 4, 'none', [
-      ss([
-        { name: 'Pec Deck', sets: [W('15–20'), W('15–20'), W('15–20')] },
-        { name: 'Reverse Pec Deck', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ]),
-      ss([
-        { name: 'Overhead Rope Ext', sets: [W('15–20'), W('15–20'), W('15–20')] },
-        { name: 'Cable Curl', sets: [W('15–20'), W('15–20'), W('15–20')] }
-      ]),
-      single('Cable Crunch', [W('15–20'), W('15–20'), W('15–20')])
-    ])
+}
+function iso(name: string, p: number, max = false): SeedExercise {
+  const r = p === 3 ? '8–10' : repI(p);
+  return { name, sets: [W(r), W(r), W(r), ...(max ? [M(r)] : [])], groupId: '', role: '' };
+}
+// A superset pair (two isolations, alternated).
+function pair(a: string, b: string, p: number): SeedExercise[] {
+  const id = gid(), r = repI(p);
+  return [
+    { name: a, sets: [W(r), W(r), W(r)], groupId: id, role: 'superset' },
+    { name: b, sets: [W(r), W(r), W(r)], groupId: id, role: 'superset' },
   ];
+}
+const sess = (
+  sessionId: string, name: string, priority: number,
+  cardioPos: 'top' | 'bottom' | 'none', blocks: SeedExercise[][]
+): SeedSession => ({ sessionId, name, priority, cardioPos, exercises: ([] as SeedExercise[]).concat(...blocks) });
 
-  const P2 = [
-    sess('p2a', 'Legs', 1, 'top', [
-      single('Back Squat', [R('bar × 8'), R('60% × 5'), W('8–10'), W('8–10'), W('8–10'), M('8–10')]),
-      ss([
-        { name: 'Bulgarian Split Squat', sets: [R('light × 6'), W('8–10'), W('8–10'), W('8–10')] },
-        { name: 'Lying Leg Curl', sets: [W('8–10'), W('8–10'), W('8–10')] }
-      ]),
-      single('Barbell Hip Thrust', [W('8–10'), W('8–10'), W('8–10')]),
-      single('Seated Calf Raise', [W('12–15'), W('12–15'), W('12–15'), M('12–15')])
+/* ---------- full-body tiers ---------- */
+
+function fbBeginner(p: number): SeedSession[] {
+  return [
+    sess('bg' + p + 'a', 'Lower body', 1, 'top', [
+      [compound('Leg Press', p, true)],
+      [iso('Seated Leg Curl', p)],
+      pair('Leg Extension', 'Standing Calf Raise', p),
     ]),
-    sess('p2b', 'Push + Pull', 1, 'none', [
-      single('Flat Barbell Bench', [R('bar × 8'), R('60% × 5'), W('8–10'), W('8–10'), W('8–10'), M('8–10')]),
-      single('Pendlay Row', [R('light × 6'), W('8–10'), W('8–10'), W('8–10')]),
-      ss([
-        { name: 'Seated Overhead Press', sets: [W('8–10'), W('8–10'), W('8–10')] },
-        { name: 'Chest-supported Cable Row', sets: [W('8–10'), W('8–10'), W('8–10')] }
-      ]),
-      ss([
-        { name: 'Skull Crusher', sets: [W('10–12'), W('10–12'), W('10–12')] },
-        { name: 'Barbell Curl', sets: [W('10–12'), W('10–12'), W('10–12')] }
-      ])
+    sess('bg' + p + 'b', 'Upper body', 1, 'none', [
+      [compound('Chest Press Machine', p, true)],
+      [compound('Lat Pulldown', p)],
+      pair('Shoulder Press Machine', 'Seated Cable Row', p),
+      pair('Triceps Pushdown', 'Biceps Curl', p),
     ]),
-    sess('p2c', 'Full-body Pump', 2, 'bottom', [
-      single('Trap-bar Deadlift', [R('light × 6'), W('8–10'), W('8–10'), W('8–10')]),
-      ss([
-        { name: 'Incline Machine Press', sets: [W('8–10'), W('8–10'), W('8–10')] },
-        { name: 'Single-arm DB Row', sets: [W('8–10'), W('8–10'), W('8–10')] }
-      ]),
-      ss([
-        { name: 'Cable Lateral Raise', sets: [W('12–15'), W('12–15'), W('12–15')] },
-        { name: 'Incline DB Curl', sets: [W('10–12'), W('10–12'), W('10–12')] }
-      ])
+    sess('bg' + p + 'c', 'Full-body pump', 2, 'bottom', [
+      pair('Goblet Squat', 'Chest-supported Row', p),
+      pair('Lateral Raise', 'Cable Crunch', p),
     ]),
-    sess('p2e', 'Compound Pump', 3, 'none', [
-      ss([
-        { name: 'Hack Squat', sets: [W('10–12'), W('10–12'), W('10–12')] },
-        { name: 'Lying Leg Curl', sets: [W('10–12'), W('10–12'), W('10–12')] }
-      ]),
-      ss([
-        { name: 'Incline Machine Press', sets: [W('10–12'), W('10–12'), W('10–12')] },
-        { name: 'Chest-supported Row', sets: [W('10–12'), W('10–12'), W('10–12')] }
-      ]),
-      single('Weighted Pull-up', [W('8–10'), W('8–10'), W('8–10')])
-    ]),
-    sess('p2d', 'Isolation Pump', 4, 'none', [
-      ss([
-        { name: 'Cable Lateral Raise', sets: [W('12–15'), W('12–15'), W('12–15')] },
-        { name: 'Reverse Pec Deck', sets: [W('12–15'), W('12–15'), W('12–15')] }
-      ]),
-      ss([
-        { name: 'Rope Pushdown', sets: [W('10–12'), W('10–12'), W('10–12')] },
-        { name: 'Preacher Curl', sets: [W('10–12'), W('10–12'), W('10–12')] }
-      ]),
-      single('Hanging Leg Raise', [W('10–15'), W('10–15'), W('10–15')])
-    ])
   ];
+}
 
-  return { 1: P1, 2: P2 };
+function fbIntermediate(p: number): SeedSession[] {
+  return [
+    sess('in' + p + 'a', 'Legs', 1, 'top', [
+      [compound('Back Squat', p, true)],
+      [compound('Romanian Deadlift', p)],
+      pair('Walking Lunge', 'Seated Leg Curl', p),
+      [iso('Standing Calf Raise', p)],
+    ]),
+    sess('in' + p + 'b', 'Push + Pull', 1, 'none', [
+      [compound('Flat Barbell Bench', p, true)],
+      [compound('Pendlay Row', p)],
+      pair('Seated Overhead Press', 'Lat Pulldown', p),
+      pair('Triceps Pushdown', 'DB Curl', p),
+    ]),
+    sess('in' + p + 'c', 'Full-body pump', 2, 'bottom', [
+      pair('Incline DB Press', 'Single-arm DB Row', p),
+      pair('Lateral Raise', 'Hammer Curl', p),
+      [iso('Hanging Leg Raise', p)],
+    ]),
+  ];
+}
+
+/* ---------- split tiers (push / pull / legs) ---------- */
+
+function splitAdvanced(p: number): SeedSession[] {
+  return [
+    sess('ad' + p + 'a', 'Push', 1, 'none', [
+      [compound('Flat Barbell Bench', p, true)],
+      [compound('Seated Overhead Press', p)],
+      pair('Incline DB Press', 'Lateral Raise', p),
+      [iso('Triceps Pushdown', p)],
+    ]),
+    sess('ad' + p + 'b', 'Pull', 1, 'top', [
+      [compound('Weighted Pull-up', p, true)],
+      [compound('Pendlay Row', p)],
+      pair('Chest-supported Row', 'Face Pull', p),
+      [iso('Barbell Curl', p)],
+    ]),
+    sess('ad' + p + 'c', 'Legs', 1, 'bottom', [
+      [compound('Back Squat', p, true)],
+      [compound('Romanian Deadlift', p)],
+      pair('Leg Press', 'Lying Leg Curl', p),
+      [iso('Seated Calf Raise', p)],
+    ]),
+    sess('ad' + p + 'd', 'Arms + delts pump', 2, 'none', [
+      pair('Cable Lateral Raise', 'Reverse Pec Deck', p),
+      pair('Overhead Rope Ext', 'Cable Curl', p),
+    ]),
+  ];
+}
+
+function splitElite(p: number): SeedSession[] {
+  // Advanced split, re-id'd to the elite template, plus an extra weak-point day.
+  const base = splitAdvanced(p).map((s) => ({ ...s, sessionId: 'el' + s.sessionId.slice(2) }));
+  base.push(sess('el' + p + 'e', 'Upper (weak-point)', 2, 'none', [
+    [compound('Incline Barbell Bench', p)],
+    [compound('Chest-supported Row', p)],
+    pair('DB Lateral Raise', 'Rear-delt Fly', p),
+    pair('Skull Crusher', 'Incline DB Curl', p),
+  ]));
+  return base;
+}
+
+export function buildSeed(tier: string): SeedPhases {
+  const f = tier === 'beginner' ? fbBeginner
+    : tier === 'intermediate' ? fbIntermediate
+    : tier === 'advanced' ? splitAdvanced
+    : splitElite;
+  return { 1: f(1), 2: f(2), 3: f(3) };
 }

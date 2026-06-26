@@ -3,7 +3,7 @@
 // (SpreadsheetApp -> Sheets REST API, via sheets.ts).
 
 import { readRows_, writeRows_, appendRows_, uid_, accessToken_ } from "./sheets";
-import { buildSeed, SeedSession } from "./seed";
+import { buildSeed } from "./seed";
 
 const truthy = (v: any) => v === true || v === "true" || v === "TRUE";
 const nowISO = () => new Date().toISOString();
@@ -82,7 +82,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
     if (!exercises.length) {
       rows.push({
         ...sBase, exOrder: 0, groupId: "", role: "",
-        exId: "", exName: "", exYoutube: "", exCues: "", rir: "",
+        exId: "", exName: "", exYoutube: "", exCues: "", rir: "", coachCue: "",
         setOrder: "", setType: "", target: "",
       });
       return;
@@ -91,7 +91,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
       const exId = e.exId || uid_();
       const eBase = {
         ...sBase, exOrder: eo, groupId: e.groupId || "", role: e.role || "",
-        exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "", rir: e.rir || "",
+        exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "", rir: e.rir || "", coachCue: e.coachCue || "",
       };
       const sets = e.sets || [];
       if (!sets.length) {
@@ -121,7 +121,7 @@ export async function getTemplate(clientId: string, phase: number) {
     const s = sessMap[sid], eo = Number(r.exOrder);
     if (!s._ex[eo]) s._ex[eo] = {
       exId: r.exId, exOrder: eo, name: r.exName,
-      youtube: r.exYoutube || "", cues: r.exCues || "", rir: r.rir || "",
+      youtube: r.exYoutube || "", cues: r.exCues || "", rir: r.rir || "", coachCue: r.coachCue || "",
       groupId: r.groupId || "", role: r.role || "", _sets: {},
     };
     if (!r.setType) return; // exercise placeholder — exercise exists, no sets
@@ -134,7 +134,7 @@ export async function getTemplate(clientId: string, phase: number) {
       exercises: Object.values(s._ex)
         .sort((a: any, b: any) => a.exOrder - b.exOrder)
         .map((e: any) => ({
-          exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "", rir: e.rir || "",
+          exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "", rir: e.rir || "", coachCue: e.coachCue || "",
           groupId: e.groupId || "", role: e.role || "",
           sets: Object.values(e._sets)
             .sort((a: any, b: any) => a.setOrder - b.setOrder)
@@ -319,20 +319,28 @@ export async function getCardioHistory(clientId: string) {
 
 /* ---------- starter templates ---------- */
 
-export const TEMPLATE_KEYS = ["tpl_beginner", "tpl_intermediate", "tpl_advanced"];
+export const TEMPLATE_KEYS = ["tpl_beginner", "tpl_intermediate", "tpl_advanced", "tpl_elite"];
+const KEY_TIER: Record<string, string> = {
+  tpl_beginner: "beginner", tpl_intermediate: "intermediate",
+  tpl_advanced: "advanced", tpl_elite: "elite",
+};
 
+// Additive, idempotent seeding. A brand-new tier (Elite, or a fresh sheet) is
+// seeded across all three phases; an existing tier only gets a phase it has
+// never had (e.g. the new power Phase 3) — existing phases the coach may have
+// edited are NEVER overwritten.
 export async function seedIfEmpty_() {
-  const hasTpl = (await readRows_("template")).some((r) => String(r.clientId).indexOf("tpl_") === 0);
-  if (hasTpl) return;
-  const seed = buildSeed();
-  let rows: Record<string, any>[] = [];
-  TEMPLATE_KEYS.forEach((k) => {
-    rows = rows.concat(
-      flattenTemplate_(k, 1, seed[1] as SeedSession[]),
-      flattenTemplate_(k, 2, seed[2] as SeedSession[])
-    );
-  });
-  await writeRows_("template", (await readRows_("template")).concat(rows));
+  const all = await readRows_("template");
+  const hasKey = (k: string) => all.some((r) => r.clientId === k);
+  const hasPhase = (k: string, p: number) => all.some((r) => r.clientId === k && Number(r.phase) === p);
+  let add: Record<string, any>[] = [];
+  for (const k of TEMPLATE_KEYS) {
+    const seed = buildSeed(KEY_TIER[k]);
+    ([1, 2, 3] as const).forEach((p) => {
+      if (!hasKey(k) || !hasPhase(k, p)) add = add.concat(flattenTemplate_(k, p, (seed as any)[p]));
+    });
+  }
+  if (add.length) await writeRows_("template", all.concat(add));
 }
 
 export async function addClientFromTemplate(name: string, goal: string, templateKey: string) {
