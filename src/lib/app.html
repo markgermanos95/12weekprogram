@@ -345,8 +345,9 @@ const TEMPLATES = [
   { key:'tpl_advanced', label:'Advanced' },
   { key:'tpl_elite', label:'Elite' }
 ];
-const PHASES=[{n:1,name:'Higher rep',weeks:'Weeks 1–4'},{n:2,name:'Medium rep',weeks:'Weeks 5–8'},{n:3,name:'Power output',weeks:'Weeks 9–12'}];
+const PHASES=[{n:1,name:'Higher rep',weeks:'Weeks 1–4'},{n:2,name:'Medium rep',weeks:'Weeks 5–8'},{n:3,name:'Power & strength',weeks:'Weeks 9–12'}];
 function phaseInfo(n){ return PHASES.find(p=>p.n===Number(n))||PHASES[0]; }
+const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessions and the Phase-3 barbell lifts feel controlled',tpl_intermediate:'Intermediate · move up when the barbell lifts progress smoothly and you want more volume',tpl_advanced:'Advanced · move up when you recover well from this and want the denser hybrid work',tpl_elite:'Elite · the ceiling — run it while it keeps progressing, deload when you stall'};
 const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
@@ -566,7 +567,7 @@ function goHome(){ if(CLIENT_MODE) return; flushTemplateSave(); S.isTemplate=fal
 async function openTemplate(i){
   const t=TEMPLATES[i]; if(!t) return;
   flushTemplateSave();
-  S.isTemplate=true; S.clientId=t.key; S.client={name:t.label+' template', goal:'Starter program · edit to taste'};
+  S.isTemplate=true; S.clientId=t.key; S.client={name:t.label+' template', goal:GRAD_NOTE[t.key]||'Starter program · edit to taste'};
   S.phase=1; S.edit=true; S.view='week'; S.sessionId=null; S.log=null; S.open=null;
   await loadTemplate(); render(); window.scrollTo(0,0);
 }

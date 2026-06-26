@@ -4544,7 +4544,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Final set: drop set, pause-stretch every rep at the bottom.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -4693,7 +4693,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: rest-pause from the deep overhead stretch.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -4842,7 +4842,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: lengthened partials to failure at the bottom stretch.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -4966,7 +4966,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: lengthened partials to failure deep behind the head.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -4987,7 +4987,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: rest-pause, full crunch through the abs.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -5146,7 +5146,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: drop set, full pause-stretch at the bottom.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -5299,7 +5299,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Upright torso, sink into the deep bottom stretch. Last set: lengthened partials to failure.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -5448,7 +5448,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: rest-pause from the deep stretch.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -5576,7 +5576,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: lengthened partials to failure, lower behind the head for max stretch.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -5752,7 +5752,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: drop set, pause-stretch each rep.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -5905,7 +5905,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: lengthened partials to failure from the deep overhead stretch.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
@@ -6058,7 +6058,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             "group": "",
             "role": "",
             "rir": "1",
-            "coachCue": "Last set: drop set, peak squeeze each rep.",
+            "coachCue": "",
             "sets": [
               {
                 "type": "W",
