@@ -903,40 +903,36 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Hack Squat (Machine)",
+            "name": "High-Bar Back Squat",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explosive intent: control down, then DRIVE up as fast as you can. Same weight as phase 1, speed is the goal.",
+            "rir": "3",
+            "coachCue": "Learn the bar - light and controlled, perfect reps; leave ~3 in reserve.",
             "sets": [
               {
                 "type": "R",
                 "target": "8"
               },
               {
-                "type": "R",
-                "target": "6"
+                "type": "W",
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
-              },
-              {
-                "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               }
             ]
           },
           {
-            "name": "Machine Chest Press",
+            "name": "Barbell Bench Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explosive press: lower under control, then punch the handles out fast. Stop each set with 2-3 crisp reps left, never grind.",
+            "rir": "3",
+            "coachCue": "Learn the bar - light and controlled, perfect reps; leave ~3 in reserve.",
             "sets": [
               {
                 "type": "R",
@@ -944,15 +940,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               }
             ]
           },
@@ -982,11 +978,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Chest-Supported T-Bar Row",
+            "name": "Seal Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explosive row: drive the elbows back fast, controlled return. Crisp reps, leave 2-3 in the tank.",
+            "rir": "3",
+            "coachCue": "Learn the bar - light and controlled, perfect reps; leave ~3 in reserve.",
             "sets": [
               {
                 "type": "R",
@@ -994,15 +990,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               }
             ]
           }
@@ -1085,11 +1081,11 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Incline Machine Press",
+            "name": "Incline Barbell Bench Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explosive press: control down, punch up fast. Stop with 2-3 sharp reps in reserve.",
+            "rir": "3",
+            "coachCue": "Learn the bar - light and controlled, perfect reps; leave ~3 in reserve.",
             "sets": [
               {
                 "type": "R",
@@ -1097,15 +1093,15 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               },
               {
                 "type": "W",
-                "target": "6–8"
+                "target": "8–10"
               }
             ]
           },
