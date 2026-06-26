@@ -52,6 +52,17 @@ export async function setCurrentPhase(clientId: string, phase: number) {
   return true;
 }
 
+// Regenerate a client's access token — the old ?client=<token> link stops
+// resolving (resolveClientToken can't find it) and a fresh token is returned
+// for the coach to re-share. The kill switch for a leaked link.
+export async function rotateClientToken(clientId: string) {
+  const all = await readRows_("clients");
+  let token = "";
+  all.forEach((c) => { if (c.clientId === clientId) { token = accessToken_(); c.accessToken = token; } });
+  if (token) await writeRows_("clients", all);
+  return token;
+}
+
 /* ---------- template flatten / unflatten ---------- */
 
 // The template tab is stored one-row-per-set. A session with no exercises, or
@@ -71,7 +82,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
     if (!exercises.length) {
       rows.push({
         ...sBase, exOrder: 0, groupId: "", role: "",
-        exId: "", exName: "", exYoutube: "", exCues: "",
+        exId: "", exName: "", exYoutube: "", exCues: "", rir: "",
         setOrder: "", setType: "", target: "",
       });
       return;
@@ -80,7 +91,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
       const exId = e.exId || uid_();
       const eBase = {
         ...sBase, exOrder: eo, groupId: e.groupId || "", role: e.role || "",
-        exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "",
+        exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "", rir: e.rir || "",
       };
       const sets = e.sets || [];
       if (!sets.length) {
@@ -110,7 +121,7 @@ export async function getTemplate(clientId: string, phase: number) {
     const s = sessMap[sid], eo = Number(r.exOrder);
     if (!s._ex[eo]) s._ex[eo] = {
       exId: r.exId, exOrder: eo, name: r.exName,
-      youtube: r.exYoutube || "", cues: r.exCues || "",
+      youtube: r.exYoutube || "", cues: r.exCues || "", rir: r.rir || "",
       groupId: r.groupId || "", role: r.role || "", _sets: {},
     };
     if (!r.setType) return; // exercise placeholder — exercise exists, no sets
@@ -123,7 +134,7 @@ export async function getTemplate(clientId: string, phase: number) {
       exercises: Object.values(s._ex)
         .sort((a: any, b: any) => a.exOrder - b.exOrder)
         .map((e: any) => ({
-          exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "",
+          exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "", rir: e.rir || "",
           groupId: e.groupId || "", role: e.role || "",
           sets: Object.values(e._sets)
             .sort((a: any, b: any) => a.setOrder - b.setOrder)
@@ -174,7 +185,7 @@ export async function saveProgress(logId: string, payload: any) {
   const mine = (p.sets || []).map((s: any) => ({
     logId, exId: s.exId, exName: s.exName, setOrder: s.setOrder,
     setType: s.setType, target: s.target, reps: s.reps, load: s.load, done: !!s.done,
-    workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
+    workingLoad: s.workingLoad || "", maxNote: s.maxNote || "", rpe: s.rpe || "",
   }));
   await writeRows_("setLogs", others.concat(mine));
   return true;
@@ -200,7 +211,7 @@ export async function getLog(logId: string) {
   const sets = (await readRows_("setLogs")).filter((r) => r.logId === logId).map((s) => ({
     exId: s.exId, exName: s.exName, setOrder: Number(s.setOrder),
     setType: s.setType, target: s.target, reps: s.reps, load: s.load, done: truthy(s.done),
-    workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
+    workingLoad: s.workingLoad || "", maxNote: s.maxNote || "", rpe: s.rpe || "",
   }));
   return {
     logId: l.logId, clientId: l.clientId, phase: Number(l.phase), sessionId: l.sessionId,
@@ -223,7 +234,7 @@ export async function getExerciseHistory(clientId: string, exId: string) {
     if (s.exId === exId && logsById[s.logId]) {
       (byLog[s.logId] = byLog[s.logId] || []).push({
         setOrder: Number(s.setOrder), type: s.setType, target: s.target, reps: s.reps, load: s.load,
-        workingLoad: s.workingLoad || "", maxNote: s.maxNote || "",
+        workingLoad: s.workingLoad || "", maxNote: s.maxNote || "", rpe: s.rpe || "",
       });
     }
   });
@@ -415,7 +426,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, setCurrentPhase, getTemplate, saveTemplate,
+  getClients, addClient, setCurrentPhase, rotateClientToken, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getCardioHistory,
 };

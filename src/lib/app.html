@@ -54,6 +54,16 @@
   .prline{padding:1px 2px 8px 41px;display:flex;align-items:center;gap:7px}
   .prbadge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--max);color:#fff;padding:2px 7px;border-radius:5px}
   .prtext{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--max);text-transform:uppercase;letter-spacing:.04em}
+  .rpe-row{display:flex;align-items:center;gap:9px;margin:9px 0 2px;padding:8px 10px;background:var(--paper);border:1px solid var(--line);border-radius:9px}
+  .rpe-l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);flex:1}
+  .rpe-i{width:84px;height:32px}
+  .linkbtn.danger:hover{color:var(--max);border-color:var(--max)}
+  .rpe-u{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .setphase{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:12px;color:var(--faint)}
+  .setphase span{flex:1}
+  .setphase-btn{appearance:none;border:1px solid var(--ink);background:var(--ink);color:#fff;font-family:var(--grotesk);font-size:12px;font-weight:600;border-radius:8px;padding:7px 11px;cursor:pointer;white-space:nowrap}
+  .hist-entry.tap{cursor:pointer}
+  .hist-entry.tap:hover{border-color:var(--line-strong)}
   .wrap{padding:14px 18px}
   .note{font-size:13px;color:var(--faint);margin:2px 0 18px;line-height:1.5}
   .note b{color:var(--ink);font-weight:600}
@@ -425,6 +435,10 @@ function lastWorkLoad(exId){
 }
 function workLoad(exId){ const e=S.exEntries[exId]; return (e&&e.workLoad!=null)?e.workLoad : ''; }
 function setWorkLoad(exId,val){ (S.exEntries[exId]||(S.exEntries[exId]={})).workLoad=val; scheduleProgressSave(); }
+// Post-exercise RPE: one effort rating /10 per exercise, logged after the work
+// (R2L's "log RPE" half — you can't honestly count reserve mid-set).
+function exRpe(exId){ const e=S.exEntries[exId]; return (e&&e.rpe!=null)?e.rpe : ''; }
+function setExRpe(exId,val){ (S.exEntries[exId]||(S.exEntries[exId]={})).rpe=val; scheduleProgressSave(); }
 
 /* Max-set builder. Stores a small structured blob per max set; composeMax()
    turns it into the human string shown as next session's cue. */
@@ -474,9 +488,17 @@ function progCueMain(exId,si,st,type){
   if(!isNaN(r)) return {t:'Beat '+r+' @ '+(prev.load||'?')+' · same weight', c:''};
   return {t:'Last @ '+(prev.load||'?')+' — add a rep', c:''};
 }
-function progCue(exId,si,st,type){
+// Working-set cue, with the exercise's optional RIR target folded in (R2L's
+// "prescribe RIR" — shown as guidance, logged honestly via post-exercise RPE).
+function progCue(exId,si,st,type,rir){
   if(type==='R'||type==='M') return null;
-  return progCueMain(exId,si,st,type);
+  let cue=progCueMain(exId,si,st,type);
+  const r=(rir==null?'':String(rir).trim());
+  if(r && /^\d+(-\d+)?$/.test(r)){
+    if(!cue) cue={t:'Aim ~'+r+' RIR',c:''};
+    else cue.t += ' · ~'+r+' RIR';
+  }
+  return cue;
 }
 
 let _pTimer=null, _tTimer=null;
@@ -496,8 +518,9 @@ function buildLogPayload(){
     const en=S.runEntries[e.exId+':'+si]||{};
     const type=en.type||st.type;
     const wl=workLoad(e.exId);
+    const rpe=exRpe(e.exId);
     const maxNote=(type==='M' && en.max && en.max.method)?JSON.stringify(en.max):'';
-    sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done, workingLoad:wl, maxNote });
+    sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done, workingLoad:wl, maxNote, rpe });
   }));
   return { clientId:S.clientId, phase:S.phase, sessionId:s.sessionId, sessionName:s.name, cardioStage:S.cardio.stage, cardioDone:S.cardio.done, cardioCals:S.cardio.cals||'', cardioWhen:(s.cardioPos&&s.cardioPos!=='none')?s.cardioPos:'', sets };
 }
@@ -514,7 +537,9 @@ async function boot(){
       S.clients=[c]; S.clientId=c.clientId; S.client=c; S.phase=Number(c.currentPhase)||1; S.edit=false; S.isTemplate=false;
       await loadTemplate();
       S.open = await gs('getOpenSession', S.clientId);
-      S.loading=false; S.view='week'; render(); return;
+      S.loading=false; S.view='week'; render();
+      try{ if(!localStorage.getItem('twelvewp_hiw_seen')){ localStorage.setItem('twelvewp_hiw_seen','1'); openInfo('priority'); } }catch(e){}
+      return;
     }
     S.clients = await gs('getClients');
     S.loading=false; S.view='home'; render();
@@ -566,12 +591,33 @@ async function copyClientLink(i){
   try{ await navigator.clipboard.writeText(url); setStat('link copied'); }
   catch(e){ await modalInput('Copy this link', url); }
 }
+async function rotateLink(i){
+  const c=S.clients[i]; if(!c) return;
+  if(!(await modalConfirm('Regenerate this link? The old one stops working immediately.','Regenerate'))) return;
+  try{
+    const token=await gs('rotateClientToken', c.clientId);
+    if(token){
+      c.accessToken=token; const url=location.origin+'/?client='+token;
+      try{ await navigator.clipboard.writeText(url); setStat('new link copied'); }
+      catch(e){ await modalInput('New link · old one is dead', url); }
+      render();
+    } else setStat('rotate failed');
+  }catch(e){ setStat('rotate failed'); }
+}
 async function doLogout(){
   try{ await fetch('/api/logout', { method:'POST' }); }catch(e){}
   location.reload();
 }
 
-async function switchPhase(ph){ if(CLIENT_MODE) return; ph=Number(ph); if(ph===S.phase) return; flushTemplateSave(); S.phase=ph; if(!S.isTemplate){ try{ await gs('setCurrentPhase',S.clientId,ph); }catch(e){} } await loadTemplate(); render(); }
+// Switching phase is VIEW-ONLY — it no longer silently persists the client's
+// currentPhase. Setting their actual phase is an explicit action (setClientPhase),
+// so a coach peeking at another phase doesn't move the client onto it.
+async function switchPhase(ph){ if(CLIENT_MODE) return; ph=Number(ph); if(ph===S.phase) return; flushTemplateSave(); S.phase=ph; await loadTemplate(); render(); }
+async function setClientPhase(){
+  if(CLIENT_MODE||S.isTemplate) return;
+  try{ await gs('setCurrentPhase', S.clientId, S.phase); if(S.client) S.client.currentPhase=S.phase; const c=S.clients.find(x=>x.clientId===S.clientId); if(c) c.currentPhase=S.phase; setStat('current phase set'); render(); }
+  catch(e){ setStat('couldn’t set phase'); }
+}
 function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTemplateSave(); S.edit=!S.edit; render(); }
 
 async function openSession(i){
@@ -592,7 +638,9 @@ function hydrate(log){
     const en={type:s.setType,reps:s.reps,load:s.load,done:s.done};
     if(s.maxNote){ try{ en.max=JSON.parse(s.maxNote); }catch(_){ } }
     S.runEntries[s.exId+':'+s.setOrder]=en;
-    if(s.workingLoad && S.exEntries[s.exId]===undefined) S.exEntries[s.exId]={workLoad:s.workingLoad};
+    const ex=S.exEntries[s.exId]||(S.exEntries[s.exId]={});
+    if(s.workingLoad && ex.workLoad==null) ex.workLoad=s.workingLoad;
+    if(s.rpe && ex.rpe==null) ex.rpe=s.rpe;
   });
   S.cardio={ stage:Number(log.cardioStage)||1, done:!!log.cardioDone, cals:log.cardioCals||'' };
 }
@@ -688,8 +736,11 @@ function closeHistory(){ S.history={open:false}; render(); }
 async function openCardioHistory(){ S.cardioHist={open:true,data:null}; render(); try{ const data=await gs('getCardioHistory',S.clientId); if(S.cardioHist.open) S.cardioHist.data=data; }catch(e2){ S.cardioHist.data=[]; } render(); }
 function closeCardioHistory(){ S.cardioHist={open:false}; render(); }
 // Session-log history — the whole client's finished sessions, newest first.
-async function openSessionHistory(){ S.sessHist={open:true,data:null}; render(); try{ const data=await gs('getHistory',S.clientId); if(S.sessHist.open) S.sessHist.data=data; }catch(e2){ S.sessHist.data=[]; } render(); }
+async function openSessionHistory(){ S.sessHist={open:true,data:null,detail:null}; render(); try{ const data=await gs('getHistory',S.clientId); if(S.sessHist.open) S.sessHist.data=data; }catch(e2){ S.sessHist.data=[]; } render(); }
 function closeSessionHistory(){ S.sessHist={open:false}; render(); }
+// Tap a training-log entry to open the full logged session via getLog.
+async function openSessionLog(logId){ if(!S.sessHist) return; S.sessHist.detail={loading:true}; render(); try{ const log=await gs('getLog', logId); S.sessHist.detail=log||{empty:true}; }catch(e){ S.sessHist.detail={empty:true}; } render(); }
+function closeSessionLog(){ if(S.sessHist) S.sessHist.detail=null; render(); }
 
 /* ---- modal ---- */
 function modalInput(title,placeholder){ return new Promise(res=>{ S.modal={kind:'input',title,placeholder:placeholder||'',res}; render(); }); }
@@ -743,6 +794,7 @@ function homeHTML(){
       <div class="scard-top"><span class="scard-name">${esc(c.name)}</span></div>
       <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Phase ${c.currentPhase||1}</span></div></div>
       <button class="linkbtn" onclick="event.stopPropagation();copyClientLink(${i})" title="Copy their personal link">${ICON_LINK}</button>
+      <button class="linkbtn danger" onclick="event.stopPropagation();rotateLink(${i})" title="Regenerate link — kills the old one">${ICON_REPEAT}</button>
       <div class="chev">${ICON_CHEV}</div></div>`;
   });
   h+=`<div class="addbar"><button class="addbtn" onclick="newClient()">+ new client</button></div>`;
@@ -755,6 +807,7 @@ function weekHTML(){
   const phLabel=S.phase===1?'Higher rep':'Medium rep'; const phWk=S.phase===1?'Weeks 1–6':'Weeks 7–12';
   let h=hdOpen()+`</div><div class="phase-label">Phase ${S.phase} · <b>${phLabel}</b> · ${phWk}</div><div class="wrap">`;
   if(!CLIENT_MODE) h+=`<button class="back" onclick="goHome()">${ICON_BACK} Home</button>`;
+  if(!CLIENT_MODE && !S.isTemplate && Number((S.client&&S.client.currentPhase)||1)!==S.phase) h+=`<div class="setphase"><span>Viewing Phase ${S.phase} · their current is Phase ${Number((S.client&&S.client.currentPhase)||1)}</span><button class="setphase-btn" onclick="setClientPhase()">Set as current</button></div>`;
   if(S.open && !S.edit) h+=`<div class="resume" onclick="resumeOpen()"><div style="flex:1"><div class="resume-t">Resume in-progress session</div><div class="resume-s">${esc(S.open.sessionName)} · pick up where you left off</div></div><div class="chev">${ICON_CHEV}</div></div>`;
   if(!S.edit){
     h+=`<div class="hiw-row"><button class="logbtn" onclick="openInfo('priority')">${ICON_INFO}<span>How it works</span></button>`;
@@ -851,6 +904,7 @@ function exHTML(session,ei,key){
     rows+=`<input class="tinput ex-name-input" value="${escA(e.name)}" placeholder="Exercise name" oninput="renameEx(${ei},this.value)">`;
     rows+=`<input class="tinput ex-field" value="${escA(e.youtube||'')}" placeholder="YouTube URL (optional)" oninput="editExField(${ei},'youtube',this.value)">`;
     rows+=`<textarea class="tinput ex-field ex-cues" placeholder="Cues / notes (optional)" oninput="editExField(${ei},'cues',this.value)">${esc(e.cues||'')}</textarea>`;
+    rows+=`<input class="tinput ex-field" inputmode="numeric" value="${escA(e.rir||'')}" placeholder="Working-set RIR target (optional)" oninput="editExField(${ei},'rir',this.value)">`;
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${ei},${si},this.value)"><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
@@ -868,9 +922,11 @@ function exHTML(session,ei,key){
       rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
-      else { const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
+      else { const cue=progCue(e.exId,si,st,type,e.rir); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
+    const hasWM=e.sets.some((st,si)=>{ const t=(S.runEntries[e.exId+':'+si]||{}).type||st.type; return t==='W'||t==='M'; });
+    if(hasWM){ const rp=exRpe(e.exId); rows+=`<div class="rpe-row"><span class="rpe-l">Effort when done</span><input class="inp rpe-i" inputmode="numeric" placeholder="RPE" value="${escA(rp)}" oninput="setExRpe('${e.exId}',this.value)"><span class="rpe-u">/10</span></div>`; }
   }
   const keyTag=key?`<span class="ex-key">${esc(key)}</span>`:'';
   if(S.edit){
@@ -945,7 +1001,8 @@ function historyOverlay(){
       sets+=`<div class="hsrow"><span class="badge sm ${st.type}">${st.type}</span><span class="htgt">${esc(st.target)}</span><span class="hval">${esc(st.reps||'–')} <span class="hx">×</span> ${esc(st.load||'–')}</span></div>${note}`;
     });
     const wl=(en.sets.find(x=>x.workingLoad)||{}).workingLoad;
-    const wlTag=wl?`<span class="hwl">working ${esc(wl)}</span>`:'';
+    const rpe=(en.sets.find(x=>x.rpe)||{}).rpe;
+    const wlTag=(wl?`<span class="hwl">working ${esc(wl)}</span>`:'')+(rpe?`<span class="hwl">RPE ${esc(rpe)}</span>`:'');
     body+=`<div class="hist-entry"><div class="hist-d">${esc(en.date)} · ${esc(en.sessionName)}${wlTag}</div>${sets}</div>`;
   });
   return `<div class="overlay" onclick="closeHistory()"><div class="sheet" onclick="event.stopPropagation()">
@@ -969,16 +1026,46 @@ function cardioHistoryOverlay(){
     <div class="hist-list">${body}</div></div></div>`;
 }
 function sessionHistoryOverlay(){
-  const H=S.sessHist; let body='';
+  const H=S.sessHist;
+  if(H.detail) return sessionLogDetail(H.detail);
+  let body='';
   if(H.data===null) body=`<div class="hist-empty">Loading…</div>`;
   else if(!H.data.length) body=`<div class="hist-empty">No finished sessions yet.</div>`;
   else H.data.forEach(en=>{
     const cardio=en.cardioDone?`<span class="cwhen">CARDIO</span>`:'';
-    body+=`<div class="hist-entry"><div class="hist-d">${esc(en.date)}${cardio}</div>
-      <div class="chrow"><span class="chcal">${esc(en.sessionName)}</span><span class="chstage">Phase ${esc(en.phase)}</span></div></div>`;
+    body+=`<div class="hist-entry tap" onclick="openSessionLog('${esc(en.logId)}')"><div class="hist-d">${esc(en.date)}${cardio}</div>
+      <div class="chrow"><span class="chcal">${esc(en.sessionName)}</span><span class="chstage">Phase ${esc(en.phase)}</span><span class="chev" style="margin-left:auto">${ICON_CHEV}</span></div></div>`;
   });
   return `<div class="overlay" onclick="closeSessionHistory()"><div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-h">Training log <button class="x" onclick="closeSessionHistory()">${ICON_X}</button></div>
+    <div class="hist-list">${body}</div></div></div>`;
+}
+// Full logged session — sets grouped by exercise, with max notes, working load
+// and post-exercise RPE. Opened from a tapped training-log entry.
+function sessionLogDetail(log){
+  let body='';
+  if(log.loading) body=`<div class="hist-empty">Loading…</div>`;
+  else if(log.empty) body=`<div class="hist-empty">Couldn't load that session.</div>`;
+  else {
+    const order=[], byEx={};
+    (log.sets||[]).forEach(s=>{ if(!byEx[s.exId]){ byEx[s.exId]={name:s.exName,sets:[]}; order.push(s.exId); } byEx[s.exId].sets.push(s); });
+    order.forEach(exId=>{
+      const ex=byEx[exId]; ex.sets.sort((a,b)=>a.setOrder-b.setOrder);
+      let srows='';
+      ex.sets.forEach(st=>{
+        let note=''; if(st.type==='M'&&st.maxNote){ try{ const d=composeMax(JSON.parse(st.maxNote)); if(d) note=`<div class="hnote">${esc(d)}</div>`; }catch(_){ } }
+        srows+=`<div class="hsrow"><span class="badge sm ${st.type}">${st.type}</span><span class="htgt">${esc(st.target)}</span><span class="hval">${esc(st.reps||'–')} <span class="hx">×</span> ${esc(st.load||'–')}</span></div>${note}`;
+      });
+      const wl=(ex.sets.find(x=>x.workingLoad)||{}).workingLoad, rpe=(ex.sets.find(x=>x.rpe)||{}).rpe;
+      const tags=(wl?`<span class="hwl">working ${esc(wl)}</span>`:'')+(rpe?`<span class="hwl">RPE ${esc(rpe)}</span>`:'');
+      body+=`<div class="hist-entry"><div class="hist-d">${esc(ex.name)}${tags}</div>${srows}</div>`;
+    });
+    if(!order.length) body=`<div class="hist-empty">No sets logged in this session.</div>`;
+  }
+  const ttl=(log.sessionName?esc(log.sessionName):'Session')+(log.date?(' · '+esc(log.date)):'');
+  return `<div class="overlay" onclick="closeSessionHistory()"><div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-h"><button class="back" style="margin:0;font-size:13px" onclick="closeSessionLog()">${ICON_BACK} Log</button><button class="x" onclick="closeSessionHistory()">${ICON_X}</button></div>
+    <div class="hist-d" style="margin:2px 0 12px">${ttl}</div>
     <div class="hist-list">${body}</div></div></div>`;
 }
 function modalOverlay(){

@@ -11,13 +11,13 @@ export const TABS: Record<string, string[]> = {
   template: [
     "clientId", "phase", "sessionId", "sessionOrder", "sessionName", "priority", "cardioPos",
     "exOrder", "groupId", "role", "exId", "exName", "setOrder", "setType", "target",
-    "exYoutube", "exCues",
+    "exYoutube", "exCues", "rir",
   ],
   sessionLogs: [
     "logId", "clientId", "phase", "sessionId", "sessionName", "date",
     "cardioStage", "cardioDone", "cardioCals", "cardioWhen", "status", "createdAt", "updatedAt",
   ],
-  setLogs: ["logId", "exId", "exName", "setOrder", "setType", "target", "reps", "load", "done", "workingLoad", "maxNote"],
+  setLogs: ["logId", "exId", "exName", "setOrder", "setType", "target", "reps", "load", "done", "workingLoad", "maxNote", "rpe"],
 };
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
