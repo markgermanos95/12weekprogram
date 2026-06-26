@@ -2317,27 +2317,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Box Jump",
+            "name": "Hack Squat (Machine)",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Max-intent jump, step down, full reset between reps",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -2466,27 +2470,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Medicine Ball Chest Pass",
+            "name": "Weighted Chest Dip",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explosive throw, reset and fire each rep at max intent",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
                 "target": "4"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "4"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -2611,27 +2619,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Kettlebell Swing (Two-Hand)",
+            "name": "Conventional Deadlift",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Snap the hips hard — float the bell with glute drive, not arms",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
+                "type": "R",
                 "target": "6"
               },
               {
-                "type": "W",
-                "target": "6"
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "6"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "6"
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -2752,27 +2764,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Hang High Pull",
+            "name": "Seal Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Violent hip extension, pull elbows high — reset each rep",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -3916,31 +3932,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Power Clean",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Violent triple extension off the floor, catch in the power position. Reset each rep — quality over grind.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
                 "type": "R",
-                "target": "3"
+                "target": "6"
               },
               {
                 "type": "R",
-                "target": "2"
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -4048,27 +4064,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Push Press",
+            "name": "Barbell Overhead Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Dip and drive — transfer leg power overhead, lock out fast. Heavy speed work, reset each rep.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
                 "type": "R",
-                "target": "3"
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3–5"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3–5"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3–5"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -4098,52 +4118,60 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
             ]
           },
           {
-            "name": "Medicine Ball Chest Pass",
+            "name": "Weighted Chest Dip",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Contrast off the speed bench after full rest — full release, throw it as hard as you can.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "5"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "5"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
           {
-            "name": "Hang High Pull",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Triple extension into a high pull, elbows lead — explosive, no catch.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
                 "type": "R",
-                "target": "3"
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "4–5"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "4–5"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "4–5"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -4395,31 +4423,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Hang Power Clean",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explode through the floor — triple extension, fast under the bar. Quality over grind, reset each rep.",
+            "rir": "2",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
@@ -4544,27 +4572,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Plyometric (Clap) Push-Up",
+            "name": "Deep-Stretch Dumbbell Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Drive off the floor, full air under the hands. Max intent, no grinding — reset between reps.",
+            "rir": "2",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "4"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
@@ -4689,27 +4721,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Medicine Ball Slam",
+            "name": "Weighted Chin-Up",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Reach tall, drive the ball through the floor as hard as you can. Pure intent.",
+            "rir": "2",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "5"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
@@ -4834,27 +4870,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Push Press",
+            "name": "Barbell Overhead Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Dip and drive — leg drive launches the bar, punch through the top. Fast, no grinding.",
+            "rir": "2",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "10"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "8–12"
+              },
+              {
+                "type": "M",
+                "target": "8–12"
               }
             ]
           },
@@ -4977,31 +5017,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Power Clean",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "From the floor — violent triple extension, drop and catch tight. Heavier than last phase, still fast.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "2"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "2"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "2"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "2"
-              },
-              {
-                "type": "W",
-                "target": "2"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -5134,31 +5174,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Barbell Bench Press Throw (Smith)",
+            "name": "Weighted Chest Dip",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Throw the bar off the chest, catch soft. Max bar speed, light load — speed is the goal.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -5287,31 +5327,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Hang High Pull",
+            "name": "Chest-Supported T-Bar Row",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Explode the hips, pull elbows high and fast. Max acceleration on the bar.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -5436,31 +5476,31 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Push Jerk",
+            "name": "Seated Dumbbell Shoulder Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Dip, drive, drop under the bar fast and punch to lockout. Speed and timing, not a grind.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "2"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "2"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "2"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "2"
-              },
-              {
-                "type": "W",
-                "target": "2"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -5587,64 +5627,60 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Trap-Bar Jump",
+            "name": "Hack Squat (Machine)",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Load the hips, jump as high as you can off the floor. Max intent, full reset each rep.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
           {
-            "name": "Dynamic-Effort Speed Squat",
+            "name": "Pendulum Squat",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "~55-65% — sit, then explode up as fast as humanly possible. Speed is the whole point.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -5744,56 +5780,60 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Medicine Ball Chest Pass",
+            "name": "Weighted Chest Dip",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Fire the ball off the chest as fast as you can. Pure speed, full reset.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
                 "target": "4"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "4"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "4"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
           {
-            "name": "Dynamic-Effort Speed Bench",
+            "name": "Barbell Bench Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "~55-65% — touch and explode, max bar speed off the chest. Speed work, not a grind.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -5893,52 +5933,60 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "none",
         "exercises": [
           {
-            "name": "Snatch-Grip High Pull",
+            "name": "Cable Lean-Away Shrug",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Wide grip, explode the hips, rip the bar high and fast. Max acceleration.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
           {
-            "name": "Medicine Ball Slam",
+            "name": "Weighted Chin-Up",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Tall reach, slam the ball through the floor with everything. Pure intent.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "5"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
@@ -6038,52 +6086,60 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
         "cardioPos": "bottom",
         "exercises": [
           {
-            "name": "Push Press",
+            "name": "Barbell Overhead Press",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Leg drive launches the bar, punch through to lockout. Fast and explosive, no grind.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "3"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "3"
+                "target": "5–8"
               },
               {
-                "type": "W",
-                "target": "3"
-              },
-              {
-                "type": "W",
-                "target": "3"
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
           {
-            "name": "Medicine Ball Rotational Throw",
+            "name": "Hanging Oblique Raise",
             "group": "",
             "role": "",
-            "rir": "",
-            "coachCue": "Rotate through the hips, fire the ball off the wall as fast as you can. Both sides.",
+            "rir": "1",
+            "coachCue": "",
             "sets": [
               {
-                "type": "W",
-                "target": "5"
+                "type": "R",
+                "target": "6"
+              },
+              {
+                "type": "R",
+                "target": "4"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "5–8"
               },
               {
                 "type": "W",
-                "target": "5"
+                "target": "5–8"
+              },
+              {
+                "type": "M",
+                "target": "5–8"
               }
             ]
           },
