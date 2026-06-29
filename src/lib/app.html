@@ -493,17 +493,12 @@ function progCueMain(exId,si,st,type){
   if(!isNaN(r)) return {t:'Beat '+r+' @ '+(prev.load||'?')+' · same weight', c:''};
   return {t:'Last @ '+(prev.load||'?')+' — add a rep', c:''};
 }
-// Working-set cue, with the exercise's optional RIR target folded in (R2L's
-// "prescribe RIR" — shown as guidance, logged honestly via post-exercise RPE).
-function progCue(exId,si,st,type,rir){
+// Working-set "beat last time" cue. The exercise's RIR target now lives in the
+// target column itself (e.g. "10–15 reps, 2 RIR"), so the cue stays purely about
+// progression — what to beat from last session.
+function progCue(exId,si,st,type){
   if(type==='R'||type==='M') return null;
-  let cue=progCueMain(exId,si,st,type);
-  const r=(rir==null?'':String(rir).trim());
-  if(r && /^\d+(-\d+)?$/.test(r)){
-    if(!cue) cue={t:'Aim ~'+r+' RIR',c:''};
-    else cue.t += ' · ~'+r+' RIR';
-  }
-  return cue;
+  return progCueMain(exId,si,st,type);
 }
 
 let _pTimer=null, _tTimer=null;
@@ -927,12 +922,13 @@ function exHTML(session,ei,key){
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
       const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done; const rpe=en.rpe!=null?en.rpe:'';
+      const tgt=st.unit==='secs'?(esc(st.target)+'s'):(esc(st.target)+' reps'+((type==='W'&&e.rir)?(', '+esc(e.rir)+' RIR'):''));
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
-      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}${st.unit==='secs'?'s':''}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
+      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
-      else if(!e.coachCue && st.unit!=='secs'){ const cue=progCue(e.exId,si,st,type,e.rir); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
+      else if(!e.coachCue && st.unit!=='secs'){ const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   }
