@@ -156,7 +156,8 @@
 
   .srow.head{padding:0 2px 5px}
   .srow.head .col{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
-  .srow{display:grid;grid-template-columns:30px 1fr 42px 46px 34px 30px;gap:6px;align-items:center;padding:5px 2px}
+  .srow{display:grid;grid-template-columns:30px 1fr 46px 50px 38px;gap:6px;align-items:center;padding:5px 2px}
+  .srow.secs{grid-template-columns:30px 1fr 30px}
   .srow.edit{grid-template-columns:34px 1fr 40px 30px}
   .col-tgt{font-family:var(--mono);font-size:12px;color:var(--faint)}
   .srow.done .col-tgt{opacity:.4}
@@ -182,6 +183,10 @@
   .wload{display:flex;align-items:center;gap:9px;margin:0 0 10px;padding:8px 10px;background:var(--paper);border:1px solid var(--line);border-radius:9px}
   .wload-l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);flex:1}
   .wload-i{width:84px;height:32px}
+  .wload2{display:flex;align-items:center;gap:8px;margin:2px 0 12px}
+  .wload2-l{font-family:var(--grotesk);font-size:14px;font-weight:600;color:var(--ink)}
+  .wload2-i{width:92px;height:34px}
+  .wload2-u{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--faint)}
   .maxbuild{padding:2px 2px 9px 41px;display:flex;flex-direction:column;gap:6px}
   .max-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
   .msel{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink);border:1px solid var(--line-strong);border-radius:7px;background:var(--card);padding:6px 8px;cursor:pointer}
@@ -923,17 +928,20 @@ function exHTML(session,ei,key){
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
     if(e.cues) rows+=`<div class="ex-cues-disp">${esc(e.cues)}</div>`;
-    const hasW=e.sets.some((st,si)=>((S.runEntries[e.exId+':'+si]||{}).type||st.type)==='W');
-    if(hasW){ const wl=workLoad(e.exId); const phw=lastWorkLoad(e.exId)||'–'; rows+=`<div class="wload"><span class="wload-l">Working load</span><input class="inp wload-i" inputmode="decimal" placeholder="${escA(phw)}" value="${escA(wl)}" oninput="setWorkLoad('${e.exId}',this.value)"></div>`; }
     if(e.coachCue) rows+=`<div class="coachcue">${esc(e.coachCue)}</div>`;
-    rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col" style="text-align:center">RPE</div><div class="col"></div></div>`;
+    const hasW=e.sets.some((st,si)=>((S.runEntries[e.exId+':'+si]||{}).type||st.type)==='W');
+    if(hasW){ const wl=workLoad(e.exId); const phw=lastWorkLoad(e.exId)||'–'; rows+=`<div class="wload2"><span class="wload2-l">Working load:</span><input class="inp wload2-i" inputmode="decimal" placeholder="${escA(phw)}" value="${escA(wl)}" oninput="setWorkLoad('${e.exId}',this.value)"><span class="wload2-u">kg</span></div>`; }
+    const anyReps=e.sets.some(st=>st.unit!=='secs');
+    if(anyReps) rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col" style="text-align:center">RPE</div></div>`;
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
       const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done; const rpe=en.rpe!=null?en.rpe:'';
-      const tgt=st.unit==='secs'?(esc(st.target)+'s'):(esc(st.target)+' reps'+((type==='W'&&e.rir)?(', '+esc(e.rir)+' RIR'):''));
+      const isSecs=st.unit==='secs';
+      const tgt=isSecs?(esc(st.target)+'s'):(esc(st.target)+' reps'+((type==='W'&&e.rir)?(', '+esc(e.rir)+' RIR'):''));
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
-      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
+      if(isSecs) rows+=`<div class="srow secs ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
+      else rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"></div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
     });
