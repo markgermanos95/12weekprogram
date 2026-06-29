@@ -156,7 +156,7 @@
   .srow.head .col{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
   .srow{display:grid;grid-template-columns:30px 1fr 46px 50px 38px;gap:6px;align-items:center;padding:5px 2px}
   .srow.secs{grid-template-columns:30px 1fr 30px}
-  .srow.edit{grid-template-columns:34px 1fr 40px 30px}
+  .srow.edit{grid-template-columns:34px 1fr 30px}
   .col-tgt{font-family:var(--mono);font-size:12px;color:var(--faint)}
   .srow.done .col-tgt{opacity:.4}
   .badge{font-family:var(--mono);font-size:11px;font-weight:700;height:30px;border-radius:7px;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff}
@@ -172,8 +172,9 @@
   .srow.done .inp{opacity:.55}
   .ex-add{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--faint);background:transparent;border:0;cursor:pointer;padding:6px 6px 0 2px;display:inline-flex;align-items:center;gap:5px}
   .ex-add:hover{color:var(--ink)}
-  .unitbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.03em;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:6px;height:34px;cursor:pointer;padding:0 2px}
-  .unitbtn:hover{color:var(--ink);border-color:var(--ink)}
+  .tbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:7px;height:28px;cursor:pointer;padding:0 9px;flex-shrink:0;line-height:1}
+  .tbtn:hover{color:var(--ink);border-color:var(--ink)}
+  .tbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
   .cue{font-family:var(--mono);font-size:10px;color:var(--faint);padding:1px 2px 7px 41px;line-height:1.4;letter-spacing:.01em}
   .cue.up{color:var(--ramp);font-weight:700}
   .cue.m{color:var(--max);font-weight:700}
@@ -396,9 +397,8 @@ const ROLE_OPTS=[
   {key:'superset',label:'Superset',tag:'SUPERSET'},
   {key:'preexhaust',label:'Pre-exhaust',tag:'PRE-EXHAUST'},
   {key:'circuit',label:'Circuit',tag:'CIRCUIT'},
-  {key:'giant',label:'Giant set',tag:'GIANT SET'},
-  {key:'dropset',label:'Drop set',tag:'DROP SET'},
-  {key:'restpause',label:'Rest-pause',tag:'REST-PAUSE'}
+  {key:'complex',label:'Complex',tag:'COMPLEX'},
+  {key:'sameequip',label:'Same equipment',tag:'SAME EQUIPMENT'}
 ];
 function roleList(csv){ return String(csv||'').split(',').map(s=>s.trim()).filter(Boolean); }
 function hasRole(csv,key){ return roleList(csv).indexOf(key)>=0; }
@@ -727,7 +727,12 @@ async function delSession(i){ if(!(await modalConfirm('Delete this session?','De
 function addSession(){ S.template.sessions.push({sessionId:uid(),name:'New session',priority:1,cardioPos:'none',exercises:[]}); scheduleTemplateSave(); render(); }
 function renameEx(ei,val){ exAt(ei).name=val; scheduleTemplateSave(); }
 function editTarget(ei,si,val){ exAt(ei).sets[si].target=val; scheduleTemplateSave(); }
-function toggleUnit(ei,si){ const st=exAt(ei).sets[si]; st.unit=(st.unit==='secs')?'reps':'secs'; scheduleTemplateSave(); render(); }
+// 'Timed' is an exercise-level attribute, not a grouping: it flips every set
+// in the exercise from reps to seconds (load/kg stays — loaded timed work
+// exists). Reuses the per-set `unit` field; the client view already keys its
+// 'Secs' header and 's' suffix off all-sets-secs.
+function isExTimed(e){ return !!(e&&e.sets&&e.sets.length&&e.sets.every(s=>s.unit==='secs')); }
+function toggleExTimed(ei){ const e=exAt(ei); const on=isExTimed(e); e.sets.forEach(s=>{ s.unit=on?'reps':'secs'; }); scheduleTemplateSave(); render(); }
 function editExField(ei,field,val){ const e=exAt(ei); e[field]=val; scheduleTemplateSave(); }
 function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); normalizeGroups(s); scheduleTemplateSave(); render(); }
 function moveEx(ei,dir){ const s=curSession(); move(s.exercises,ei,dir); normalizeGroups(s); scheduleTemplateSave(); render(); }
@@ -960,7 +965,7 @@ function exHTML(session,ei,key){
     rows+=`<input class="tinput ex-field" inputmode="numeric" value="${escA(e.rir||'')}" placeholder="Working-set RIR target (optional)" oninput="editExField(${ei},'rir',this.value)">`;
     rows+=`<input class="tinput ex-field" value="${escA(e.coachCue||'')}" placeholder="Coach cue — shown to client (e.g. power: explosive ~55%)" oninput="editExField(${ei},'coachCue',this.value)">`;
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
-    e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${ei},${si},this.value)"><button class="unitbtn" onclick="toggleUnit(${ei},${si})" title="reps / seconds">${(st.unit==='secs')?'SEC':'REP'}</button><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
+    e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="${isExTimed(e)?'target secs':'target'}" oninput="editTarget(${ei},${si},this.value)"><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
@@ -987,7 +992,8 @@ function exHTML(session,ei,key){
     const n=session.exercises.length;
     const arrows=`<div class="arrows"><button class="abtn" onclick="moveEx(${ei},-1)" ${ei===0?'disabled':''}>${ICON_UP}</button><button class="abtn" onclick="moveEx(${ei},1)" ${ei===n-1?'disabled':''}>${ICON_DN}</button></div>`;
     const link=grouped?`<button class="lnkbtn on" onclick="unlinkEx(${ei})" title="Remove from group">${ICON_LINK}</button>`:(ei>0?`<button class="lnkbtn" onclick="linkUp(${ei})" title="Group with exercise above">${ICON_LINK}</button>`:'');
-    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
+    const timed=`<button class="tbtn ${isExTimed(e)?'on':''}" onclick="toggleExTimed(${ei})" title="Log this exercise in seconds instead of reps">TIMED</button>`;
+    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${timed}${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
     const chips=grouped?'':roleChips(ei,e.role);
     return `<div class="ex">${top}${chips}${rows}</div>`;
   }
