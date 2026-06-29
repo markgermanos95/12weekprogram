@@ -922,13 +922,17 @@ function sessionHTML(){
   groups.forEach(grp=>{
     const grouped=grp.groupId && grp.items.length>1;
     if(grouped){
-      const letter=KEYS[gi++]||'';
+      // A1/A2 numbering means "superset — alternate between these". Only a
+      // superset earns it; any other grouping (e.g. same-equipment) stays
+      // bracketed with its role tag but unnumbered.
+      const isSuper=hasRole(grp.role,'superset');
+      const letter=isSuper?(KEYS[gi++]||''):'';
       const tg=roleTagLine(grp.role)||'GROUPED';
-      const alt=hasRole(grp.role,'superset')?' · alternate':'';
+      const alt=isSuper?' · alternate':'';
       h+=`<div class="block ss"><div class="ss-rail"></div>`;
       if(S.edit) h+=groupBar(grp.items[0],grp.role);
       else h+=`<div class="ss-tag">${tg} <span class="cnt">${grp.items.length} exercises${alt}</span></div>`;
-      grp.items.forEach((ei,k)=> h+=exHTML(s,ei,letter+(k+1)));
+      grp.items.forEach((ei,k)=> h+=exHTML(s,ei,isSuper?(letter+(k+1)):null));
       h+=`</div>`;
     } else {
       const ei=grp.items[0];
