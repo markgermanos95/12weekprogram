@@ -147,9 +147,7 @@
   .ex-name{font-size:15px;font-weight:600;letter-spacing:-.01em;flex:1}
   .ex-name-input{margin-bottom:6px;font-weight:600}
   .ex-field{margin-bottom:6px;font-size:13px;font-weight:400}
-  .ex-cues{resize:vertical;min-height:60px;font-size:13px}
   .ex-yt{display:inline-block;font-size:12px;font-weight:600;color:var(--max);text-decoration:none;margin-bottom:6px}
-  .ex-cues-disp{font-size:13px;color:var(--faint);margin-bottom:8px;white-space:pre-wrap;line-height:1.5}
   .histbtn{appearance:none;border:1px solid var(--line);background:var(--paper);border-radius:7px;width:30px;height:28px;cursor:pointer;color:var(--faint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .histbtn svg{width:15px;height:15px}
   .histbtn:hover{color:var(--ink);border-color:var(--line-strong)}
@@ -179,6 +177,7 @@
   .cue{font-family:var(--mono);font-size:10px;color:var(--faint);padding:1px 2px 7px 41px;line-height:1.4;letter-spacing:.01em}
   .cue.up{color:var(--ramp);font-weight:700}
   .cue.m{color:var(--max);font-weight:700}
+  .lasttime{font-family:var(--mono);font-size:9px;color:var(--faint);padding:0 2px 6px 41px;line-height:1.3;letter-spacing:.02em}
   .coachcue{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ramp);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:2px 0 10px;line-height:1.45}
   .wload{display:flex;align-items:center;gap:9px;margin:0 0 10px;padding:8px 10px;background:var(--paper);border:1px solid var(--line);border-radius:9px}
   .wload-l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);flex:1}
@@ -302,7 +301,7 @@ const CLIENT_MODE = !!CLIENT_TOKEN_FROM_URL;
 // swapped for the token server-side expects; args where the first argument
 // is a logId need the token prepended instead. Keeps every existing call
 // site in this file unchanged — only gs() itself needs to know this.
-const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getHistory','getExerciseBests','getLastSession','getCardioHistory']);
+const CLIENT_REPLACE_FIRST = new Set(['getTemplate','startSession','getOpenSession','getExerciseHistory','getHistory','getExerciseBests','getLastSession','getSetHistory','getCardioHistory']);
 const CLIENT_PREPEND = new Set(['saveProgress','finishSession','getLog']);
 
 class LoginRequired extends Error {}
@@ -358,7 +357,7 @@ const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessi
 const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
-  log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null, bests:{},
+  log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null, bests:{}, hist:{},
   clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, infoCtx:'week', modal:null, loginError:''
 };
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
@@ -440,6 +439,29 @@ function normalizeGroups(s){
    Max sets are handled separately by the max-set builder below. */
 function parseRange(t){ const m=String(t==null?'':t).match(/(\d+)\s*[–-]\s*(\d+)/); return m?{lo:+m[1],hi:+m[2]}:null; }
 function lastSet(exId,si){ const m=(S.last&&S.last.sets)||{}; return m[exId+':'+si]||null; }
+// "Last time" reference per set slot, from S.hist (per-slot most-recent by type
+// + most-recent any). Rule: same-type within 2 weeks -> type fallback (W->max,
+// M->working) any date -> ultimate most-recent any. Ramps only ever pull a ramp.
+function within2wk(set,now){ if(!set||!set.date) return false; const p=String(set.date).split('-'); if(p.length!==3) return false; const setMs=Date.UTC(+p[0],(+p[1])-1,+p[2]); if(isNaN(setMs)) return false; const nowMs=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()); return (nowMs - setMs) <= 14*864e5; }
+function lastTimeRef(h,todayType,now){
+  if(!h) return null;
+  if(todayType==='R') return h.R||null;
+  if(todayType==='W'){ if(h.W && within2wk(h.W,now)) return h.W; if(h.M) return h.M; return h.recent||null; }
+  if(todayType==='M'){ if(h.M && within2wk(h.M,now)) return h.M; if(h.W) return h.W; return h.recent||null; }
+  return h.recent||null;
+}
+function fmtDate(s){ const p=String(s||'').split('-'); if(p.length!==3||isNaN(+p[1])||isNaN(+p[2])) return String(s||''); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][(+p[1])-1]||''; return (+p[2])+' '+m; }
+function lastTimeLine(exId,si,todayType,unit){
+  const ref=lastTimeRef(S.hist&&S.hist[exId+':'+si], todayType, new Date());
+  if(!ref) return '';
+  const loadOk=ref.load!==''&&ref.load!=null; const repsOk=ref.reps!==''&&ref.reps!=null;
+  const v=(repsOk?esc(ref.reps):'–')+(unit==='secs'?'s':'');
+  const main=loadOk?(esc(ref.load)+'kg × '+v):(unit==='secs'?v:(v+' reps'));
+  let out=esc(fmtDate(ref.date))+' · '+(ref.type==='M'?'max · ':'')+main;
+  if(ref.rpe) out+=' @RPE '+esc(ref.rpe);
+  if(ref.type==='M'&&ref.maxNote){ let mm=''; try{ mm=composeMax(JSON.parse(ref.maxNote)); }catch(_){ } if(mm) out+=' · '+esc(mm); }
+  return out;
+}
 // Working load carries forward across sessions: ghost-prefill from the most
 // recent logged workingLoad for this exercise (any set), editable, no enforcement.
 function lastWorkLoad(exId){
@@ -640,14 +662,15 @@ function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTem
 
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
-  S.sessionId=s.sessionId; S.view='session'; S.last=null; S.bests={};
+  S.sessionId=s.sessionId; S.view='session'; S.last=null; S.bests={}; S.hist={};
   if(S.isTemplate){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; render(); window.scrollTo(0,0); return; }
   try{
     const log=await gs('startSession', S.clientId, S.phase, s.sessionId, s.name); S.log=log; hydrate(log);
     try{ S.last=await gs('getLastSession', S.clientId, s.sessionId); }catch(e){ S.last=null; }
+    try{ S.hist=await gs('getSetHistory', S.clientId, s.sessionId); }catch(e){ S.hist={}; }
     try{ S.bests=await gs('getExerciseBests', S.clientId); }catch(e){ S.bests={}; }
   }
-  catch(e){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; S.last=null; S.bests={}; }
+  catch(e){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; S.last=null; S.bests={}; S.hist={}; }
   render(); window.scrollTo(0,0);
 }
 function hydrate(log){
@@ -712,7 +735,7 @@ function delSet(ei,si){ exAt(ei).sets.splice(si,1); scheduleTemplateSave(); rend
 function addSet(ei){ const e=exAt(ei); const last=e.sets[e.sets.length-1]; e.sets.push({type:'W',target:last?last.target:'10–12',unit:last?(last.unit||'reps'):'reps'}); scheduleTemplateSave(); render(); }
 async function addExercise(){
   const name=await modalInput('Exercise name','e.g. Back Squat'); if(!name) return;
-  curSession().exercises.push({exId:uid(),name,youtube:'',cues:'',groupId:'',role:'',sets:[{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'}]});
+  curSession().exercises.push({exId:uid(),name,youtube:'',groupId:'',role:'',sets:[{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'}]});
   scheduleTemplateSave(); render();
 }
 // Group this exercise with the one above it. If the one above is already in a
@@ -930,7 +953,6 @@ function exHTML(session,ei,key){
   if(S.edit){
     rows+=`<input class="tinput ex-name-input" value="${escA(e.name)}" placeholder="Exercise name" oninput="renameEx(${ei},this.value)">`;
     rows+=`<input class="tinput ex-field" value="${escA(e.youtube||'')}" placeholder="YouTube URL (optional)" oninput="editExField(${ei},'youtube',this.value)">`;
-    rows+=`<textarea class="tinput ex-field ex-cues" placeholder="Cues / notes (optional)" oninput="editExField(${ei},'cues',this.value)">${esc(e.cues||'')}</textarea>`;
     rows+=`<input class="tinput ex-field" inputmode="numeric" value="${escA(e.rir||'')}" placeholder="Working-set RIR target (optional)" oninput="editExField(${ei},'rir',this.value)">`;
     rows+=`<input class="tinput ex-field" value="${escA(e.coachCue||'')}" placeholder="Coach cue — shown to client (e.g. power: explosive ~55%)" oninput="editExField(${ei},'coachCue',this.value)">`;
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
@@ -938,7 +960,6 @@ function exHTML(session,ei,key){
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
-    if(e.cues) rows+=`<div class="ex-cues-disp">${esc(e.cues)}</div>`;
     if(e.coachCue) rows+=`<div class="coachcue">${esc(e.coachCue)}</div>`;
     const hasW=e.sets.some((st,si)=>((S.runEntries[e.exId+':'+si]||{}).type||st.type)==='W');
     if(hasW){ const wl=workLoad(e.exId); const phw=lastWorkLoad(e.exId)||'–'; rows+=`<div class="wload2"><span class="wload2-l">Working load:</span><input class="inp wload2-i" inputmode="decimal" placeholder="${escA(phw)}" value="${escA(wl)}" oninput="setWorkLoad('${e.exId}',this.value)"><span class="wload2-u">kg</span></div>`; }
@@ -951,6 +972,7 @@ function exHTML(session,ei,key){
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
       rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"></div>`;
+      const ltl=lastTimeLine(e.exId,si,type,st.unit); if(ltl) rows+=`<div class="lasttime">${ltl}</div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
     });

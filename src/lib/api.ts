@@ -325,6 +325,33 @@ export async function getLastSession(clientId: string, sessionId: string) {
   return { date: String(last.date), sets };
 }
 
+// Per-slot history for the "last time" reference line. For each exId:setOrder,
+// across this client's finished sessions of this sessionId (newest first),
+// record the most-recent set of EACH type (R/W/M) and the most-recent of any
+// type — enough for the rule (recent same-type within a window, max/working
+// fallback, ultimate-any fallback). Carries date + rpe + maxNote.
+export async function getSetHistory(clientId: string, sessionId: string) {
+  const sess = (await readRows_("sessionLogs"))
+    .filter((r) => r.clientId === clientId && r.sessionId === sessionId && r.status === "done")
+    .sort((a, b) => (+new Date(b.date) - +new Date(a.date)) || (+new Date(b.updatedAt) - +new Date(a.updatedAt)));
+  if (!sess.length) return {};
+  const dateOf: Record<string, string> = {};
+  sess.forEach((l) => { dateOf[l.logId] = String(l.date); });
+  const byLog: Record<string, any[]> = {};
+  (await readRows_("setLogs")).forEach((s) => { if (dateOf[s.logId]) (byLog[s.logId] = byLog[s.logId] || []).push(s); });
+  const out: Record<string, any> = {};
+  sess.forEach((l) => {
+    (byLog[l.logId] || []).forEach((s) => {
+      const key = s.exId + ":" + Number(s.setOrder);
+      const o = out[key] || (out[key] = { R: null, W: null, M: null, recent: null });
+      const rec = { date: dateOf[l.logId], type: s.setType, reps: s.reps, load: s.load, rpe: s.rpe || "", maxNote: s.maxNote || "" };
+      if (!o.recent) o.recent = rec;
+      if (s.setType && !o[s.setType]) o[s.setType] = rec;
+    });
+  });
+  return out;
+}
+
 // Global cardio history for a client — every finished session that logged
 // cardio, newest first, each tagged START/END from the snapshot taken at
 // save time (cardioWhen), so moving cardio in the template later won't
@@ -422,6 +449,9 @@ export async function getExerciseHistoryForToken(token: string, exId: string) {
 export async function getLastSessionForToken(token: string, sessionId: string) {
   return getLastSession(await clientIdForToken_(token), sessionId);
 }
+export async function getSetHistoryForToken(token: string, sessionId: string) {
+  return getSetHistory(await clientIdForToken_(token), sessionId);
+}
 export async function getCardioHistoryForToken(token: string) {
   return getCardioHistory(await clientIdForToken_(token));
 }
@@ -460,7 +490,7 @@ export async function getLogForToken(token: string, logId: string) {
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
   getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
-  getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getCardioHistory,
+  getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getSetHistory, getCardioHistory,
 };
 
 export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
@@ -475,5 +505,6 @@ export const clientFns: Record<string, (...args: any[]) => Promise<any>> = {
   getHistory: getHistoryForToken,
   getExerciseBests: getExerciseBestsForToken,
   getLastSession: getLastSessionForToken,
+  getSetHistory: getSetHistoryForToken,
   getCardioHistory: getCardioHistoryForToken,
 };
