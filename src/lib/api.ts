@@ -83,7 +83,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
       rows.push({
         ...sBase, exOrder: 0, groupId: "", role: "",
         exId: "", exName: "", exYoutube: "", exCues: "", rir: "", coachCue: "",
-        setOrder: "", setType: "", target: "",
+        setOrder: "", setType: "", target: "", unit: "",
       });
       return;
     }
@@ -95,11 +95,11 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
       };
       const sets = e.sets || [];
       if (!sets.length) {
-        rows.push({ ...eBase, setOrder: "", setType: "", target: "" });
+        rows.push({ ...eBase, setOrder: "", setType: "", target: "", unit: "" });
         return;
       }
       sets.forEach((set: any, ki: number) => {
-        rows.push({ ...eBase, setOrder: ki, setType: set.type, target: set.target });
+        rows.push({ ...eBase, setOrder: ki, setType: set.type, target: set.target, unit: set.unit || "reps" });
       });
     });
   });
@@ -125,7 +125,7 @@ export async function getTemplate(clientId: string, phase: number) {
       groupId: r.groupId || "", role: r.role || "", _sets: {},
     };
     if (!r.setType) return; // exercise placeholder — exercise exists, no sets
-    s._ex[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target };
+    s._ex[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target, unit: r.unit || "reps" };
   });
   const sessions = Object.values(sessMap)
     .sort((a: any, b: any) => a.order - b.order)
@@ -138,7 +138,7 @@ export async function getTemplate(clientId: string, phase: number) {
           groupId: e.groupId || "", role: e.role || "",
           sets: Object.values(e._sets)
             .sort((a: any, b: any) => a.setOrder - b.setOrder)
-            .map((st: any) => ({ type: st.type, target: st.target })),
+            .map((st: any) => ({ type: st.type, target: st.target, unit: st.unit || "reps" })),
         })),
     }));
   return { clientId, phase: Number(phase), sessions };
@@ -330,7 +330,7 @@ const KEY_TIER: Record<string, string> = {
 // hidden `__seedver__` marker row records the version so it never runs again
 // until the next bump. Real clients (non-tpl_ rows) are never touched, and once
 // seeded the coach owns the templates — no further auto-writes.
-const SEED_VERSION = 7;
+const SEED_VERSION = 9;
 export async function seedIfEmpty_() {
   const all = await readRows_("template");
   const verRow = all.find((r) => r.clientId === "__seedver__");

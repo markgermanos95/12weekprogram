@@ -4,7 +4,7 @@
 <base target="_top">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Coaching</title>
+<title>12 Week Programs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -156,8 +156,8 @@
 
   .srow.head{padding:0 2px 5px}
   .srow.head .col{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
-  .srow{display:grid;grid-template-columns:34px 1fr 56px 62px 30px;gap:7px;align-items:center;padding:5px 2px}
-  .srow.edit{grid-template-columns:34px 1fr 30px}
+  .srow{display:grid;grid-template-columns:30px 1fr 42px 46px 34px 30px;gap:6px;align-items:center;padding:5px 2px}
+  .srow.edit{grid-template-columns:34px 1fr 40px 30px}
   .col-tgt{font-family:var(--mono);font-size:12px;color:var(--faint)}
   .srow.done .col-tgt{opacity:.4}
   .badge{font-family:var(--mono);font-size:11px;font-weight:700;height:30px;border-radius:7px;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff}
@@ -173,6 +173,8 @@
   .srow.done .inp{opacity:.55}
   .ex-add{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--faint);background:transparent;border:0;cursor:pointer;padding:6px 6px 0 2px;display:inline-flex;align-items:center;gap:5px}
   .ex-add:hover{color:var(--ink)}
+  .unitbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.03em;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:6px;height:34px;cursor:pointer;padding:0 2px}
+  .unitbtn:hover{color:var(--ink);border-color:var(--ink)}
   .cue{font-family:var(--mono);font-size:10px;color:var(--faint);padding:1px 2px 7px 41px;line-height:1.4;letter-spacing:.01em}
   .cue.up{color:var(--ramp);font-weight:700}
   .cue.m{color:var(--max);font-weight:700}
@@ -345,9 +347,9 @@ const TEMPLATES = [
   { key:'tpl_advanced', label:'Advanced' },
   { key:'tpl_elite', label:'Elite' }
 ];
-const PHASES=[{n:1,name:'Higher rep',weeks:'Weeks 1–4'},{n:2,name:'Medium rep',weeks:'Weeks 5–8'},{n:3,name:'Power & strength',weeks:'Weeks 9–12'}];
+const PHASES=[{n:1,name:'Capacity',weeks:'Weeks 1–4'},{n:2,name:'Tension',weeks:'Weeks 5–8'},{n:3,name:'Power',weeks:'Weeks 9–12'}];
 function phaseInfo(n){ return PHASES.find(p=>p.n===Number(n))||PHASES[0]; }
-const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessions and the Phase-3 barbell lifts feel controlled',tpl_intermediate:'Intermediate · move up when the barbell lifts progress smoothly and you want more volume',tpl_advanced:'Advanced · move up when you recover well from this and want the denser hybrid work',tpl_elite:'Elite · the ceiling — run it while it keeps progressing, deload when you stall'};
+const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessions and the Block-3 barbell lifts feel controlled',tpl_intermediate:'Intermediate · move up when the barbell lifts progress smoothly and you want more volume',tpl_advanced:'Advanced · move up when you recover well from this and want the denser hybrid work',tpl_elite:'Elite · the ceiling — run it while it keeps progressing, deload when you stall'};
 const S = {
   loading:true, clients:[], clientId:null, client:null, phase:1,
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
@@ -440,10 +442,8 @@ function lastWorkLoad(exId){
 }
 function workLoad(exId){ const e=S.exEntries[exId]; return (e&&e.workLoad!=null)?e.workLoad : ''; }
 function setWorkLoad(exId,val){ (S.exEntries[exId]||(S.exEntries[exId]={})).workLoad=val; scheduleProgressSave(); }
-// Post-exercise RPE: one effort rating /10 per exercise, logged after the work
-// (R2L's "log RPE" half — you can't honestly count reserve mid-set).
-function exRpe(exId){ const e=S.exEntries[exId]; return (e&&e.rpe!=null)?e.rpe : ''; }
-function setExRpe(exId,val){ (S.exEntries[exId]||(S.exEntries[exId]={})).rpe=val; scheduleProgressSave(); }
+// RPE is logged per set now — reps + RPE captured together on each set row
+// (see the run set row + setCell). No per-exercise rating.
 
 /* Max-set builder. Stores a small structured blob per max set; composeMax()
    turns it into the human string shown as next session's cue. */
@@ -523,9 +523,8 @@ function buildLogPayload(){
     const en=S.runEntries[e.exId+':'+si]||{};
     const type=en.type||st.type;
     const wl=workLoad(e.exId);
-    const rpe=exRpe(e.exId);
     const maxNote=(type==='M' && en.max && en.max.method)?JSON.stringify(en.max):'';
-    sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done, workingLoad:wl, maxNote, rpe });
+    sets.push({ exId:e.exId, exName:e.name, setOrder:si, setType:type, target:st.target, reps:en.reps||'', load:en.load||'', done:!!en.done, workingLoad:wl, maxNote, rpe:en.rpe||'' });
   }));
   return { clientId:S.clientId, phase:S.phase, sessionId:s.sessionId, sessionName:s.name, cardioStage:S.cardio.stage, cardioDone:S.cardio.done, cardioCals:S.cardio.cals||'', cardioWhen:(s.cardioPos&&s.cardioPos!=='none')?s.cardioPos:'', sets };
 }
@@ -620,8 +619,8 @@ async function doLogout(){
 async function switchPhase(ph){ if(CLIENT_MODE) return; ph=Number(ph); if(ph===S.phase) return; flushTemplateSave(); S.phase=ph; await loadTemplate(); render(); }
 async function setClientPhase(){
   if(CLIENT_MODE||S.isTemplate) return;
-  try{ await gs('setCurrentPhase', S.clientId, S.phase); if(S.client) S.client.currentPhase=S.phase; const c=S.clients.find(x=>x.clientId===S.clientId); if(c) c.currentPhase=S.phase; setStat('current phase set'); render(); }
-  catch(e){ setStat('couldn’t set phase'); }
+  try{ await gs('setCurrentPhase', S.clientId, S.phase); if(S.client) S.client.currentPhase=S.phase; const c=S.clients.find(x=>x.clientId===S.clientId); if(c) c.currentPhase=S.phase; setStat('current block set'); render(); }
+  catch(e){ setStat('couldn’t set block'); }
 }
 function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTemplateSave(); S.edit=!S.edit; render(); }
 
@@ -640,12 +639,11 @@ async function openSession(i){
 function hydrate(log){
   S.runEntries={}; S.exEntries={};
   (log.sets||[]).forEach(s=>{
-    const en={type:s.setType,reps:s.reps,load:s.load,done:s.done};
+    const en={type:s.setType,reps:s.reps,load:s.load,done:s.done,rpe:s.rpe};
     if(s.maxNote){ try{ en.max=JSON.parse(s.maxNote); }catch(_){ } }
     S.runEntries[s.exId+':'+s.setOrder]=en;
     const ex=S.exEntries[s.exId]||(S.exEntries[s.exId]={});
     if(s.workingLoad && ex.workLoad==null) ex.workLoad=s.workingLoad;
-    if(s.rpe && ex.rpe==null) ex.rpe=s.rpe;
   });
   S.cardio={ stage:Number(log.cardioStage)||1, done:!!log.cardioDone, cals:log.cardioCals||'' };
 }
@@ -692,14 +690,15 @@ async function delSession(i){ if(!(await modalConfirm('Delete this session?','De
 function addSession(){ S.template.sessions.push({sessionId:uid(),name:'New session',priority:1,cardioPos:'none',exercises:[]}); scheduleTemplateSave(); render(); }
 function renameEx(ei,val){ exAt(ei).name=val; scheduleTemplateSave(); }
 function editTarget(ei,si,val){ exAt(ei).sets[si].target=val; scheduleTemplateSave(); }
+function toggleUnit(ei,si){ const st=exAt(ei).sets[si]; st.unit=(st.unit==='secs')?'reps':'secs'; scheduleTemplateSave(); render(); }
 function editExField(ei,field,val){ const e=exAt(ei); e[field]=val; scheduleTemplateSave(); }
 function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); normalizeGroups(s); scheduleTemplateSave(); render(); }
 function moveEx(ei,dir){ const s=curSession(); move(s.exercises,ei,dir); normalizeGroups(s); scheduleTemplateSave(); render(); }
 function delSet(ei,si){ exAt(ei).sets.splice(si,1); scheduleTemplateSave(); render(); }
-function addSet(ei){ const e=exAt(ei); const last=e.sets[e.sets.length-1]; e.sets.push({type:'W',target:last?last.target:'10–12'}); scheduleTemplateSave(); render(); }
+function addSet(ei){ const e=exAt(ei); const last=e.sets[e.sets.length-1]; e.sets.push({type:'W',target:last?last.target:'10–12',unit:last?(last.unit||'reps'):'reps'}); scheduleTemplateSave(); render(); }
 async function addExercise(){
   const name=await modalInput('Exercise name','e.g. Back Squat'); if(!name) return;
-  curSession().exercises.push({exId:uid(),name,youtube:'',cues:'',groupId:'',role:'',sets:[{type:'W',target:'10–12'},{type:'W',target:'10–12'},{type:'W',target:'10–12'}]});
+  curSession().exercises.push({exId:uid(),name,youtube:'',cues:'',groupId:'',role:'',sets:[{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'}]});
   scheduleTemplateSave(); render();
 }
 // Group this exercise with the one above it. If the one above is already in a
@@ -760,11 +759,11 @@ function modalCancel(){ const m=S.modal; S.modal=null; render(); if(m) m.res(m.k
    ============================================================ */
 function hdOpen(){
   const info=`<button class="iconbtn" onclick="openInfo()" title="How it works">${ICON_INFO}</button>`;
-  const phaseSwitch=`<div class="phase-switch">`+PHASES.map(p=>`<button class="${S.phase===p.n?'on':''}" onclick="switchPhase(${p.n})">P${p.n}</button>`).join('')+`</div>`;
+  const phaseSwitch=`<div class="phase-switch">`+PHASES.map(p=>`<button class="${S.phase===p.n?'on':''}" onclick="switchPhase(${p.n})">B${p.n}</button>`).join('')+`</div>`;
   if(CLIENT_MODE){
     return `<div class="hd"><div class="hd-top">
       <div><div class="client" style="cursor:default">${esc(S.client.name)}</div><div class="meta">${esc(S.client.goal||'')}</div></div>
-      <div class="hd-tools"><div class="trow">${info}<span class="phasetag">PHASE ${S.phase}</span></div></div>
+      <div class="hd-tools"><div class="trow">${info}<span class="phasetag">BLOCK ${S.phase}</span></div></div>
     </div><div class="savestat" id="savestat"></div>`;
   }
   if(S.isTemplate){
@@ -783,7 +782,7 @@ function homeHTML(){
   const info=`<button class="iconbtn" onclick="openInfo()" title="How it works">${ICON_INFO}</button>`;
   const logout=`<button class="iconbtn" onclick="doLogout()" title="Log out">${ICON_LOGOUT}</button>`;
   let h=`<div class="hd"><div class="hd-top">
-    <div><div class="client" style="cursor:default">Coaching</div><div class="meta">${S.clients.length} client${S.clients.length===1?'':'s'}</div></div>
+    <div><div class="client" style="cursor:default">12 Week Programs</div><div class="meta">${S.clients.length} client${S.clients.length===1?'':'s'}</div></div>
     <div class="hd-tools"><div class="trow">${info}${logout}</div></div>
   </div><div class="savestat" id="savestat"></div></div><div class="wrap">`;
   h+=`<div class="group-lbl">Templates<span class="ln"></span></div>`;
@@ -797,7 +796,7 @@ function homeHTML(){
   S.clients.forEach((c,i)=>{
     h+=`<div class="scard tap" onclick="openClientHome(${i})"><div class="rail"></div><div class="scard-body">
       <div class="scard-top"><span class="scard-name">${esc(c.name)}</span></div>
-      <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Phase ${c.currentPhase||1}</span></div></div>
+      <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Block ${c.currentPhase||1}</span></div></div>
       <button class="linkbtn" onclick="event.stopPropagation();copyClientLink(${i})" title="Copy their personal link">${ICON_LINK}</button>
       <button class="linkbtn danger" onclick="event.stopPropagation();rotateLink(${i})" title="Regenerate link — kills the old one">${ICON_REPEAT}</button>
       <div class="chev">${ICON_CHEV}</div></div>`;
@@ -810,9 +809,9 @@ function homeHTML(){
 function weekHTML(){
   const p=S.template;
   const _pi=phaseInfo(S.phase); const phLabel=_pi.name; const phWk=_pi.weeks;
-  let h=hdOpen()+`</div><div class="phase-label">Phase ${S.phase} · <b>${phLabel}</b> · ${phWk}</div><div class="wrap">`;
+  let h=hdOpen()+`</div><div class="phase-label">Block ${S.phase} · <b>${phLabel}</b> · ${phWk}</div><div class="wrap">`;
   if(!CLIENT_MODE) h+=`<button class="back" onclick="goHome()">${ICON_BACK} Home</button>`;
-  if(!CLIENT_MODE && !S.isTemplate && Number((S.client&&S.client.currentPhase)||1)!==S.phase) h+=`<div class="setphase"><span>Viewing Phase ${S.phase} · their current is Phase ${Number((S.client&&S.client.currentPhase)||1)}</span><button class="setphase-btn" onclick="setClientPhase()">Set as current</button></div>`;
+  if(!CLIENT_MODE && !S.isTemplate && Number((S.client&&S.client.currentPhase)||1)!==S.phase) h+=`<div class="setphase"><span>Viewing Block ${S.phase} · their current is Block ${Number((S.client&&S.client.currentPhase)||1)}</span><button class="setphase-btn" onclick="setClientPhase()">Set as current</button></div>`;
   if(S.open && !S.edit) h+=`<div class="resume" onclick="resumeOpen()"><div style="flex:1"><div class="resume-t">Resume in-progress session</div><div class="resume-s">${esc(S.open.sessionName)} · pick up where you left off</div></div><div class="chev">${ICON_CHEV}</div></div>`;
   if(!S.edit){
     h+=`<div class="hiw-row"><button class="logbtn" onclick="openInfo('priority')">${ICON_INFO}<span>How it works</span></button>`;
@@ -824,8 +823,12 @@ function weekHTML(){
     p.sessions.forEach((s,i)=> h+=editTile(s,i,p.sessions.length));
     h+=`<div class="addbar"><button class="addbtn" onclick="addSession()">+ add session</button></div>`;
   } else {
-    [[1,'Priority 1 · each session · 1–2× per week'],[2,'Priority 2 · optional'],[3,'Priority 3 · optional'],[4,'Priority 4 · optional']].forEach(g=>{
-      const list=[]; p.sessions.forEach((s,i)=>{ if(s.priority===g[0]) list.push([s,i]); });
+    const flat=p.sessions.length>0 && p.sessions.every(s=>Number(s.priority)===1);
+    const groups = flat
+      ? [[1,'Cycle through · every session counts equally']]
+      : [[1,'Priority 1 · your primary — hit it as often as you can'],[2,'Priority 2 · first backup'],[3,'Priority 3 · for lower-gas days'],[4,'Priority 4 · for lower-gas days']];
+    groups.forEach(g=>{
+      const list=[]; p.sessions.forEach((s,i)=>{ if(Number(s.priority)===g[0]) list.push([s,i]); });
       if(!list.length) return;
       h+=`<div class="group-lbl">${g[1]}<span class="ln"></span></div>`;
       list.forEach(pair=> h+=runTile(pair[0],pair[1]));
@@ -869,7 +872,7 @@ function sessionHTML(){
   let h=hdOpen()+`</div><div class="wrap"><button class="back" onclick="backToWeek()">${ICON_BACK} Week</button>`;
   if(S.edit) h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><input class="tinput" value="${escA(s.name)}" oninput="renameCur(this.value)"></div>`;
   else h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><span class="sess-name">${esc(s.name)}</span></div>`;
-  h+=`<div class="sess-meta">Phase ${S.phase} · ${esc(phaseInfo(S.phase).name.toLowerCase())}</div>
+  h+=`<div class="sess-meta">Block ${S.phase} · ${esc(phaseInfo(S.phase).name.toLowerCase())}</div>
     <div class="legend"><span><span class="lg-b badge R">R</span> Ramp-up</span><span><span class="lg-b badge W">W</span> Working</span><span><span class="lg-b badge M">M</span> Max</span></div>`;
   if(!S.edit) h+=`<button class="logbtn hiw-session" onclick="openInfo('sets')">${ICON_INFO}<span>How it works</span></button>`;
   if(s.cardioPos==='top') h+=cardioHTML(s,'top');
@@ -912,7 +915,7 @@ function exHTML(session,ei,key){
     rows+=`<input class="tinput ex-field" inputmode="numeric" value="${escA(e.rir||'')}" placeholder="Working-set RIR target (optional)" oninput="editExField(${ei},'rir',this.value)">`;
     rows+=`<input class="tinput ex-field" value="${escA(e.coachCue||'')}" placeholder="Coach cue — shown to client (e.g. power: explosive ~55%)" oninput="editExField(${ei},'coachCue',this.value)">`;
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
-    e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${ei},${si},this.value)"><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
+    e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="target" oninput="editTarget(${ei},${si},this.value)"><button class="unitbtn" onclick="toggleUnit(${ei},${si})" title="reps / seconds">${(st.unit==='secs')?'SEC':'REP'}</button><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
@@ -920,20 +923,18 @@ function exHTML(session,ei,key){
     const hasW=e.sets.some((st,si)=>((S.runEntries[e.exId+':'+si]||{}).type||st.type)==='W');
     if(hasW){ const wl=workLoad(e.exId); const phw=lastWorkLoad(e.exId)||'–'; rows+=`<div class="wload"><span class="wload-l">Working load</span><input class="inp wload-i" inputmode="decimal" placeholder="${escA(phw)}" value="${escA(wl)}" oninput="setWorkLoad('${e.exId}',this.value)"></div>`; }
     if(e.coachCue) rows+=`<div class="coachcue">${esc(e.coachCue)}</div>`;
-    rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col"></div></div>`;
+    rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col" style="text-align:center">RPE</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
-      const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done;
+      const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done; const rpe=en.rpe!=null?en.rpe:'';
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
-      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
+      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${esc(st.target)}${st.unit==='secs'?'s':''}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
-      else if(!e.coachCue){ const cue=progCue(e.exId,si,st,type,e.rir); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
+      else if(!e.coachCue && st.unit!=='secs'){ const cue=progCue(e.exId,si,st,type,e.rir); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
-    const hasWM=e.sets.some((st,si)=>{ const t=(S.runEntries[e.exId+':'+si]||{}).type||st.type; return t==='W'||t==='M'; });
-    if(hasWM){ const rp=exRpe(e.exId); rows+=`<div class="rpe-row"><span class="rpe-l">Effort when done</span><input class="inp rpe-i" inputmode="numeric" placeholder="RPE" value="${escA(rp)}" oninput="setExRpe('${e.exId}',this.value)"><span class="rpe-u">/10</span></div>`; }
   }
   const keyTag=key?`<span class="ex-key">${esc(key)}</span>`:'';
   if(S.edit){
@@ -1041,7 +1042,7 @@ function sessionHistoryOverlay(){
   else H.data.forEach(en=>{
     const cardio=en.cardioDone?`<span class="cwhen">CARDIO</span>`:'';
     body+=`<div class="hist-entry tap" onclick="openSessionLog('${esc(en.logId)}')"><div class="hist-d">${esc(en.date)}${cardio}</div>
-      <div class="chrow"><span class="chcal">${esc(en.sessionName)}</span><span class="chstage">Phase ${esc(en.phase)}</span><span class="chev" style="margin-left:auto">${ICON_CHEV}</span></div></div>`;
+      <div class="chrow"><span class="chcal">${esc(en.sessionName)}</span><span class="chstage">Block ${esc(en.phase)}</span><span class="chev" style="margin-left:auto">${ICON_CHEV}</span></div></div>`;
   });
   return `<div class="overlay" onclick="closeSessionHistory()"><div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-h">Training log <button class="x" onclick="closeSessionHistory()">${ICON_X}</button></div>
@@ -1092,23 +1093,30 @@ function modalOverlay(){
 }
 function infoOverlay(){
   const key=(t,name,desc)=>`<div class="info-key"><span class="badge sm ${t}">${t}</span><div class="kx"><b>${name}</b> — ${desc}</div></div>`;
+  const secBlocks=`
+    <div class="info-sec">The three blocks<span class="ln"></span></div>
+    <div class="info-item">Your 12 weeks run through three 4-week blocks, and the emphasis shifts as you go.</div>
+    <div class="info-item"><span class="it-h">Weeks 1–4 · Capacity</span>Higher reps (10–15), more supersets — build your conditioning and work capacity first.</div>
+    <div class="info-item"><span class="it-h">Weeks 5–8 · Tension</span>Mostly 8–12, heavier and controlled — the capacity you built lets you handle the load.</div>
+    <div class="info-item"><span class="it-h">Weeks 9–12 · Power</span>Lower reps (3–8) on the big lifts moved fast, plus short conditioning circuits.</div>`;
   const secPriority=`
-    <div class="info-sec">Priority ranks<span class="ln"></span></div>
-    <div class="info-item">Sessions are ranked by priority, and that ranking is also the <b>drop order</b> — start at the top and work down.</div>
-    <div class="info-item"><span class="it-h">Priority 1 · the spine</span>Hit these every week (1–2× each). Even if P1 is all you manage, you've done the core of the program.</div>
-    <div class="info-item"><span class="it-h">Priority 2–4 · optional</span>Add them when time and energy allow. When you're short, cuts come off the bottom — drop P4 first, then P3, then P2.</div>`;
-  const secWeekly=`
-    <div class="info-sec">Weekly effort<span class="ln"></span></div>
-    <div class="info-item"><span class="it-h">Going hard</span>Hit each Priority 1 session 3× this week. Add Priority 2–4 on top if you've got the gas.</div>
-    <div class="info-item"><span class="it-h">Solid work</span>Hit each Priority 1 twice, plus a Priority 2/3/4 session or two when time allows.</div>
-    <div class="info-item"><span class="it-h">Minimum effective</span>Hit each Priority 1 once. That's the floor that keeps you progressing — anything above is a bonus.</div>`;
+    <div class="info-sec">Priority<span class="ln"></span></div>
+    <div class="info-item">If your sessions are <b>ranked</b> (P1, P2…): Priority 1 is your primary — hit it as often as you can. Priority 2 is your first backup, then 3 and 4 — for the days you're too run-down to repeat a 1 or 2 but still want a session. Scale down as you go.</div>
+    <div class="info-item">If every session is a <b>Priority 1</b> (all equal): there's no ranking — just cycle through them. Training more that week? Cycle through again.</div>`;
   const secSets=`
     <div class="info-sec">Set types<span class="ln"></span></div>
-    ${key('R','Ramp-up','light, building toward your working weight. Stay well short of failure (~5+ reps in reserve). Primes the movement, not a hard set.')}
-    ${key('W','Working','your main effort. Hard but controlled — leave about 1–3 reps in reserve.')}
-    ${key('M','Max effort','the set that drives the adaptation. Take it to or within a rep of failure (~0–1 in reserve).')}
-    <div class="info-item" style="margin-top:4px">Tap a set's badge to cycle R → W → M.</div>`;
-  const body = S.infoCtx==='sets' ? (secSets+secPriority+secWeekly) : (secPriority+secWeekly+secSets);
+    ${key('R','Ramp-up','light sets building up to your working weight — add as many as you need.')}
+    ${key('W','Working','your main sets, run on double progression (below). Do them as prescribed.')}
+    ${key('M','Max','your overload set, your call — push it however you want to top out that day. The app offers options to guide you.')}
+    <div class="info-item" style="margin-top:4px">Tap a set's badge to cycle R → W → M. A set's target can be reps or seconds.</div>`;
+  const secProg=`
+    <div class="info-sec">Progression<span class="ln"></span></div>
+    <div class="info-item">Each working set gives you a rep range and your working weight — the weight carries over, and you update it when you're ready to progress. Each session, push your output at that weight a bit higher; as your reps reach the top of the range, step the weight up.</div>`;
+  const secEffort=`
+    <div class="info-sec">RIR &amp; RPE<span class="ln"></span></div>
+    <div class="info-item"><span class="it-h">RIR · Reps In Reserve</span>Some working sets carry an RIR target — how many reps to leave in the tank. That's the effort we're asking for.</div>
+    <div class="info-item"><span class="it-h">RPE · Rate of Perceived Exertion</span>After every set you log your reps and an RPE — how hard that set actually felt, out of 10.</div>`;
+  const body = S.infoCtx==='sets' ? (secSets+secProg+secEffort+secBlocks+secPriority) : (secBlocks+secPriority+secSets+secProg+secEffort);
   return `<div class="overlay" onclick="closeInfo()"><div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-h">How it works <button class="x" onclick="closeInfo()">${ICON_X}</button></div>
     ${body}
