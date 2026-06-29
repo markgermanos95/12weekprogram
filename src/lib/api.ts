@@ -63,6 +63,18 @@ export async function rotateClientToken(clientId: string) {
   return token;
 }
 
+// Coach-only: remove a client and everything tied to them — their template,
+// their session logs, and the set logs under those sessions. Irreversible.
+export async function deleteClient(clientId: string) {
+  await writeRows_("clients", (await readRows_("clients")).filter((c) => c.clientId !== clientId));
+  await writeRows_("template", (await readRows_("template")).filter((r) => r.clientId !== clientId));
+  const logs = await readRows_("sessionLogs");
+  const mine = new Set(logs.filter((r) => r.clientId === clientId).map((r) => r.logId));
+  await writeRows_("sessionLogs", logs.filter((r) => r.clientId !== clientId));
+  if (mine.size) await writeRows_("setLogs", (await readRows_("setLogs")).filter((r) => !mine.has(r.logId)));
+  return true;
+}
+
 /* ---------- template flatten / unflatten ---------- */
 
 // The template tab is stored one-row-per-set. A session with no exercises, or
@@ -325,24 +337,23 @@ const KEY_TIER: Record<string, string> = {
   tpl_advanced: "advanced", tpl_elite: "elite",
 };
 
-// Version-gated reseed. Bumping SEED_VERSION triggers a ONE-TIME rebuild of the
-// tpl_* templates: every tpl_ row is wiped and re-seeded from buildSeed, and a
-// hidden `__seedver__` marker row records the version so it never runs again
-// until the next bump. Real clients (non-tpl_ rows) are never touched, and once
-// seeded the coach owns the templates — no further auto-writes.
-const SEED_VERSION = 10;
+// Factory seed — runs ONCE per template, ever. It only creates a tpl_* that has
+// no rows yet; a template that already exists is never touched, so a coach's
+// edits (renamed sessions, swapped exercises) survive every deploy. seed.ts is
+// the starting point, not a live source the coach competes with. To pull the
+// latest factory program into a template, delete its rows so it counts as
+// missing and re-seeds on the next load.
 export async function seedIfEmpty_() {
   const all = await readRows_("template");
-  const verRow = all.find((r) => r.clientId === "__seedver__");
-  const ver = verRow ? Number(verRow.phase) : 0;
-  if (ver >= SEED_VERSION) return;
-  const keep = all.filter((r) => String(r.clientId).indexOf("tpl_") !== 0 && r.clientId !== "__seedver__");
+  const have = new Set(all.map((r) => String(r.clientId)));
+  const missing = TEMPLATE_KEYS.filter((k) => !have.has(k));
+  if (!missing.length) return;
   let seeds: Record<string, any>[] = [];
-  for (const k of TEMPLATE_KEYS) {
+  for (const k of missing) {
     const seed = buildSeed(KEY_TIER[k]);
     ([1, 2, 3] as const).forEach((p) => { seeds = seeds.concat(flattenTemplate_(k, p, (seed as any)[p])); });
   }
-  await writeRows_("template", keep.concat(seeds, [{ clientId: "__seedver__", phase: SEED_VERSION }]));
+  await appendRows_("template", seeds);
 }
 
 export async function addClientFromTemplate(name: string, goal: string, templateKey: string) {
@@ -436,7 +447,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, setCurrentPhase, rotateClientToken, getTemplate, saveTemplate,
+  getClients, addClient, deleteClient, setCurrentPhase, rotateClientToken, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getCardioHistory,
 };

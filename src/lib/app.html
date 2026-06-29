@@ -371,6 +371,7 @@ const ICON_INFO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const ICON_LOGOUT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
 const ICON_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l1.5-1.5a5 5 0 0 0-7.07-7.07L10 5.88"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.5 1.5a5 5 0 0 0 7.07 7.07L14 18.12"/></svg>';
 const ICON_REPEAT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
+const ICON_TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
 
 /* ============================================================
    RESOLVERS + SAVE
@@ -603,6 +604,12 @@ async function rotateLink(i){
     } else setStat('rotate failed');
   }catch(e){ setStat('rotate failed'); }
 }
+async function delClient(i){
+  const c=S.clients[i]; if(!c) return;
+  if(!(await modalConfirm('Delete '+c.name+'? Removes their program and all logged history — can\'t be undone.','Delete'))) return;
+  try{ await gs('deleteClient', c.clientId); S.clients=await gs('getClients'); setStat('client deleted'); render(); }
+  catch(e){ setStat('delete failed'); }
+}
 async function doLogout(){
   try{ await fetch('/api/logout', { method:'POST' }); }catch(e){}
   location.reload();
@@ -794,6 +801,7 @@ function homeHTML(){
       <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Block ${c.currentPhase||1}</span></div></div>
       <button class="linkbtn" onclick="event.stopPropagation();copyClientLink(${i})" title="Copy their personal link">${ICON_LINK}</button>
       <button class="linkbtn danger" onclick="event.stopPropagation();rotateLink(${i})" title="Regenerate link — kills the old one">${ICON_REPEAT}</button>
+      <button class="linkbtn danger" onclick="event.stopPropagation();delClient(${i})" title="Delete client">${ICON_TRASH}</button>
       <div class="chev">${ICON_CHEV}</div></div>`;
   });
   h+=`<div class="addbar"><button class="addbtn" onclick="newClient()">+ new client</button></div>`;
