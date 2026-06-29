@@ -839,7 +839,7 @@ function runTile(s,i){
     <div class="rail p${s.priority}"></div>
     <div class="scard-body">
       <div class="scard-top"><span class="ptag p${s.priority}">P${s.priority}</span><span class="scard-name">${esc(s.name)}</span></div>
-      <div class="scard-sub"><span>${countEx(s)} exercises</span><span class="dot">·</span><span>${countSets(s)} sets</span>${cardio?`<span class="dot">·</span><span>cardio ${esc(s.cardioPos)}</span>`:''}</div>
+      <div class="scard-sub"><span>${countEx(s)} exercises</span><span class="dot">·</span><span>${countSets(s)} sets</span>${cardio?`<span class="dot">·</span><span>cardio ${s.cardioPos==='top'?'first':'last'}</span>`:''}</div>
     </div><div class="chev">${ICON_CHEV}</div></div>`;
 }
 function editTile(s,i,n){
@@ -854,7 +854,7 @@ function editTile(s,i,n){
       <button class="abtn" onclick="openSession(${i})" title="Edit exercises">${ICON_CHEV}</button>
       <button class="del" onclick="delSession(${i})">${ICON_X}</button></div></div>`;
 }
-function countSets(s){ let n=0; s.exercises.forEach(e=>n+=e.sets.length); return n; }
+function countSets(s){ let n=0; s.exercises.forEach(e=>e.sets.forEach(st=>{ if(st.type!=='R') n++; })); return n; }
 function countEx(s){ return s.exercises.length; }
 
 function roleChips(ei,csv){

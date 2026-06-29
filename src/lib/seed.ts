@@ -53,7 +53,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -82,7 +82,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -111,7 +111,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -140,7 +140,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -169,7 +169,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -198,7 +198,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -239,7 +239,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -268,7 +268,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -297,7 +297,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -326,7 +326,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -355,7 +355,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -384,7 +384,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -420,7 +420,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -449,7 +449,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -478,7 +478,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -507,7 +507,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -531,7 +531,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -555,7 +555,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -584,7 +584,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -620,7 +620,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -649,7 +649,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -678,7 +678,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -702,7 +702,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -726,7 +726,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -750,7 +750,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -793,7 +793,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -827,7 +827,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -856,7 +856,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -880,7 +880,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -904,7 +904,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -945,7 +945,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -974,7 +974,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1003,7 +1003,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1027,7 +1027,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1051,7 +1051,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -1087,7 +1087,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1121,7 +1121,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1150,7 +1150,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1174,7 +1174,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -1198,7 +1198,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -1234,7 +1234,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1263,7 +1263,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1292,7 +1292,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -1316,7 +1316,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-12",
                 "unit": "reps"
               }
@@ -1340,7 +1340,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -1388,7 +1388,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -1427,7 +1427,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -1456,7 +1456,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -1485,7 +1485,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -1574,7 +1574,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -1613,7 +1613,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -1642,7 +1642,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -1671,7 +1671,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -1695,7 +1695,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -1760,7 +1760,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -1789,7 +1789,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -1813,7 +1813,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -1837,7 +1837,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-12",
                 "unit": "reps"
               }
@@ -1861,7 +1861,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -1902,7 +1902,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -1931,7 +1931,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -1955,7 +1955,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -1979,7 +1979,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -2003,7 +2003,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2048,7 +2048,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2077,7 +2077,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2106,7 +2106,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2135,7 +2135,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2164,7 +2164,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2193,7 +2193,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2217,7 +2217,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2258,7 +2258,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2287,7 +2287,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2316,7 +2316,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2345,7 +2345,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2374,7 +2374,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2403,7 +2403,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2439,7 +2439,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2468,7 +2468,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2497,7 +2497,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2526,7 +2526,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2550,7 +2550,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2574,7 +2574,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2603,7 +2603,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2639,7 +2639,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -2668,7 +2668,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2697,7 +2697,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2721,7 +2721,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2745,7 +2745,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2769,7 +2769,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2812,7 +2812,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -2846,7 +2846,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -2875,7 +2875,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -2899,7 +2899,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -2923,7 +2923,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -2964,7 +2964,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -2993,7 +2993,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3022,7 +3022,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3046,7 +3046,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3070,7 +3070,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -3106,7 +3106,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3140,7 +3140,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3169,7 +3169,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3193,7 +3193,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -3217,7 +3217,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -3253,7 +3253,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3282,7 +3282,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3311,7 +3311,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3335,7 +3335,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -3359,7 +3359,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -3407,7 +3407,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -3446,7 +3446,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -3475,7 +3475,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -3504,7 +3504,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -3593,7 +3593,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -3632,7 +3632,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-6",
                 "unit": "reps"
               }
@@ -3661,7 +3661,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -3690,7 +3690,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "5-8",
                 "unit": "reps"
               }
@@ -3714,7 +3714,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -3779,7 +3779,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -3808,7 +3808,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -3832,7 +3832,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -3856,7 +3856,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-12",
                 "unit": "reps"
               }
@@ -3880,7 +3880,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -3921,7 +3921,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -3950,7 +3950,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "6-8",
                 "unit": "reps"
               }
@@ -3974,7 +3974,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -3998,7 +3998,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-10",
                 "unit": "reps"
               }
@@ -4022,7 +4022,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "12-15",
                 "unit": "reps"
               }
@@ -4072,7 +4072,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4106,7 +4106,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4135,7 +4135,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4164,7 +4164,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4193,7 +4193,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4222,7 +4222,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4268,7 +4268,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4302,7 +4302,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4331,7 +4331,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4360,7 +4360,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4389,7 +4389,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4435,7 +4435,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4464,7 +4464,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4493,7 +4493,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4522,7 +4522,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4551,7 +4551,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4580,7 +4580,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4609,7 +4609,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4655,7 +4655,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4689,7 +4689,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4718,7 +4718,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4747,7 +4747,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4776,7 +4776,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4805,7 +4805,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4834,7 +4834,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -4882,7 +4882,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -4916,7 +4916,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -4945,7 +4945,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -4974,7 +4974,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5003,7 +5003,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5032,7 +5032,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5078,7 +5078,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5112,7 +5112,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5141,7 +5141,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5170,7 +5170,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5199,7 +5199,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5245,7 +5245,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5274,7 +5274,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5303,7 +5303,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5332,7 +5332,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5361,7 +5361,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5390,7 +5390,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5419,7 +5419,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5465,7 +5465,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5499,7 +5499,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5528,7 +5528,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -5557,7 +5557,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5586,7 +5586,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5615,7 +5615,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5644,7 +5644,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5692,7 +5692,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -5731,7 +5731,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -5765,7 +5765,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -5799,7 +5799,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -5828,7 +5828,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -5922,7 +5922,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5956,7 +5956,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -5990,7 +5990,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6019,7 +6019,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6048,7 +6048,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6077,7 +6077,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6106,7 +6106,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6135,7 +6135,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6164,7 +6164,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6210,7 +6210,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -6244,7 +6244,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -6278,7 +6278,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -6307,7 +6307,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -6336,7 +6336,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -6365,7 +6365,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6394,7 +6394,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6423,7 +6423,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6452,7 +6452,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6502,7 +6502,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6536,7 +6536,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6565,7 +6565,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6594,7 +6594,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6623,7 +6623,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6652,7 +6652,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6698,7 +6698,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6732,7 +6732,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6761,7 +6761,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6790,7 +6790,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6819,7 +6819,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6865,7 +6865,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6894,7 +6894,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6923,7 +6923,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6952,7 +6952,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -6981,7 +6981,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7010,7 +7010,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7039,7 +7039,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7085,7 +7085,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7119,7 +7119,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7148,7 +7148,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7177,7 +7177,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7206,7 +7206,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7235,7 +7235,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7264,7 +7264,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7312,7 +7312,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7346,7 +7346,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7375,7 +7375,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7404,7 +7404,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7433,7 +7433,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7462,7 +7462,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7508,7 +7508,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7542,7 +7542,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7571,7 +7571,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7600,7 +7600,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7629,7 +7629,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7675,7 +7675,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7704,7 +7704,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7733,7 +7733,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7762,7 +7762,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7791,7 +7791,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7820,7 +7820,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7849,7 +7849,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -7895,7 +7895,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7929,7 +7929,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7958,7 +7958,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -7987,7 +7987,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8016,7 +8016,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8045,7 +8045,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8074,7 +8074,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8122,7 +8122,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -8161,7 +8161,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -8195,7 +8195,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -8229,7 +8229,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -8258,7 +8258,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "3-8",
                 "unit": "reps"
               }
@@ -8352,7 +8352,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8386,7 +8386,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8420,7 +8420,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8449,7 +8449,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8478,7 +8478,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8507,7 +8507,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8536,7 +8536,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8565,7 +8565,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8594,7 +8594,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8640,7 +8640,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -8674,7 +8674,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -8708,7 +8708,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -8737,7 +8737,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -8766,7 +8766,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "8-12",
                 "unit": "reps"
               }
@@ -8795,7 +8795,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8824,7 +8824,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8853,7 +8853,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }
@@ -8882,7 +8882,7 @@ const PROGRAMS: Record<string, Record<string, RawSession[]>> = {
                 "unit": "reps"
               },
               {
-                "type": "M",
+                "type": "W",
                 "target": "10-15",
                 "unit": "reps"
               }

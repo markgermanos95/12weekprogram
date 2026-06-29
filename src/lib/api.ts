@@ -330,7 +330,7 @@ const KEY_TIER: Record<string, string> = {
 // hidden `__seedver__` marker row records the version so it never runs again
 // until the next bump. Real clients (non-tpl_ rows) are never touched, and once
 // seeded the coach owns the templates — no further auto-writes.
-const SEED_VERSION = 9;
+const SEED_VERSION = 10;
 export async function seedIfEmpty_() {
   const all = await readRows_("template");
   const verRow = all.find((r) => r.clientId === "__seedver__");
