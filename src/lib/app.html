@@ -364,6 +364,7 @@ const S = {
 function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+function isMin(){ return !!(S.client && S.client.minimal); }
 
 const ICON_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
 const ICON_BACK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
@@ -629,6 +630,12 @@ async function setClientPhase(){
   try{ await gs('setCurrentPhase', S.clientId, S.phase); if(S.client) S.client.currentPhase=S.phase; const c=S.clients.find(x=>x.clientId===S.clientId); if(c) c.currentPhase=S.phase; setStat('current block set'); render(); }
   catch(e){ setStat('couldn’t set block'); }
 }
+async function toggleMinimal(){
+  if(CLIENT_MODE||S.isTemplate||!S.client) return;
+  const on=!isMin();
+  try{ await gs('setClientMinimal', S.clientId, on); S.client.minimal=on; const c=S.clients.find(x=>x.clientId===S.clientId); if(c) c.minimal=on; setStat('minimal '+(on?'on':'off')); render(); }
+  catch(e){ setStat('toggle failed'); }
+}
 function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTemplateSave(); S.edit=!S.edit; render(); }
 
 async function openSession(i){
@@ -770,7 +777,7 @@ function hdOpen(){
   if(CLIENT_MODE){
     return `<div class="hd"><div class="hd-top">
       <div><div class="client" style="cursor:default">${esc(S.client.name)}</div><div class="meta">${esc(S.client.goal||'')}</div></div>
-      <div class="hd-tools"><div class="trow">${info}<span class="phasetag">BLOCK ${S.phase}</span></div></div>
+      <div class="hd-tools"><div class="trow">${info}${isMin()?'':`<span class="phasetag">BLOCK ${S.phase}</span>`}</div></div>
     </div><div class="savestat" id="savestat"></div>`;
   }
   if(S.isTemplate){
@@ -817,19 +824,23 @@ function homeHTML(){
 function weekHTML(){
   const p=S.template;
   const _pi=phaseInfo(S.phase); const phLabel=_pi.name; const phWk=_pi.weeks;
-  let h=hdOpen()+`</div><div class="phase-label">Block ${S.phase} · <b>${phLabel}</b> · ${phWk}</div><div class="wrap">`;
+  let h=hdOpen()+`</div>${isMin()?'':`<div class="phase-label">Block ${S.phase} · <b>${phLabel}</b> · ${phWk}</div>`}<div class="wrap">`;
   if(!CLIENT_MODE) h+=`<button class="back" onclick="goHome()">${ICON_BACK} Home</button>`;
   if(!CLIENT_MODE && !S.isTemplate && Number((S.client&&S.client.currentPhase)||1)!==S.phase) h+=`<div class="setphase"><span>Viewing Block ${S.phase} · their current is Block ${Number((S.client&&S.client.currentPhase)||1)}</span><button class="setphase-btn" onclick="setClientPhase()">Set as current</button></div>`;
   if(S.open && !S.edit) h+=`<div class="resume" onclick="resumeOpen()"><div style="flex:1"><div class="resume-t">Resume in-progress session</div><div class="resume-s">${esc(S.open.sessionName)} · pick up where you left off</div></div><div class="chev">${ICON_CHEV}</div></div>`;
   if(!S.edit){
     h+=`<div class="hiw-row"><button class="logbtn" onclick="openInfo('priority')">${ICON_INFO}<span>How it works</span></button>`;
     if(!S.isTemplate) h+=`<button class="logbtn" onclick="openSessionHistory()">${ICON_HIST}<span>Training log</span></button>`;
+    if(!CLIENT_MODE && !S.isTemplate) h+=`<button class="logbtn" onclick="toggleMinimal()"><span>Minimal: ${isMin()?'on':'off'}</span></button>`;
     h+=`</div>`;
   }
   if(S.edit){
     h+=`<div class="group-lbl">Reorder · rename · re-tag<span class="ln"></span></div>`;
     p.sessions.forEach((s,i)=> h+=editTile(s,i,p.sessions.length));
     h+=`<div class="addbar"><button class="addbtn" onclick="addSession()">+ add session</button></div>`;
+  } else if(isMin()){
+    p.sessions.forEach((s,i)=> h+=runTile(s,i));
+    if(!p.sessions.length) h+=`<div class="hist-empty">No sessions yet.</div>`;
   } else {
     const flat=p.sessions.length>0 && p.sessions.every(s=>Number(s.priority)===1);
     const groups = flat
@@ -851,7 +862,7 @@ function runTile(s,i){
   return `<div class="scard tap" onclick="openSession(${i})">
     <div class="rail p${s.priority}"></div>
     <div class="scard-body">
-      <div class="scard-top"><span class="ptag p${s.priority}">P${s.priority}</span><span class="scard-name">${esc(s.name)}</span></div>
+      <div class="scard-top">${isMin()?'':`<span class="ptag p${s.priority}">P${s.priority}</span>`}<span class="scard-name">${esc(s.name)}</span></div>
       <div class="scard-sub"><span>${countEx(s)} exercises</span><span class="dot">·</span><span>${countSets(s)} sets</span>${cardio?`<span class="dot">·</span><span>cardio ${s.cardioPos==='top'?'first':'last'}</span>`:''}</div>
     </div><div class="chev">${ICON_CHEV}</div></div>`;
 }
@@ -880,7 +891,7 @@ function sessionHTML(){
   let h=hdOpen()+`</div><div class="wrap"><button class="back" onclick="backToWeek()">${ICON_BACK} Week</button>`;
   if(S.edit) h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><input class="tinput" value="${escA(s.name)}" oninput="renameCur(this.value)"></div>`;
   else h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><span class="sess-name">${esc(s.name)}</span></div>`;
-  h+=`<div class="sess-meta">Block ${S.phase} · ${esc(phaseInfo(S.phase).name.toLowerCase())}</div>
+  h+=`${isMin()?'':`<div class="sess-meta">Block ${S.phase} · ${esc(phaseInfo(S.phase).name.toLowerCase())}</div>`}
     <div class="legend"><span><span class="lg-b badge R">R</span> Ramp-up</span><span><span class="lg-b badge W">W</span> Working</span><span><span class="lg-b badge M">M</span> Max</span></div>`;
   if(!S.edit) h+=`<button class="logbtn hiw-session" onclick="openInfo('sets')">${ICON_INFO}<span>How it works</span></button>`;
   if(s.cardioPos==='top') h+=cardioHTML(s,'top');
@@ -931,17 +942,15 @@ function exHTML(session,ei,key){
     if(e.coachCue) rows+=`<div class="coachcue">${esc(e.coachCue)}</div>`;
     const hasW=e.sets.some((st,si)=>((S.runEntries[e.exId+':'+si]||{}).type||st.type)==='W');
     if(hasW){ const wl=workLoad(e.exId); const phw=lastWorkLoad(e.exId)||'–'; rows+=`<div class="wload2"><span class="wload2-l">Working load:</span><input class="inp wload2-i" inputmode="decimal" placeholder="${escA(phw)}" value="${escA(wl)}" oninput="setWorkLoad('${e.exId}',this.value)"><span class="wload2-u">kg</span></div>`; }
-    const anyReps=e.sets.some(st=>st.unit!=='secs');
-    if(anyReps) rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">Reps</div><div class="col" style="text-align:center">Load</div><div class="col" style="text-align:center">RPE</div></div>`;
+    const firstCol=(e.sets.length && e.sets.every(st=>st.unit==='secs')) ? 'Secs' : 'Reps';
+    rows+=`<div class="srow head"><div class="col"></div><div class="col">Target</div><div class="col" style="text-align:center">${firstCol}</div><div class="col" style="text-align:center">Load</div><div class="col" style="text-align:center">RPE</div></div>`;
     e.sets.forEach((st,si)=>{
       const en=S.runEntries[e.exId+':'+si]||{}; const type=en.type||st.type;
       const reps=en.reps!=null?en.reps:''; const load=en.load!=null?en.load:''; const done=!!en.done; const rpe=en.rpe!=null?en.rpe:'';
-      const isSecs=st.unit==='secs';
-      const tgt=isSecs?(esc(st.target)+'s'):(esc(st.target)+' reps'+((type==='W'&&e.rir)?(', '+esc(e.rir)+' RIR'):''));
+      const tgt=st.unit==='secs'?(esc(st.target)+'s'):(esc(st.target)+' reps'+((type==='W'&&e.rir)?(', '+esc(e.rir)+' RIR'):''));
       const prev=lastSet(e.exId,si);
       const phR=(prev&&prev.reps)?escA(prev.reps):'–'; const phL=(prev&&prev.load)?escA(prev.load):'–';
-      if(isSecs) rows+=`<div class="srow secs ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
-      else rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"></div>`;
+      rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"></div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
     });
@@ -1127,7 +1136,7 @@ function infoOverlay(){
     <div class="info-sec">RIR &amp; RPE<span class="ln"></span></div>
     <div class="info-item"><span class="it-h">RIR · Reps In Reserve</span>Some working sets carry an RIR target — how many reps to leave in the tank. That's the effort we're asking for.</div>
     <div class="info-item"><span class="it-h">RPE · Rate of Perceived Exertion</span>After every set you log your reps and an RPE — how hard that set actually felt, out of 10.</div>`;
-  const body = S.infoCtx==='sets' ? (secSets+secProg+secEffort+secBlocks+secPriority) : (secBlocks+secPriority+secSets+secProg+secEffort);
+  const body = isMin() ? (secSets+secProg+secEffort) : (S.infoCtx==='sets' ? (secSets+secProg+secEffort+secBlocks+secPriority) : (secBlocks+secPriority+secSets+secProg+secEffort));
   return `<div class="overlay" onclick="closeInfo()"><div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-h">How it works <button class="x" onclick="closeInfo()">${ICON_X}</button></div>
     ${body}

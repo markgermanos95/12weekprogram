@@ -7,7 +7,7 @@ import { google } from "googleapis";
 import { randomBytes } from "crypto";
 
 export const TABS: Record<string, string[]> = {
-  clients: ["clientId", "name", "goal", "currentPhase", "createdAt", "accessToken"],
+  clients: ["clientId", "name", "goal", "currentPhase", "createdAt", "accessToken", "minimal"],
   template: [
     "clientId", "phase", "sessionId", "sessionOrder", "sessionName", "priority", "cardioPos",
     "exOrder", "groupId", "role", "exId", "exName", "setOrder", "setType", "target",

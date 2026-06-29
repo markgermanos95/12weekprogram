@@ -33,6 +33,7 @@ export async function getClients() {
     goal: c.goal,
     currentPhase: Number(c.currentPhase) || 1,
     accessToken: c.accessToken,
+    minimal: truthy(c.minimal),
   }));
 }
 
@@ -40,7 +41,7 @@ export async function addClient(name: string, goal: string) {
   const clientId = uid_();
   await appendRows_("clients", [
     { clientId, name: name || "New client", goal: goal || "", currentPhase: 1,
-      createdAt: nowISO(), accessToken: accessToken_() },
+      createdAt: nowISO(), accessToken: accessToken_(), minimal: "" },
   ]);
   return clientId;
 }
@@ -48,6 +49,16 @@ export async function addClient(name: string, goal: string) {
 export async function setCurrentPhase(clientId: string, phase: number) {
   const all = await readRows_("clients");
   all.forEach((c) => { if (c.clientId === clientId) c.currentPhase = phase; });
+  await writeRows_("clients", all);
+  return true;
+}
+
+// Coach-only: flip a client into minimal mode — their client view strips the
+// 12WP framing (blocks, priority, the periodisation explainers), leaving just
+// the sessions and the lifting.
+export async function setClientMinimal(clientId: string, on: boolean) {
+  const all = await readRows_("clients");
+  all.forEach((c) => { if (c.clientId === clientId) c.minimal = on ? "true" : ""; });
   await writeRows_("clients", all);
   return true;
 }
@@ -360,7 +371,7 @@ export async function addClientFromTemplate(name: string, goal: string, template
   const clientId = uid_();
   await appendRows_("clients", [
     { clientId, name: name || "New client", goal: goal || "", currentPhase: 1,
-      createdAt: nowISO(), accessToken: accessToken_() },
+      createdAt: nowISO(), accessToken: accessToken_(), minimal: "" },
   ]);
   const exMap: Record<string, string> = {};
   const copied = (await readRows_("template")).filter((r) => r.clientId === templateKey).map((r) => {
@@ -393,7 +404,7 @@ export async function resolveClientToken(token: string) {
   const rows = await readRows_("clients");
   const c = rows.find((r) => r.accessToken === token);
   if (!c) return null;
-  return { clientId: c.clientId, name: c.name, goal: c.goal, currentPhase: Number(c.currentPhase) || 1 };
+  return { clientId: c.clientId, name: c.name, goal: c.goal, currentPhase: Number(c.currentPhase) || 1, minimal: truthy(c.minimal) };
 }
 
 export async function getTemplateForToken(token: string, phase: number) {
@@ -447,7 +458,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, deleteClient, setCurrentPhase, rotateClientToken, getTemplate, saveTemplate,
+  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getCardioHistory,
 };
