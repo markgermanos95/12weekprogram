@@ -936,7 +936,6 @@ function exHTML(session,ei,key){
       rows+=`<div class="srow ${done?'done':''}"><button class="badge ${type}" onclick="cycleBadge(${ei},${si})">${type}</button><div class="col-tgt">${tgt}</div><input class="inp" inputmode="numeric" placeholder="${phR}" value="${escA(reps)}" oninput="setCell(${ei},${si},'reps',this.value)"><input class="inp" inputmode="decimal" placeholder="${phL}" value="${escA(load)}" oninput="setCell(${ei},${si},'load',this.value)"><input class="inp" inputmode="numeric" placeholder="–" value="${escA(rpe)}" oninput="setCell(${ei},${si},'rpe',this.value)"><button class="chk" onclick="toggleDone(${ei},${si})">${ICON_CHK}</button></div>`;
       if(isPR(e.exId,type,reps,load)) rows+=`<div class="prline"><span class="prbadge">PR</span><span class="prtext">new best</span></div>`;
       if(type==='M') rows+=maxBuild(ei,si,e);
-      else if(!e.coachCue && st.unit!=='secs'){ const cue=progCue(e.exId,si,st,type); if(cue) rows+=`<div class="cue ${cue.c}">${esc(cue.t)}</div>`; }
     });
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
   }
