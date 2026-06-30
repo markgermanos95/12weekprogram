@@ -190,6 +190,15 @@ export async function setTemplateWip(clientId: string, on: boolean) {
   return true;
 }
 
+// Coach-only: which programs (templates and clients) are flagged WIP — one
+// template-tab scan, returns the distinct clientIds with tplWip set. Lets the
+// home screen show WIP at a glance without loading every template.
+export async function getTemplateWips() {
+  const out = new Set<string>();
+  (await readRows_("template")).forEach((r) => { if (truthy(r.tplWip)) out.add(String(r.clientId)); });
+  return Array.from(out);
+}
+
 /* ---------- in-progress session: start / autosave / resume / finish ---------- */
 
 export async function startSession(clientId: string, phase: number, sessionId: string, sessionName: string) {
@@ -504,7 +513,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip,
+  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip, getTemplateWips,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getSetHistory, getCardioHistory,
 };

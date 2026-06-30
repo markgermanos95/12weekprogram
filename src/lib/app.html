@@ -363,7 +363,7 @@ const PHASES=[{n:1,name:'Capacity',weeks:'Weeks 1–4'},{n:2,name:'Tension',week
 function phaseInfo(n){ return PHASES.find(p=>p.n===Number(n))||PHASES[0]; }
 const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessions and the Block-3 barbell lifts feel controlled',tpl_intermediate:'Intermediate · move up when the barbell lifts progress smoothly and you want more volume',tpl_advanced:'Advanced · move up when you recover well from this and want the denser hybrid work',tpl_elite:'Elite · the ceiling — run it while it keeps progressing, deload when you stall'};
 const S = {
-  loading:true, clients:[], clientId:null, client:null, phase:1,
+  loading:true, clients:[], clientId:null, client:null, phase:1, tplWips:[],
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
   log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null, bests:{}, hist:{},
   clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, infoCtx:'week', modal:null, loginError:''
@@ -577,6 +577,7 @@ async function boot(){
       return;
     }
     S.clients = await gs('getClients');
+    try{ S.tplWips = await gs('getTemplateWips'); }catch(e){ S.tplWips=[]; }
     S.loading=false; S.view='home'; render();
   }catch(e){
     if (e instanceof LoginRequired){ S.loading=false; S.view='login'; render(); return; }
@@ -746,7 +747,8 @@ function toggleExTimed(ei){ const e=exAt(ei); const on=isExTimed(e); e.sets.forE
 function wipc(flag){ return !CLIENT_MODE && !!flag; }
 function toggleExWip(ei){ const e=exAt(ei); e.wip=!e.wip; scheduleTemplateSave(); render(); }
 function toggleSessWip(i){ const s=S.template.sessions[i]; if(!s) return; s.wip=!s.wip; scheduleTemplateSave(); render(); }
-function toggleTplWip(){ const on=!(S.template&&S.template.tplWip); gs('setTemplateWip', S.clientId, on).then(()=>{ if(S.template) S.template.tplWip=on; setStat(on?'marked WIP':'WIP cleared'); render(); }).catch(()=>setStat('save failed')); }
+function isTplWip(key){ return !CLIENT_MODE && S.tplWips && S.tplWips.indexOf(key)>=0; }
+function toggleTplWip(key){ const on=!(S.tplWips&&S.tplWips.indexOf(key)>=0); gs('setTemplateWip', key, on).then(()=>{ S.tplWips=S.tplWips||[]; const i=S.tplWips.indexOf(key); if(on&&i<0) S.tplWips.push(key); else if(!on&&i>=0) S.tplWips.splice(i,1); if(S.template&&S.clientId===key) S.template.tplWip=on; setStat(on?'marked WIP':'WIP cleared'); render(); }).catch(()=>setStat('save failed')); }
 function editExField(ei,field,val){ const e=exAt(ei); e[field]=val; scheduleTemplateSave(); }
 function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); normalizeGroups(s); scheduleTemplateSave(); render(); }
 function moveEx(ei,dir){ const s=curSession(); move(s.exercises,ei,dir); normalizeGroups(s); scheduleTemplateSave(); render(); }
@@ -816,8 +818,7 @@ function modalCancel(){ const m=S.modal; S.modal=null; render(); if(m) m.res(m.k
 function hdOpen(){
   const info=`<button class="iconbtn" onclick="openInfo()" title="How it works">${ICON_INFO}</button>`;
   const phaseSwitch=`<div class="phase-switch">`+PHASES.map(p=>`<button class="${S.phase===p.n?'on':''}" onclick="switchPhase(${p.n})">B${p.n}</button>`).join('')+`</div>`;
-  const tplw=!!(S.template&&S.template.tplWip);
-  const wipBtn=`<button class="wbtn ${tplw?'on':''}" onclick="toggleTplWip()" title="Mark the whole program work-in-progress (coach only)">WIP</button>`;
+  const wipBtn=(!CLIENT_MODE&&S.template&&S.template.tplWip)?'<span class="wip-chip">WIP</span>':'';
   if(CLIENT_MODE){
     return `<div class="hd"><div class="hd-top">
       <div><div class="client" style="cursor:default">${esc(S.client.name)}</div><div class="meta">${esc(S.client.goal||'')}</div></div>
@@ -845,16 +846,19 @@ function homeHTML(){
   </div><div class="savestat" id="savestat"></div></div><div class="wrap">`;
   h+=`<div class="group-lbl">Templates<span class="ln"></span></div>`;
   TEMPLATES.forEach((t,i)=>{
-    h+=`<div class="scard tap" onclick="openTemplate(${i})"><div class="rail"></div><div class="scard-body">
-      <div class="scard-top"><span class="scard-name">${esc(t.label)}</span></div>
-      <div class="scard-sub"><span>starter program · edit to taste</span></div></div><div class="chev">${ICON_CHEV}</div></div>`;
+    h+=`<div class="scard tap${isTplWip(t.key)?' wip':''}" onclick="openTemplate(${i})"><div class="rail"></div><div class="scard-body">
+      <div class="scard-top"><span class="scard-name">${esc(t.label)}</span>${isTplWip(t.key)?'<span class="wip-chip">WIP</span>':''}</div>
+      <div class="scard-sub"><span>starter program · edit to taste</span></div></div>
+      <button class="wbtn ${isTplWip(t.key)?'on':''}" onclick="event.stopPropagation();toggleTplWip('${t.key}')" title="Mark work-in-progress (coach only)">WIP</button>
+      <div class="chev">${ICON_CHEV}</div></div>`;
   });
   h+=`<div class="group-lbl">Clients<span class="ln"></span></div>`;
   if(!S.clients.length) h+=`<div class="hist-empty">No clients yet — create one from a template.</div>`;
   S.clients.forEach((c,i)=>{
-    h+=`<div class="scard tap" onclick="openClientHome(${i})"><div class="rail"></div><div class="scard-body">
-      <div class="scard-top"><span class="scard-name">${esc(c.name)}</span></div>
+    h+=`<div class="scard tap${isTplWip(c.clientId)?' wip':''}" onclick="openClientHome(${i})"><div class="rail"></div><div class="scard-body">
+      <div class="scard-top"><span class="scard-name">${esc(c.name)}</span>${isTplWip(c.clientId)?'<span class="wip-chip">WIP</span>':''}</div>
       <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Block ${c.currentPhase||1}</span></div></div>
+      <button class="wbtn ${isTplWip(c.clientId)?'on':''}" onclick="event.stopPropagation();toggleTplWip('${c.clientId}')" title="Mark work-in-progress (coach only)">WIP</button>
       <button class="linkbtn" onclick="event.stopPropagation();copyClientLink(${i})" title="Copy their personal link">${ICON_LINK}</button>
       <button class="linkbtn danger" onclick="event.stopPropagation();rotateLink(${i})" title="Regenerate link — kills the old one">${ICON_REPEAT}</button>
       <button class="linkbtn danger" onclick="event.stopPropagation();delClient(${i})" title="Delete client">${ICON_TRASH}</button>
