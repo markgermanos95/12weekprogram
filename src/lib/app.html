@@ -13,6 +13,7 @@
     --paper:#F5F4F0; --card:#FFFFFF; --ink:#17181C; --faint:#94928A;
     --line:#E4E2DB; --line-strong:#CFCCC3;
     --ramp:#5B7B8C; --work:#17181C; --max:#C8442B;
+    --wip:#C77A0E; --wip-bg:#FBEFD9;
     --grotesk:'Space Grotesk',-apple-system,system-ui,sans-serif;
     --mono:'JetBrains Mono',ui-monospace,monospace;
   }
@@ -175,6 +176,12 @@
   .tbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:7px;height:28px;cursor:pointer;padding:0 9px;flex-shrink:0;line-height:1}
   .tbtn:hover{color:var(--ink);border-color:var(--ink)}
   .tbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* WIP (work-in-progress) — coach-only amber marker at exercise/session/template level */
+  .wbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--wip);border:1px solid var(--wip);background:var(--card);border-radius:7px;height:28px;cursor:pointer;padding:0 9px;flex-shrink:0;line-height:1}
+  .wbtn:hover{background:var(--wip-bg)}
+  .wbtn.on{background:var(--wip);color:#fff}
+  .wip{border-color:var(--wip)!important;background:var(--wip-bg)!important}
+  .wip-chip{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;color:#fff;background:var(--wip);padding:5px 9px;border-radius:7px}
   .cue{font-family:var(--mono);font-size:10px;color:var(--faint);padding:1px 2px 7px 41px;line-height:1.4;letter-spacing:.01em}
   .cue.up{color:var(--ramp);font-weight:700}
   .cue.m{color:var(--max);font-weight:700}
@@ -538,9 +545,9 @@ function scheduleProgressSave(){
 }
 function scheduleTemplateSave(){
   setStat('saving…'); clearTimeout(_tTimer);
-  _tTimer=setTimeout(()=>{ gs('saveTemplate', S.clientId, S.phase, S.template.sessions).then(()=>setStat('saved')).catch(()=>setStat('save failed')); }, 900);
+  _tTimer=setTimeout(()=>{ gs('saveTemplate', S.clientId, S.phase, S.template.sessions, !!(S.template&&S.template.tplWip)).then(()=>setStat('saved')).catch(()=>setStat('save failed')); }, 900);
 }
-function flushTemplateSave(){ if(_tTimer){ clearTimeout(_tTimer); _tTimer=null; gs('saveTemplate', S.clientId, S.phase, S.template.sessions); } }
+function flushTemplateSave(){ if(_tTimer){ clearTimeout(_tTimer); _tTimer=null; gs('saveTemplate', S.clientId, S.phase, S.template.sessions, !!(S.template&&S.template.tplWip)); } }
 function buildLogPayload(){
   const s=curSession(); const sets=[];
   s.exercises.forEach(e=>e.sets.forEach((st,si)=>{
@@ -733,6 +740,13 @@ function editTarget(ei,si,val){ exAt(ei).sets[si].target=val; scheduleTemplateSa
 // 'Secs' header and 's' suffix off all-sets-secs.
 function isExTimed(e){ return !!(e&&e.sets&&e.sets.length&&e.sets.every(s=>s.unit==='secs')); }
 function toggleExTimed(ei){ const e=exAt(ei); const on=isExTimed(e); e.sets.forEach(s=>{ s.unit=on?'reps':'secs'; }); scheduleTemplateSave(); render(); }
+// WIP markers — coach-only. wipc() gates the amber highlight to the coach view.
+// Exercise/session WIP ride the per-phase template save; template WIP spans all
+// phases so it goes straight to the backend (setTemplateWip).
+function wipc(flag){ return !CLIENT_MODE && !!flag; }
+function toggleExWip(ei){ const e=exAt(ei); e.wip=!e.wip; scheduleTemplateSave(); render(); }
+function toggleSessWip(i){ const s=S.template.sessions[i]; if(!s) return; s.wip=!s.wip; scheduleTemplateSave(); render(); }
+function toggleTplWip(){ const on=!(S.template&&S.template.tplWip); gs('setTemplateWip', S.clientId, on).then(()=>{ if(S.template) S.template.tplWip=on; setStat(on?'marked WIP':'WIP cleared'); render(); }).catch(()=>setStat('save failed')); }
 function editExField(ei,field,val){ const e=exAt(ei); e[field]=val; scheduleTemplateSave(); }
 function delEx(ei){ const s=curSession(); s.exercises.splice(ei,1); normalizeGroups(s); scheduleTemplateSave(); render(); }
 function moveEx(ei,dir){ const s=curSession(); move(s.exercises,ei,dir); normalizeGroups(s); scheduleTemplateSave(); render(); }
@@ -802,6 +816,8 @@ function modalCancel(){ const m=S.modal; S.modal=null; render(); if(m) m.res(m.k
 function hdOpen(){
   const info=`<button class="iconbtn" onclick="openInfo()" title="How it works">${ICON_INFO}</button>`;
   const phaseSwitch=`<div class="phase-switch">`+PHASES.map(p=>`<button class="${S.phase===p.n?'on':''}" onclick="switchPhase(${p.n})">B${p.n}</button>`).join('')+`</div>`;
+  const tplw=!!(S.template&&S.template.tplWip);
+  const wipBtn=`<button class="wbtn ${tplw?'on':''}" onclick="toggleTplWip()" title="Mark the whole program work-in-progress (coach only)">WIP</button>`;
   if(CLIENT_MODE){
     return `<div class="hd"><div class="hd-top">
       <div><div class="client" style="cursor:default">${esc(S.client.name)}</div><div class="meta">${esc(S.client.goal||'')}</div></div>
@@ -811,12 +827,12 @@ function hdOpen(){
   if(S.isTemplate){
     return `<div class="hd"><div class="hd-top">
       <div><div class="client" style="cursor:default">${esc(S.client.name)}</div><div class="meta">${esc(S.client.goal||'')}</div></div>
-      <div class="hd-tools"><div class="trow">${info}<span class="phasetag">TEMPLATE</span></div>${phaseSwitch}</div>
+      <div class="hd-tools"><div class="trow">${info}${wipBtn}<span class="phasetag">TEMPLATE</span></div>${phaseSwitch}</div>
     </div><div class="savestat" id="savestat"></div>`;
   }
   return `<div class="hd"><div class="hd-top">
     <div><div class="client" onclick="openClients()">${esc(S.client.name)} <span class="cdrop">▾</span></div><div class="meta">${esc(S.client.goal||'')}</div></div>
-    <div class="hd-tools"><div class="trow">${info}<button class="edit-btn ${S.edit?'on':''}" onclick="toggleEdit()">${S.edit?'DONE':'EDIT'}</button></div>${phaseSwitch}</div>
+    <div class="hd-tools"><div class="trow">${info}${wipBtn}<button class="edit-btn ${S.edit?'on':''}" onclick="toggleEdit()">${S.edit?'DONE':'EDIT'}</button></div>${phaseSwitch}</div>
   </div><div class="savestat" id="savestat"></div>`;
 }
 
@@ -887,15 +903,15 @@ function weekHTML(){
 }
 function runTile(s,i){
   const cardio = s.cardioPos && s.cardioPos!=='none';
-  return `<div class="scard tap" onclick="openSession(${i})">
+  return `<div class="scard tap${wipc(s.wip)?' wip':''}" onclick="openSession(${i})">
     <div class="rail p${s.priority}"></div>
     <div class="scard-body">
-      <div class="scard-top">${isMin()?'':`<span class="ptag p${s.priority}">P${s.priority}</span>`}<span class="scard-name">${esc(s.name)}</span></div>
+      <div class="scard-top">${isMin()?'':`<span class="ptag p${s.priority}">P${s.priority}</span>`}<span class="scard-name">${esc(s.name)}</span>${wipc(s.wip)?'<span class="wip-chip">WIP</span>':''}</div>
       <div class="scard-sub"><span>${countEx(s)} exercises</span><span class="dot">·</span><span>${countSets(s)} sets</span>${cardio?`<span class="dot">·</span><span>cardio ${s.cardioPos==='top'?'first':'last'}</span>`:''}</div>
     </div><div class="chev">${ICON_CHEV}</div></div>`;
 }
 function editTile(s,i,n){
-  return `<div class="scard">
+  return `<div class="scard${wipc(s.wip)?' wip':''}">
     <div class="ec"><div class="arrows">
       <button class="abtn" onclick="moveSession(${i},-1)" ${i===0?'disabled':''}>${ICON_UP}</button>
       <button class="abtn" onclick="moveSession(${i},1)" ${i===n-1?'disabled':''}>${ICON_DN}</button></div></div>
@@ -903,6 +919,7 @@ function editTile(s,i,n){
       <button class="ptag btn p${s.priority}" onclick="cyclePriority(${i})">P${s.priority}</button>
       <input class="tinput" value="${escA(s.name)}" oninput="renameSession(${i},this.value)"></div></div>
     <div class="ec">
+      <button class="wbtn ${s.wip?'on':''}" onclick="toggleSessWip(${i})" title="Mark this session work-in-progress (coach only)">WIP</button>
       <button class="abtn" onclick="openSession(${i})" title="Edit exercises">${ICON_CHEV}</button>
       <button class="del" onclick="delSession(${i})">${ICON_X}</button></div></div>`;
 }
@@ -917,8 +934,10 @@ function groupBar(firstEi,role){ return `<div class="grp-bar"><span class="grp-h
 function sessionHTML(){
   const s=curSession(); if(!s){ S.view='week'; return weekHTML(); }
   let h=hdOpen()+`</div><div class="wrap"><button class="back" onclick="backToWeek()">${ICON_BACK} Week</button>`;
-  if(S.edit) h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><input class="tinput" value="${escA(s.name)}" oninput="renameCur(this.value)"></div>`;
-  else h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><span class="sess-name">${esc(s.name)}</span></div>`;
+  const _si=S.template.sessions.findIndex(x=>x.sessionId===s.sessionId);
+  const sessWipChip=wipc(s.wip)?'<span class="wip-chip">WIP</span>':'';
+  if(S.edit) h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><input class="tinput" value="${escA(s.name)}" oninput="renameCur(this.value)"><button class="wbtn ${s.wip?'on':''}" onclick="toggleSessWip(${_si})" title="Mark this session work-in-progress (coach only)">WIP</button></div>`;
+  else h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><span class="sess-name">${esc(s.name)}</span>${sessWipChip}</div>`;
   h+=`${isMin()?'':`<div class="sess-meta">Block ${S.phase} · ${esc(phaseInfo(S.phase).name.toLowerCase())}</div>`}
     <div class="legend"><span><span class="lg-b badge R">R</span> Ramp-up</span><span><span class="lg-b badge W">W</span> Working</span><span><span class="lg-b badge M">M</span> Max</span></div>`;
   if(!S.edit) h+=`<button class="logbtn hiw-session" onclick="openInfo('sets')">${ICON_INFO}<span>How it works</span></button>`;
@@ -993,12 +1012,13 @@ function exHTML(session,ei,key){
     const arrows=`<div class="arrows"><button class="abtn" onclick="moveEx(${ei},-1)" ${ei===0?'disabled':''}>${ICON_UP}</button><button class="abtn" onclick="moveEx(${ei},1)" ${ei===n-1?'disabled':''}>${ICON_DN}</button></div>`;
     const link=grouped?`<button class="lnkbtn on" onclick="unlinkEx(${ei})" title="Remove from group">${ICON_LINK}</button>`:(ei>0?`<button class="lnkbtn" onclick="linkUp(${ei})" title="Group with exercise above">${ICON_LINK}</button>`:'');
     const timed=`<button class="tbtn ${isExTimed(e)?'on':''}" onclick="toggleExTimed(${ei})" title="Log this exercise in seconds instead of reps">TIMED</button>`;
-    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${timed}${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
+    const wip=`<button class="wbtn ${e.wip?'on':''}" onclick="toggleExWip(${ei})" title="Mark this exercise work-in-progress (coach only)">WIP</button>`;
+    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${wip}${timed}${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
     const chips=grouped?'':roleChips(ei,e.role);
-    return `<div class="ex">${top}${chips}${rows}</div>`;
+    return `<div class="ex${wipc(e.wip)?' wip':''}">${top}${chips}${rows}</div>`;
   }
   const hist=`<button class="histbtn" onclick="openHistory(${ei})" title="History">${ICON_HIST}</button>`;
-  return `<div class="ex"><div class="ex-top">${keyTag}<span class="ex-name">${esc(e.name)}</span>${hist}</div>${rows}</div>`;
+  return `<div class="ex${wipc(e.wip)?' wip':''}"><div class="ex-top">${keyTag}<span class="ex-name">${esc(e.name)}</span>${wipc(e.wip)?'<span class="wip-chip">WIP</span>':''}${hist}</div>${rows}</div>`;
 }
 function numFieldMax(ei,si,fld,ph,val){ return `<input class="inp mfld" inputmode="decimal" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${ei},${si},'${fld}',this.value)">`; }
 function txtFieldMax(ei,si,fld,ph,val){ return `<input class="inp mfld wide" placeholder="${escA(ph)}" value="${escA(val==null?'':val)}" oninput="setMaxField(${ei},${si},'${fld}',this.value)">`; }

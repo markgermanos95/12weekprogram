@@ -94,19 +94,24 @@ export async function deleteClient(clientId: string) {
 // parents: a blank `exId` marks "session exists, no exercises", a blank
 // `setType` marks "exercise exists, no sets". getTemplate honours both.
 // Placeholders are transient — the next save with real content replaces them.
-function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
+function flattenTemplate_(clientId: string, phase: number, sessions: any[], tplWip = false) {
+  // WIP flags (coach-only amber markers): exWip per exercise, sessWip per
+  // session, tplWip across the whole template — repeated on the rows at each
+  // scope, same pattern as the other repeated session/exercise fields.
+  const tw = tplWip ? "true" : "";
   const rows: Record<string, any>[] = [];
   sessions.forEach((s, si) => {
     const sBase = {
       clientId, phase, sessionId: s.sessionId, sessionOrder: si,
       sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
+      sessWip: s.wip ? "true" : "", tplWip: tw,
     };
     const exercises = s.exercises || [];
     if (!exercises.length) {
       rows.push({
         ...sBase, exOrder: 0, groupId: "", role: "",
         exId: "", exName: "", exYoutube: "", exCues: "", rir: "", coachCue: "",
-        setOrder: "", setType: "", target: "", unit: "",
+        setOrder: "", setType: "", target: "", unit: "", exWip: "",
       });
       return;
     }
@@ -115,6 +120,7 @@ function flattenTemplate_(clientId: string, phase: number, sessions: any[]) {
       const eBase = {
         ...sBase, exOrder: eo, groupId: e.groupId || "", role: e.role || "",
         exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "", rir: e.rir || "", coachCue: e.coachCue || "",
+        exWip: e.wip ? "true" : "",
       };
       const sets = e.sets || [];
       if (!sets.length) {
@@ -138,14 +144,14 @@ export async function getTemplate(clientId: string, phase: number) {
     const sid = r.sessionId;
     if (!sessMap[sid]) sessMap[sid] = {
       sessionId: sid, order: Number(r.sessionOrder), name: r.sessionName,
-      priority: Number(r.priority), cardioPos: r.cardioPos, _ex: {},
+      priority: Number(r.priority), cardioPos: r.cardioPos, wip: truthy(r.sessWip), _ex: {},
     };
     if (!r.exId) return; // session placeholder — session exists, no exercises
     const s = sessMap[sid], eo = Number(r.exOrder);
     if (!s._ex[eo]) s._ex[eo] = {
       exId: r.exId, exOrder: eo, name: r.exName,
       youtube: r.exYoutube || "", cues: r.exCues || "", rir: r.rir || "", coachCue: r.coachCue || "",
-      groupId: r.groupId || "", role: r.role || "", _sets: {},
+      groupId: r.groupId || "", role: r.role || "", wip: truthy(r.exWip), _sets: {},
     };
     if (!r.setType) return; // exercise placeholder — exercise exists, no sets
     s._ex[eo]._sets[Number(r.setOrder)] = { setOrder: Number(r.setOrder), type: r.setType, target: r.target, unit: r.unit || "reps" };
@@ -153,24 +159,34 @@ export async function getTemplate(clientId: string, phase: number) {
   const sessions = Object.values(sessMap)
     .sort((a: any, b: any) => a.order - b.order)
     .map((s: any) => ({
-      sessionId: s.sessionId, name: s.name, priority: s.priority, cardioPos: s.cardioPos,
+      sessionId: s.sessionId, name: s.name, priority: s.priority, cardioPos: s.cardioPos, wip: !!s.wip,
       exercises: Object.values(s._ex)
         .sort((a: any, b: any) => a.exOrder - b.exOrder)
         .map((e: any) => ({
           exId: e.exId, name: e.name, youtube: e.youtube || "", cues: e.cues || "", rir: e.rir || "", coachCue: e.coachCue || "",
-          groupId: e.groupId || "", role: e.role || "",
+          groupId: e.groupId || "", role: e.role || "", wip: !!e.wip,
           sets: Object.values(e._sets)
             .sort((a: any, b: any) => a.setOrder - b.setOrder)
             .map((st: any) => ({ type: st.type, target: st.target, unit: st.unit || "reps" })),
         })),
     }));
-  return { clientId, phase: Number(phase), sessions };
+  return { clientId, phase: Number(phase), sessions, tplWip: rows.some((r) => truthy(r.tplWip)) };
 }
 
-export async function saveTemplate(clientId: string, phase: number, sessions: any[]) {
+export async function saveTemplate(clientId: string, phase: number, sessions: any[], tplWip = false) {
   const all = await readRows_("template");
   const keep = all.filter((r) => !(r.clientId === clientId && Number(r.phase) === Number(phase)));
-  await writeRows_("template", keep.concat(flattenTemplate_(clientId, phase, sessions)));
+  await writeRows_("template", keep.concat(flattenTemplate_(clientId, phase, sessions, tplWip)));
+  return true;
+}
+
+// Coach-only: flip the whole-template WIP flag. Spans every phase, so it writes
+// the tplWip column across all of this template's rows at once (a per-phase
+// saveTemplate would only touch the block being edited).
+export async function setTemplateWip(clientId: string, on: boolean) {
+  const all = await readRows_("template");
+  all.forEach((r) => { if (r.clientId === clientId) r.tplWip = on ? "true" : ""; });
+  await writeRows_("template", all);
   return true;
 }
 
@@ -488,7 +504,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate,
+  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getSetHistory, getCardioHistory,
 };
