@@ -182,6 +182,9 @@
   .ex.collapsed .ex-name-input{margin-bottom:0}
   .collapse-all{appearance:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:7px;padding:6px 11px;cursor:pointer;margin-bottom:12px}
   .collapse-all:hover{color:var(--ink);border-color:var(--ink)}
+  .ex-actions{display:flex;gap:8px;margin-top:9px}
+  .ex-mini{appearance:none;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:7px;padding:6px 10px;cursor:pointer}
+  .ex-mini:hover{color:var(--ink);border-color:var(--ink)}
   /* WIP (work-in-progress) — coach-only amber marker at exercise/session/template level */
   .wbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--wip);border:1px solid var(--wip);background:var(--card);border-radius:7px;height:28px;cursor:pointer;padding:0 9px;flex-shrink:0;line-height:1}
   .wbtn:hover{background:var(--wip-bg)}
@@ -682,6 +685,12 @@ async function copyBlock(){
   try{ await gs('copyBlockFromTemplate', S.clientId, tpl, S.phase); await loadTemplate(); setStat('Block '+S.phase+' copied'); render(); }
   catch(e){ setStat('copy failed'); }
 }
+// Move / duplicate an exercise to any session in the current block (carries all
+// metadata). Duplicate gets a fresh exId; move keeps the original's identity.
+function cloneEx(e){ return {exId:uid(), name:e.name, youtube:e.youtube||'', cues:e.cues||'', rir:e.rir||'', coachCue:e.coachCue||'', groupId:'', role:'', wip:!!e.wip, sets:(e.sets||[]).map(s=>({type:s.type,target:s.target,unit:s.unit||'reps'}))}; }
+async function pickSession(title){ const opts=S.template.sessions.map((x,i)=>({label:(x.name||('Session '+(i+1)))+(x.sessionId===S.sessionId?' · this one':''), value:i})); return await modalChoice(title, opts); }
+async function dupExercise(ei){ const e=exAt(ei); const idx=await pickSession('Duplicate to which session?'); if(idx==null) return; S.template.sessions[idx].exercises.push(cloneEx(e)); normalizeGroups(S.template.sessions[idx]); scheduleTemplateSave(); setStat('duplicated'); render(); }
+async function moveExercise(ei){ const src=curSession(); const idx=await pickSession('Move to which session?'); if(idx==null) return; const dst=S.template.sessions[idx]; const mv=src.exercises.splice(ei,1)[0]; if(!mv) return; mv.groupId=''; mv.role=''; dst.exercises.push(mv); normalizeGroups(src); if(dst!==src) normalizeGroups(dst); scheduleTemplateSave(); setStat('moved'); render(); }
 
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
@@ -1024,6 +1033,7 @@ function exHTML(session,ei,key){
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="${isExTimed(e)?'target secs':'target'}" oninput="editTarget(${ei},${si},this.value)"><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
+    rows+=`<div class="ex-actions"><button class="ex-mini" onclick="dupExercise(${ei})">⧉ Duplicate</button><button class="ex-mini" onclick="moveExercise(${ei})">⇄ Move</button></div>`;
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
     if(e.coachCue) rows+=`<div class="coachcue">${esc(e.coachCue)}</div>`;
