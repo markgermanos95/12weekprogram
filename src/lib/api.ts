@@ -489,6 +489,20 @@ export async function addClientFromTemplate(name: string, goal: string, template
   return clientId;
 }
 
+// Coach-only: copy one block (phase) of a template into a client's SAME block,
+// with fresh exercise ids so history never collides. Writes only that
+// (clientId, phase) row — every other block of the client is untouched. Lets a
+// coach build out Blocks 2/3 for a client from a template without disturbing
+// the block they've already tailored.
+export async function copyBlockFromTemplate(clientId: string, templateKey: string, phase: number) {
+  const src = (await readRows_("programs")).find((r) => r.clientId === templateKey && Number(r.phase) === Number(phase));
+  let sessions: any[] = [];
+  if (src) { try { sessions = normSessions_(JSON.parse(src.sessions || "[]")); } catch { sessions = []; } }
+  sessions.forEach((s) => s.exercises.forEach((e: any) => { e.exId = uid_(); }));
+  await writeProgram_(clientId, Number(phase), sessions, false);
+  return true;
+}
+
 /* ---------- client-token access (no coach login required) ---------- */
 // The browser never sends a raw clientId for client-mode calls — only the
 // long random token from its URL. These wrappers resolve token -> clientId
@@ -563,7 +577,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip, getTemplateWips,
+  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip, getTemplateWips, copyBlockFromTemplate,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getSetHistory, getCardioHistory,
 };

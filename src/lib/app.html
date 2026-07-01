@@ -176,6 +176,12 @@
   .tbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:7px;height:28px;cursor:pointer;padding:0 9px;flex-shrink:0;line-height:1}
   .tbtn:hover{color:var(--ink);border-color:var(--ink)}
   .tbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .ex-num{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--faint);min-width:16px;text-align:center;flex-shrink:0}
+  .cbtn{appearance:none;width:28px;height:28px;border:1px solid var(--line-strong);background:var(--card);border-radius:7px;color:var(--faint);cursor:pointer;font-size:12px;line-height:1;flex-shrink:0}
+  .cbtn:hover{color:var(--ink);border-color:var(--ink)}
+  .ex.collapsed .ex-name-input{margin-bottom:0}
+  .collapse-all{appearance:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--faint);border:1px solid var(--line-strong);background:var(--card);border-radius:7px;padding:6px 11px;cursor:pointer;margin-bottom:12px}
+  .collapse-all:hover{color:var(--ink);border-color:var(--ink)}
   /* WIP (work-in-progress) — coach-only amber marker at exercise/session/template level */
   .wbtn{appearance:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--wip);border:1px solid var(--wip);background:var(--card);border-radius:7px;height:28px;cursor:pointer;padding:0 9px;flex-shrink:0;line-height:1}
   .wbtn:hover{background:var(--wip-bg)}
@@ -363,7 +369,7 @@ const PHASES=[{n:1,name:'Capacity',weeks:'Weeks 1–4'},{n:2,name:'Tension',week
 function phaseInfo(n){ return PHASES.find(p=>p.n===Number(n))||PHASES[0]; }
 const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessions and the Block-3 barbell lifts feel controlled',tpl_intermediate:'Intermediate · move up when the barbell lifts progress smoothly and you want more volume',tpl_advanced:'Advanced · move up when you recover well from this and want the denser hybrid work',tpl_elite:'Elite · the ceiling — run it while it keeps progressing, deload when you stall'};
 const S = {
-  loading:true, clients:[], clientId:null, client:null, phase:1, tplWips:[],
+  loading:true, clients:[], clientId:null, client:null, phase:1, tplWips:[], collapsed:{},
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
   log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null, bests:{}, hist:{},
   clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, infoCtx:'week', modal:null, loginError:''
@@ -667,11 +673,32 @@ async function toggleMinimal(){
   catch(e){ setStat('toggle failed'); }
 }
 function toggleEdit(){ if(CLIENT_MODE||S.isTemplate) return; if(S.edit) flushTemplateSave(); S.edit=!S.edit; render(); }
+// Coach: pull a template's block into this client's current (empty) block.
+async function copyBlock(){
+  if(CLIENT_MODE||S.isTemplate||!S.client) return;
+  const tpl=await modalChoice('Copy Block '+S.phase+' from which template?', TEMPLATES.map(t=>({label:t.label, value:t.key})));
+  if(!tpl) return;
+  setStat('copying…');
+  try{ await gs('copyBlockFromTemplate', S.clientId, tpl, S.phase); await loadTemplate(); setStat('Block '+S.phase+' copied'); render(); }
+  catch(e){ setStat('copy failed'); }
+}
 
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
   S.sessionId=s.sessionId; S.view='session'; S.last=null; S.bests={}; S.hist={};
-  if(S.isTemplate){ S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''}; render(); window.scrollTo(0,0); return; }
+  // Only the CLIENT (their own token) starts a workout. A template preview, or a
+  // COACH tapping into a client's session, opens a read-only preview — it must
+  // never call startSession / create a log. Coach still gets the client's history
+  // loaded for display.
+  if(S.isTemplate || !CLIENT_MODE){
+    S.log=null; S.runEntries={}; S.exEntries={}; S.cardio={stage:1,done:false,cals:''};
+    if(!S.isTemplate){
+      try{ S.last=await gs('getLastSession', S.clientId, s.sessionId); }catch(e){ S.last=null; }
+      try{ S.hist=await gs('getSetHistory', S.clientId, s.sessionId); }catch(e){ S.hist={}; }
+      try{ S.bests=await gs('getExerciseBests', S.clientId); }catch(e){ S.bests={}; }
+    }
+    render(); window.scrollTo(0,0); return;
+  }
   try{
     const log=await gs('startSession', S.clientId, S.phase, s.sessionId, s.name); S.log=log; hydrate(log);
     try{ S.last=await gs('getLastSession', S.clientId, s.sessionId); }catch(e){ S.last=null; }
@@ -746,6 +773,10 @@ function toggleExTimed(ei){ const e=exAt(ei); const on=isExTimed(e); e.sets.forE
 // phases so it goes straight to the backend (setTemplateWip).
 function wipc(flag){ return !CLIENT_MODE && !!flag; }
 function toggleExWip(ei){ const e=exAt(ei); e.wip=!e.wip; scheduleTemplateSave(); render(); }
+// Collapse tiles to title-only in the edit view (UI state only — not persisted).
+function isCollapsed(id){ return !!(S.collapsed&&S.collapsed[id]); }
+function toggleCollapse(id){ if(S.collapsed[id]) delete S.collapsed[id]; else S.collapsed[id]=true; render(); }
+function collapseAllToggle(){ const s=curSession(); if(!s) return; const allCol=s.exercises.length&&s.exercises.every(e=>isCollapsed(e.exId)); s.exercises.forEach(e=>{ if(allCol) delete S.collapsed[e.exId]; else S.collapsed[e.exId]=true; }); render(); }
 function toggleSessWip(i){ const s=S.template.sessions[i]; if(!s) return; s.wip=!s.wip; scheduleTemplateSave(); render(); }
 function isTplWip(key){ return !CLIENT_MODE && S.tplWips && S.tplWips.indexOf(key)>=0; }
 function toggleTplWip(key){ const on=!(S.tplWips&&S.tplWips.indexOf(key)>=0); gs('setTemplateWip', key, on).then(()=>{ S.tplWips=S.tplWips||[]; const i=S.tplWips.indexOf(key); if(on&&i<0) S.tplWips.push(key); else if(!on&&i>=0) S.tplWips.splice(i,1); if(S.template&&S.clientId===key) S.template.tplWip=on; setStat(on?'marked WIP':'WIP cleared'); render(); }).catch(()=>setStat('save failed')); }
@@ -886,6 +917,7 @@ function weekHTML(){
     h+=`<div class="group-lbl">Reorder · rename · re-tag<span class="ln"></span></div>`;
     p.sessions.forEach((s,i)=> h+=editTile(s,i,p.sessions.length));
     h+=`<div class="addbar"><button class="addbtn" onclick="addSession()">+ add session</button></div>`;
+    if(!p.sessions.length && !S.isTemplate) h+=`<div class="addbar"><button class="addbtn" onclick="copyBlock()">Copy Block ${S.phase} from a template</button></div>`;
   } else if(isMin()){
     p.sessions.forEach((s,i)=> h+=runTile(s,i));
     if(!p.sessions.length) h+=`<div class="hist-empty">No sessions yet.</div>`;
@@ -942,6 +974,7 @@ function sessionHTML(){
   const sessWipChip=wipc(s.wip)?'<span class="wip-chip">WIP</span>':'';
   if(S.edit) h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><input class="tinput" value="${escA(s.name)}" oninput="renameCur(this.value)"><button class="wbtn ${s.wip?'on':''}" onclick="toggleSessWip(${_si})" title="Mark this session work-in-progress (coach only)">WIP</button></div>`;
   else h+=`<div class="sess-head"><span class="ptag p${s.priority}">P${s.priority}</span><span class="sess-name">${esc(s.name)}</span>${sessWipChip}</div>`;
+  if(S.edit && s.exercises.length) h+=`<button class="collapse-all" onclick="collapseAllToggle()">${s.exercises.every(e=>isCollapsed(e.exId))?'▸ Expand all':'▾ Collapse all'}</button>`;
   h+=`${isMin()?'':`<div class="sess-meta">Block ${S.phase} · ${esc(phaseInfo(S.phase).name.toLowerCase())}</div>`}
     <div class="legend"><span><span class="lg-b badge R">R</span> Ramp-up</span><span><span class="lg-b badge W">W</span> Working</span><span><span class="lg-b badge M">M</span> Max</span></div>`;
   if(!S.edit) h+=`<button class="logbtn hiw-session" onclick="openInfo('sets')">${ICON_INFO}<span>How it works</span></button>`;
@@ -975,7 +1008,8 @@ function sessionHTML(){
     if(s.cardioPos==='none') h+=`<div class="addbar"><button class="addbtn" onclick="addCardioBlock()">+ cardio block</button></div>`;
     if(!s.exercises.length) h+=`<div class="hist-empty">No exercises yet. Add some, then group or tag them.</div>`;
   } else {
-    h+=`<button class="finish" onclick="finishCurrent()">Finish session</button><div class="foot">Autosaving — close and come back any time.</div>`;
+    if(S.log) h+=`<button class="finish" onclick="finishCurrent()">Finish session</button><div class="foot">Autosaving — close and come back any time.</div>`;
+    else if(!CLIENT_MODE && !S.isTemplate) h+=`<div class="foot">Coach preview — opening this doesn't start their workout.</div>`;
   }
   return h+`</div>`;
 }
@@ -1017,9 +1051,12 @@ function exHTML(session,ei,key){
     const link=grouped?`<button class="lnkbtn on" onclick="unlinkEx(${ei})" title="Remove from group">${ICON_LINK}</button>`:(ei>0?`<button class="lnkbtn" onclick="linkUp(${ei})" title="Group with exercise above">${ICON_LINK}</button>`:'');
     const timed=`<button class="tbtn ${isExTimed(e)?'on':''}" onclick="toggleExTimed(${ei})" title="Log this exercise in seconds instead of reps">TIMED</button>`;
     const wip=`<button class="wbtn ${e.wip?'on':''}" onclick="toggleExWip(${ei})" title="Mark this exercise work-in-progress (coach only)">WIP</button>`;
-    const top=`<div class="ex-edit-top">${arrows}${keyTag}<div class="ex-edit-tools">${wip}${timed}${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
-    const chips=grouped?'':roleChips(ei,e.role);
-    return `<div class="ex${wipc(e.wip)?' wip':''}">${top}${chips}${rows}</div>`;
+    const isCol=isCollapsed(e.exId);
+    const col=`<button class="cbtn" onclick="toggleCollapse('${e.exId}')" title="${isCol?'Expand':'Collapse'}">${isCol?'▸':'▾'}</button>`;
+    const top=`<div class="ex-edit-top"><span class="ex-num">${ei+1}</span>${arrows}${keyTag}<div class="ex-edit-tools">${col}${wip}${timed}${link}<button class="del" onclick="delEx(${ei})">${ICON_X}</button></div></div>`;
+    const chips=(grouped||isCol)?'':roleChips(ei,e.role);
+    const body=isCol?`<input class="tinput ex-name-input" value="${escA(e.name)}" placeholder="Exercise name" oninput="renameEx(${ei},this.value)">`:rows;
+    return `<div class="ex${wipc(e.wip)?' wip':''}${isCol?' collapsed':''}">${top}${chips}${body}</div>`;
   }
   const hist=`<button class="histbtn" onclick="openHistory(${ei})" title="History">${ICON_HIST}</button>`;
   return `<div class="ex${wipc(e.wip)?' wip':''}"><div class="ex-top">${keyTag}<span class="ex-name">${esc(e.name)}</span>${wipc(e.wip)?'<span class="wip-chip">WIP</span>':''}${hist}</div>${rows}</div>`;
