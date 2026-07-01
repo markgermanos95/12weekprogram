@@ -489,6 +489,26 @@ export async function addClientFromTemplate(name: string, goal: string, template
   return clientId;
 }
 
+/* ---------- exercise library (starred, reusable metadata) ---------- */
+export async function getLibrary() {
+  return (await readRows_("library")).map((r) => ({ libId: r.libId, name: r.name, youtube: r.youtube || "", coachCue: r.coachCue || "", rir: r.rir || "" }));
+}
+// Star an exercise's metadata. Re-starring the same name (case-insensitive)
+// updates that entry rather than duplicating it.
+export async function starExercise(item: any) {
+  const name = String((item && item.name) || "").trim();
+  if (!name) return "";
+  const rows = await readRows_("library");
+  const existing = rows.find((r) => String(r.name || "").trim().toLowerCase() === name.toLowerCase());
+  const libId = existing ? existing.libId : uid_();
+  await upsertRow_("library", ["libId"], { libId, name, youtube: (item && item.youtube) || "", coachCue: (item && item.coachCue) || "", rir: (item && item.rir) || "" });
+  return libId;
+}
+export async function unstarExercise(libId: string) {
+  await deleteRowsWhere_("library", (r) => r.libId === libId);
+  return true;
+}
+
 // Coach-only: copy one block (phase) of a template into a client's SAME block,
 // with fresh exercise ids so history never collides. Writes only that
 // (clientId, phase) row — every other block of the client is untouched. Lets a
@@ -577,7 +597,7 @@ export async function getLogForToken(token: string, logId: string) {
 // request body — never a cookie, never a bare clientId from the browser.
 
 export const coachFns: Record<string, (...args: any[]) => Promise<any>> = {
-  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip, getTemplateWips, copyBlockFromTemplate,
+  getClients, addClient, deleteClient, setCurrentPhase, setClientMinimal, rotateClientToken, getTemplate, saveTemplate, setTemplateWip, getTemplateWips, copyBlockFromTemplate, getLibrary, starExercise, unstarExercise,
   startSession, saveProgress, getOpenSession, finishSession, getLog,
   getExerciseHistory, getHistory, getExerciseBests, addClientFromTemplate, getLastSession, getSetHistory, getCardioHistory,
 };

@@ -24,6 +24,9 @@ export const TABS: Record<string, string[]> = {
   // `template` tab, where every save rewrote the entire tab. `template` is kept
   // as a read-only backup of the pre-migration data.
   programs: ["clientId", "phase", "tplWip", "updatedAt", "sessions"],
+  // Reusable exercise metadata — "star" an exercise to save its name/video/cues
+  // once and pull it into any program without re-typing.
+  library: ["libId", "name", "youtube", "coachCue", "rir"],
 };
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;

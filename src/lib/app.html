@@ -372,7 +372,7 @@ const PHASES=[{n:1,name:'Capacity',weeks:'Weeks 1–4'},{n:2,name:'Tension',week
 function phaseInfo(n){ return PHASES.find(p=>p.n===Number(n))||PHASES[0]; }
 const GRAD_NOTE={tpl_beginner:'Beginner · graduate when you can run all 4 sessions and the Block-3 barbell lifts feel controlled',tpl_intermediate:'Intermediate · move up when the barbell lifts progress smoothly and you want more volume',tpl_advanced:'Advanced · move up when you recover well from this and want the denser hybrid work',tpl_elite:'Elite · the ceiling — run it while it keeps progressing, deload when you stall'};
 const S = {
-  loading:true, clients:[], clientId:null, client:null, phase:1, tplWips:[], collapsed:{},
+  loading:true, clients:[], clientId:null, client:null, phase:1, tplWips:[], collapsed:{}, library:[],
   template:null, edit:false, view:'home', sessionId:null, isTemplate:false,
   log:null, runEntries:{}, exEntries:{}, cardio:{stage:1,done:false,cals:''}, open:null, last:null, bests:{}, hist:{},
   clientsOpen:false, history:{open:false}, cardioHist:{open:false}, sessHist:{open:false}, infoOpen:false, infoCtx:'week', modal:null, loginError:''
@@ -587,6 +587,7 @@ async function boot(){
     }
     S.clients = await gs('getClients');
     try{ S.tplWips = await gs('getTemplateWips'); }catch(e){ S.tplWips=[]; }
+    await loadLibrary();
     S.loading=false; S.view='home'; render();
   }catch(e){
     if (e instanceof LoginRequired){ S.loading=false; S.view='login'; render(); return; }
@@ -691,6 +692,11 @@ function cloneEx(e){ return {exId:uid(), name:e.name, youtube:e.youtube||'', cue
 async function pickSession(title){ const opts=S.template.sessions.map((x,i)=>({label:(x.name||('Session '+(i+1)))+(x.sessionId===S.sessionId?' · this one':''), value:i})); return await modalChoice(title, opts); }
 async function dupExercise(ei){ const e=exAt(ei); const idx=await pickSession('Duplicate to which session?'); if(idx==null) return; S.template.sessions[idx].exercises.push(cloneEx(e)); normalizeGroups(S.template.sessions[idx]); scheduleTemplateSave(); setStat('duplicated'); render(); }
 async function moveExercise(ei){ const src=curSession(); const idx=await pickSession('Move to which session?'); if(idx==null) return; const dst=S.template.sessions[idx]; const mv=src.exercises.splice(ei,1)[0]; if(!mv) return; mv.groupId=''; mv.role=''; dst.exercises.push(mv); normalizeGroups(src); if(dst!==src) normalizeGroups(dst); scheduleTemplateSave(); setStat('moved'); render(); }
+// Exercise library: star to save reusable metadata; pull it into any program.
+async function loadLibrary(){ try{ S.library=await gs('getLibrary'); }catch(e){ S.library=[]; } }
+function inLibrary(name){ const n=String(name||'').trim().toLowerCase(); return !!(S.library||[]).find(l=>String(l.name||'').trim().toLowerCase()===n); }
+async function starEx(ei){ const e=exAt(ei); if(!e.name){ setStat('name the exercise first'); return; } setStat('saving…'); try{ await gs('starExercise', {name:e.name, youtube:e.youtube||'', coachCue:e.coachCue||'', rir:e.rir||''}); await loadLibrary(); setStat('saved to library ★'); render(); }catch(_){ setStat('save failed'); } }
+async function addFromLibrary(){ if(!S.library||!S.library.length){ setStat('library empty — star an exercise first'); return; } const id=await modalChoice('Add from library', S.library.map(l=>({label:l.name, value:l.libId}))); if(!id) return; const l=(S.library||[]).find(x=>x.libId===id); if(!l) return; curSession().exercises.push({exId:uid(),name:l.name,youtube:l.youtube||'',cues:'',rir:l.rir||'',coachCue:l.coachCue||'',groupId:'',role:'',wip:false,sets:[{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'},{type:'W',target:'10–12',unit:'reps'}]}); scheduleTemplateSave(); setStat('added from library'); render(); }
 
 async function openSession(i){
   const s=S.template.sessions[i]; if(!s) return;
@@ -1013,7 +1019,7 @@ function sessionHTML(){
   });
   if(s.cardioPos==='bottom') h+=cardioHTML(s,'bottom');
   if(S.edit){
-    h+=`<div class="addbar"><button class="addbtn" onclick="addExercise()">+ add exercise</button></div>`;
+    h+=`<div class="addbar"><button class="addbtn" onclick="addExercise()">+ add exercise</button>${(S.library&&S.library.length)?`<button class="addbtn" onclick="addFromLibrary()">★ from library</button>`:''}</div>`;
     if(s.cardioPos==='none') h+=`<div class="addbar"><button class="addbtn" onclick="addCardioBlock()">+ cardio block</button></div>`;
     if(!s.exercises.length) h+=`<div class="hist-empty">No exercises yet. Add some, then group or tag them.</div>`;
   } else {
@@ -1033,7 +1039,7 @@ function exHTML(session,ei,key){
     rows+=`<div class="srow head edit"><div class="col"></div><div class="col">Target</div><div class="col"></div></div>`;
     e.sets.forEach((st,si)=> rows+=`<div class="srow edit"><button class="badge ${st.type}" onclick="cycleBadge(${ei},${si})">${st.type}</button><input class="inp tgt" value="${escA(st.target)}" placeholder="${isExTimed(e)?'target secs':'target'}" oninput="editTarget(${ei},${si},this.value)"><button class="del" onclick="delSet(${ei},${si})">${ICON_X}</button></div>`);
     rows+=`<button class="ex-add" onclick="addSet(${ei})">+ set</button>`;
-    rows+=`<div class="ex-actions"><button class="ex-mini" onclick="dupExercise(${ei})">⧉ Duplicate</button><button class="ex-mini" onclick="moveExercise(${ei})">⇄ Move</button></div>`;
+    rows+=`<div class="ex-actions"><button class="ex-mini" onclick="starEx(${ei})">${inLibrary(e.name)?'★ Saved':'☆ Save'}</button><button class="ex-mini" onclick="dupExercise(${ei})">⧉ Duplicate</button><button class="ex-mini" onclick="moveExercise(${ei})">⇄ Move</button></div>`;
   } else {
     if(e.youtube) rows+=`<a class="ex-yt" href="${escA(e.youtube)}" target="_blank" rel="noopener">▶ Watch demo</a>`;
     if(e.coachCue) rows+=`<div class="coachcue">${esc(e.coachCue)}</div>`;
