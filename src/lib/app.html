@@ -847,7 +847,7 @@ function homeHTML(){
   h+=`<div class="group-lbl">Templates<span class="ln"></span></div>`;
   TEMPLATES.forEach((t,i)=>{
     h+=`<div class="scard tap${isTplWip(t.key)?' wip':''}" onclick="openTemplate(${i})"><div class="rail"></div><div class="scard-body">
-      <div class="scard-top"><span class="scard-name">${esc(t.label)}</span>${isTplWip(t.key)?'<span class="wip-chip">WIP</span>':''}</div>
+      <div class="scard-top"><span class="scard-name">${esc(t.label)}</span></div>
       <div class="scard-sub"><span>starter program · edit to taste</span></div></div>
       <button class="wbtn ${isTplWip(t.key)?'on':''}" onclick="event.stopPropagation();toggleTplWip('${t.key}')" title="Mark work-in-progress (coach only)">WIP</button>
       <div class="chev">${ICON_CHEV}</div></div>`;
@@ -856,7 +856,7 @@ function homeHTML(){
   if(!S.clients.length) h+=`<div class="hist-empty">No clients yet — create one from a template.</div>`;
   S.clients.forEach((c,i)=>{
     h+=`<div class="scard tap${isTplWip(c.clientId)?' wip':''}" onclick="openClientHome(${i})"><div class="rail"></div><div class="scard-body">
-      <div class="scard-top"><span class="scard-name">${esc(c.name)}</span>${isTplWip(c.clientId)?'<span class="wip-chip">WIP</span>':''}</div>
+      <div class="scard-top"><span class="scard-name">${esc(c.name)}</span></div>
       <div class="scard-sub"><span>${esc(c.goal||'')||'—'}</span><span class="dot">·</span><span>Block ${c.currentPhase||1}</span></div></div>
       <button class="wbtn ${isTplWip(c.clientId)?'on':''}" onclick="event.stopPropagation();toggleTplWip('${c.clientId}')" title="Mark work-in-progress (coach only)">WIP</button>
       <button class="linkbtn" onclick="event.stopPropagation();copyClientLink(${i})" title="Copy their personal link">${ICON_LINK}</button>

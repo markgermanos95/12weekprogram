@@ -18,6 +18,12 @@ export const TABS: Record<string, string[]> = {
     "cardioStage", "cardioDone", "cardioCals", "cardioWhen", "status", "createdAt", "updatedAt",
   ],
   setLogs: ["logId", "exId", "exName", "setOrder", "setType", "target", "reps", "load", "done", "workingLoad", "maxNote", "rpe"],
+  // Isolated program storage: ONE row per (clientId, phase). The whole program
+  // for that block lives as a JSON blob in `sessions`. Writes are single-row
+  // (upsertRow_), so one program can never disturb another — unlike the flat
+  // `template` tab, where every save rewrote the entire tab. `template` is kept
+  // as a read-only backup of the pre-migration data.
+  programs: ["clientId", "phase", "tplWip", "updatedAt", "sessions"],
 };
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
@@ -217,4 +223,89 @@ export async function appendRows_(name: string, objs: Record<string, any>[]) {
     insertDataOption: "INSERT_ROWS",
     requestBody: { values: rows },
   });
+}
+
+// Atomic upsert keyed by keyCols: locate the single matching row and rewrite
+// ONLY that row's range, or append if none matches. Never clears the tab, so a
+// write to one program's row physically cannot touch another's. This is the
+// isolation the flat template tab never had.
+export async function upsertRow_(name: string, keyCols: string[], obj: Record<string, any>) {
+  await ensureSheets_();
+  const sheets = sheetsClient();
+  const hdr = TABS[name];
+  const width = colLetter(hdr.length);
+  const got = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${name}!A2:${width}` });
+  const rows = got.data.values || [];
+  const kIdx = keyCols.map((k) => hdr.indexOf(k));
+  const rowVals = hdr.map((h) => (obj[h] !== undefined ? obj[h] : ""));
+  let found = -1;
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (keyCols.every((k, j) => String(r[kIdx[j]] ?? "") === String(obj[k] ?? ""))) { found = i; break; }
+  }
+  if (found >= 0) {
+    const rn = found + 2; // data starts at sheet row 2
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID, range: `${name}!A${rn}:${width}${rn}`,
+      valueInputOption: "RAW", requestBody: { values: [rowVals] },
+    });
+  } else {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID, range: `${name}!A1`,
+      valueInputOption: "RAW", insertDataOption: "INSERT_ROWS", requestBody: { values: [rowVals] },
+    });
+  }
+  return true;
+}
+
+// Targeted patch: for every row matching matchFn, apply `patch` and rewrite ONLY
+// those rows in place (one batched update of the individual row ranges). No
+// whole-tab clear, so unmatched rows are physically untouched.
+export async function patchRows_(name: string, matchFn: (o: Record<string, any>) => boolean, patch: Record<string, any>) {
+  await ensureSheets_();
+  const sheets = sheetsClient();
+  const hdr = TABS[name];
+  const width = colLetter(hdr.length);
+  const got = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${name}!A2:${width}` });
+  const rows = got.data.values || [];
+  const data: { range: string; values: any[][] }[] = [];
+  rows.forEach((r, i) => {
+    const o: Record<string, any> = {};
+    hdr.forEach((h, j) => (o[h] = r[j] !== undefined ? r[j] : ""));
+    if (matchFn(o)) {
+      Object.assign(o, patch);
+      const rn = i + 2;
+      data.push({ range: `${name}!A${rn}:${width}${rn}`, values: [hdr.map((h) => (o[h] !== undefined ? o[h] : ""))] });
+    }
+  });
+  if (data.length) {
+    await sheets.spreadsheets.values.batchUpdate({ spreadsheetId: SHEET_ID, requestBody: { valueInputOption: "RAW", data } });
+  }
+  return data.length;
+}
+
+// Atomic row removal: delete only the rows matching matchFn, bottom-up, in one
+// batchUpdate. Unlike writeRows_ (clear-then-write), there is no window where
+// survivors are gone — a failure leaves the tab fully intact.
+export async function deleteRowsWhere_(name: string, matchFn: (o: Record<string, any>) => boolean) {
+  await ensureSheets_();
+  const sheets = sheetsClient();
+  const hdr = TABS[name];
+  const width = colLetter(hdr.length);
+  const sheetId = _tabInfo?.[name]?.sheetId;
+  if (sheetId == null) return 0;
+  const got = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${name}!A2:${width}` });
+  const rows = got.data.values || [];
+  const idxs: number[] = [];
+  rows.forEach((r, i) => {
+    const o: Record<string, any> = {};
+    hdr.forEach((h, j) => (o[h] = r[j] !== undefined ? r[j] : ""));
+    if (matchFn(o)) idxs.push(i + 1); // data row i (0-based from A2) => 0-based sheet rowIndex i+1
+  });
+  if (!idxs.length) return 0;
+  const requests = idxs.sort((a, b) => b - a).map((ri) => ({
+    deleteDimension: { range: { sheetId, dimension: "ROWS", startIndex: ri, endIndex: ri + 1 } },
+  }));
+  await sheets.spreadsheets.batchUpdate({ spreadsheetId: SHEET_ID, requestBody: { requests } });
+  return idxs.length;
 }

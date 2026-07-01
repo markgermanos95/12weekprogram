@@ -2,7 +2,7 @@
 // shapes, same Google Sheet — only the underlying read/write calls changed
 // (SpreadsheetApp -> Sheets REST API, via sheets.ts).
 
-import { readRows_, writeRows_, appendRows_, uid_, accessToken_ } from "./sheets";
+import { readRows_, writeRows_, appendRows_, upsertRow_, patchRows_, deleteRowsWhere_, uid_, accessToken_ } from "./sheets";
 import { buildSeed } from "./seed";
 
 const truthy = (v: any) => v === true || v === "true" || v === "TRUE";
@@ -24,8 +24,22 @@ async function ensureClientTokens_() {
   return rows;
 }
 
+// Serialise the one-time create path (migrate + seed) behind a shared in-flight
+// promise so concurrent loads on this instance can't both populate an empty
+// programs tab and race duplicate rows. A failed run clears the latch to retry.
+let _createOnce: Promise<void> | null = null;
+function createOnce_() {
+  if (!_createOnce) {
+    _createOnce = (async () => {
+      await migrateFlatToPrograms_(); // one-time: legacy flat template -> isolated programs
+      await seedIfEmpty_();
+    })().catch((e) => { _createOnce = null; throw e; });
+  }
+  return _createOnce;
+}
+
 export async function getClients() {
-  await seedIfEmpty_();
+  await createOnce_();
   const rows = await ensureClientTokens_();
   return rows.map((c) => ({
     clientId: c.clientId,
@@ -78,7 +92,7 @@ export async function rotateClientToken(clientId: string) {
 // their session logs, and the set logs under those sessions. Irreversible.
 export async function deleteClient(clientId: string) {
   await writeRows_("clients", (await readRows_("clients")).filter((c) => c.clientId !== clientId));
-  await writeRows_("template", (await readRows_("template")).filter((r) => r.clientId !== clientId));
+  await deleteRowsWhere_("programs", (r) => r.clientId === clientId);
   const logs = await readRows_("sessionLogs");
   const mine = new Set(logs.filter((r) => r.clientId === clientId).map((r) => r.logId));
   await writeRows_("sessionLogs", logs.filter((r) => r.clientId !== clientId));
@@ -86,59 +100,12 @@ export async function deleteClient(clientId: string) {
   return true;
 }
 
-/* ---------- template flatten / unflatten ---------- */
+/* ---------- template unflatten (legacy, migration-only) ---------- */
 
-// The template tab is stored one-row-per-set. A session with no exercises, or
-// an exercise with no sets, would otherwise flatten to *zero* rows and vanish
-// on the next read — so we emit a structural placeholder for those empty
-// parents: a blank `exId` marks "session exists, no exercises", a blank
-// `setType` marks "exercise exists, no sets". getTemplate honours both.
-// Placeholders are transient — the next save with real content replaces them.
-function flattenTemplate_(clientId: string, phase: number, sessions: any[], tplWip = false) {
-  // WIP flags (coach-only amber markers): exWip per exercise, sessWip per
-  // session, tplWip across the whole template — repeated on the rows at each
-  // scope, same pattern as the other repeated session/exercise fields.
-  const tw = tplWip ? "true" : "";
-  const rows: Record<string, any>[] = [];
-  sessions.forEach((s, si) => {
-    const sBase = {
-      clientId, phase, sessionId: s.sessionId, sessionOrder: si,
-      sessionName: s.name, priority: s.priority, cardioPos: s.cardioPos || "none",
-      sessWip: s.wip ? "true" : "", tplWip: tw,
-    };
-    const exercises = s.exercises || [];
-    if (!exercises.length) {
-      rows.push({
-        ...sBase, exOrder: 0, groupId: "", role: "",
-        exId: "", exName: "", exYoutube: "", exCues: "", rir: "", coachCue: "",
-        setOrder: "", setType: "", target: "", unit: "", exWip: "",
-      });
-      return;
-    }
-    exercises.forEach((e: any, eo: number) => {
-      const exId = e.exId || uid_();
-      const eBase = {
-        ...sBase, exOrder: eo, groupId: e.groupId || "", role: e.role || "",
-        exId, exName: e.name, exYoutube: e.youtube || "", exCues: e.cues || "", rir: e.rir || "", coachCue: e.coachCue || "",
-        exWip: e.wip ? "true" : "",
-      };
-      const sets = e.sets || [];
-      if (!sets.length) {
-        rows.push({ ...eBase, setOrder: "", setType: "", target: "", unit: "" });
-        return;
-      }
-      sets.forEach((set: any, ki: number) => {
-        rows.push({ ...eBase, setOrder: ki, setType: set.type, target: set.target, unit: set.unit || "reps" });
-      });
-    });
-  });
-  return rows;
-}
-
-export async function getTemplate(clientId: string, phase: number) {
-  const rows = (await readRows_("template")).filter(
-    (r) => r.clientId === clientId && Number(r.phase) === Number(phase)
-  );
+// Rebuild the sessions[] for one program from legacy flat template rows
+// (one-row-per-set). Used only by the one-time migration; live reads come from
+// the programs tab.
+function unflattenRows_(rows: Record<string, any>[]) {
   const sessMap: Record<string, any> = {};
   rows.forEach((r) => {
     const sid = r.sessionId;
@@ -170,23 +137,80 @@ export async function getTemplate(clientId: string, phase: number) {
             .map((st: any) => ({ type: st.type, target: st.target, unit: st.unit || "reps" })),
         })),
     }));
-  return { clientId, phase: Number(phase), sessions, tplWip: rows.some((r) => truthy(r.tplWip)) };
+  return { sessions, tplWip: rows.some((r) => truthy(r.tplWip)) };
 }
 
-export async function saveTemplate(clientId: string, phase: number, sessions: any[], tplWip = false) {
-  const all = await readRows_("template");
-  const keep = all.filter((r) => !(r.clientId === clientId && Number(r.phase) === Number(phase)));
-  await writeRows_("template", keep.concat(flattenTemplate_(clientId, phase, sessions, tplWip)));
+/* ---------- isolated program storage (programs tab: one row per clientId+phase) ---------- */
+
+// Coerce a sessions[] parsed from JSON back to the canonical shape, tolerating
+// anything slightly off so a stray/missing field can never silently drop a
+// session, exercise, or set on the way in or out.
+function normSessions_(raw: any): any[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((s: any) => ({
+    sessionId: String((s && s.sessionId) || uid_()),
+    name: (s && s.name) || "", priority: Number(s && s.priority) || 1,
+    cardioPos: (s && s.cardioPos) || "none", wip: !!(s && s.wip),
+    exercises: (s && Array.isArray(s.exercises) ? s.exercises : []).map((e: any) => ({
+      exId: String((e && e.exId) || uid_()), name: (e && e.name) || "", youtube: (e && e.youtube) || "",
+      cues: (e && e.cues) || "", rir: (e && e.rir) || "", coachCue: (e && e.coachCue) || "",
+      groupId: (e && e.groupId) || "", role: (e && e.role) || "", wip: !!(e && e.wip),
+      sets: (e && Array.isArray(e.sets) ? e.sets : []).map((st: any) => ({
+        type: (st && st.type) || "W", target: st && st.target != null ? st.target : "", unit: (st && st.unit) || "reps",
+      })),
+    })),
+  }));
+}
+
+async function readProgram_(clientId: string, phase: number): Promise<{ sessions: any[]; tplWip: boolean } | null> {
+  const matches = (await readRows_("programs")).filter((x) => x.clientId === clientId && Number(x.phase) === Number(phase));
+  if (!matches.length) return null;
+  // If a cold-start race ever left duplicate rows for this block, prefer the
+  // most recently written one — an inert stale twin can never win the read.
+  const r = matches.sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")))[0];
+  let sessions: any[] = [];
+  try { sessions = normSessions_(JSON.parse(r.sessions || "[]")); } catch { sessions = []; }
+  return { sessions, tplWip: truthy(r.tplWip) };
+}
+
+// Single-row write — touches ONLY this program's row. A bug here cannot reach
+// any other program or template. This is the whole point of the programs tab.
+async function writeProgram_(clientId: string, phase: number, sessions: any[], tplWip: boolean) {
+  await upsertRow_("programs", ["clientId", "phase"], {
+    clientId, phase: Number(phase), tplWip: tplWip ? "true" : "", updatedAt: nowISO(),
+    sessions: JSON.stringify(normSessions_(sessions)),
+  });
   return true;
 }
 
-// Coach-only: flip the whole-template WIP flag. Spans every phase, so it writes
-// the tplWip column across all of this template's rows at once (a per-phase
-// saveTemplate would only touch the block being edited).
+export async function getTemplate(clientId: string, phase: number) {
+  const prog = await readProgram_(clientId, phase);
+  return { clientId, phase: Number(phase), sessions: prog ? prog.sessions : [], tplWip: prog ? prog.tplWip : false };
+}
+
+// Does this block currently hold real content? A corrupt/unparseable blob counts
+// as content (never overwrite something we can't read).
+async function programHasContent_(clientId: string, phase: number): Promise<boolean> {
+  const matches = (await readRows_("programs")).filter((x) => x.clientId === clientId && Number(x.phase) === Number(phase));
+  return matches.some((r) => { try { const a = JSON.parse(r.sessions || "[]"); return Array.isArray(a) && a.length > 0; } catch { return true; } });
+}
+
+export async function saveTemplate(clientId: string, phase: number, sessions: any[], tplWip = false) {
+  // Self-wipe guard: if the incoming program is empty but the stored one is not,
+  // refuse to blank it — a transient empty/failed load must never overwrite good
+  // data. The WIP toggle is still honoured.
+  if ((!sessions || !sessions.length) && (await programHasContent_(clientId, phase))) {
+    await patchRows_("programs", (o) => o.clientId === clientId && Number(o.phase) === Number(phase), { tplWip: tplWip ? "true" : "", updatedAt: nowISO() });
+    return true;
+  }
+  await writeProgram_(clientId, phase, sessions, tplWip);
+  return true;
+}
+
+// Coach-only whole-template WIP: patch the tplWip cell on each of this template's
+// existing block rows in place — no other program's row is read or written.
 export async function setTemplateWip(clientId: string, on: boolean) {
-  const all = await readRows_("template");
-  all.forEach((r) => { if (r.clientId === clientId) r.tplWip = on ? "true" : ""; });
-  await writeRows_("template", all);
+  await patchRows_("programs", (o) => o.clientId === clientId, { tplWip: on ? "true" : "" });
   return true;
 }
 
@@ -195,7 +219,7 @@ export async function setTemplateWip(clientId: string, on: boolean) {
 // home screen show WIP at a glance without loading every template.
 export async function getTemplateWips() {
   const out = new Set<string>();
-  (await readRows_("template")).forEach((r) => { if (truthy(r.tplWip)) out.add(String(r.clientId)); });
+  (await readRows_("programs")).forEach((r) => { if (truthy(r.tplWip)) out.add(String(r.clientId)); });
   return Array.from(out);
 }
 
@@ -407,16 +431,39 @@ const KEY_TIER: Record<string, string> = {
 // latest factory program into a template, delete its rows so it counts as
 // missing and re-seeds on the next load.
 export async function seedIfEmpty_() {
-  const all = await readRows_("template");
-  const have = new Set(all.map((r) => String(r.clientId)));
-  const missing = TEMPLATE_KEYS.filter((k) => !have.has(k));
-  if (!missing.length) return;
-  let seeds: Record<string, any>[] = [];
-  for (const k of missing) {
+  const have = new Set((await readRows_("programs")).map((r) => `${r.clientId}|${Number(r.phase)}`));
+  // Blocks the flat backup still holds belong to migration, not seed — so the
+  // coach's real edited work (e.g. Beginner B1) can never be shadowed by a
+  // freshly-seeded authored starter, even under a concurrent cold start.
+  const flatOwned = new Set((await readRows_("template")).map((r) => `${r.clientId}|${Number(r.phase)}`));
+  for (const k of TEMPLATE_KEYS) {
     const seed = buildSeed(KEY_TIER[k]);
-    ([1, 2, 3] as const).forEach((p) => { seeds = seeds.concat(flattenTemplate_(k, p, (seed as any)[p])); });
+    for (const p of [1, 2, 3] as const) {
+      const key = `${k}|${p}`;
+      if (have.has(key) || flatOwned.has(key)) continue; // exists, or migration owns it
+      await writeProgram_(k, p, (seed as any)[p], false);
+      have.add(key);
+    }
   }
-  await appendRows_("template", seeds);
+}
+
+// One-time lift of the legacy flat `template` tab into the isolated programs tab.
+// Idempotent — writes only a (clientId, phase) the programs tab doesn't already
+// have, and never touches the `template` tab, which stays as a backup.
+export async function migrateFlatToPrograms_() {
+  const flat = await readRows_("template");
+  if (!flat.length) return;
+  const have = new Set((await readRows_("programs")).map((r) => `${r.clientId}|${Number(r.phase)}`));
+  const groups: Record<string, Record<string, any>[]> = {};
+  flat.forEach((r) => { const key = `${r.clientId}|${Number(r.phase)}`; (groups[key] = groups[key] || []).push(r); });
+  for (const key of Object.keys(groups)) {
+    if (have.has(key)) continue;
+    const rows = groups[key];
+    const clientId = String(rows[0].clientId);
+    const phase = Number(rows[0].phase);
+    const { sessions, tplWip } = unflattenRows_(rows);
+    await writeProgram_(clientId, phase, sessions, tplWip);
+  }
 }
 
 export async function addClientFromTemplate(name: string, goal: string, templateKey: string) {
@@ -425,17 +472,20 @@ export async function addClientFromTemplate(name: string, goal: string, template
     { clientId, name: name || "New client", goal: goal || "", currentPhase: 1,
       createdAt: nowISO(), accessToken: accessToken_(), minimal: "" },
   ]);
-  const exMap: Record<string, string> = {};
-  const copied = (await readRows_("template")).filter((r) => r.clientId === templateKey).map((r) => {
-    const o = { ...r };
-    o.clientId = clientId;
-    if (r.exId) { // leave placeholder rows (blank exId) untouched
-      if (!exMap[r.exId]) exMap[r.exId] = uid_();
-      o.exId = exMap[r.exId];
-    }
-    return o;
+  // Copy each of the template's block programs to the new client with fresh
+  // exercise ids, so logged history never collides between client and template.
+  // Dedup by phase (newest updatedAt) so a stray duplicate row can't double up.
+  const byPhase: Record<number, Record<string, any>> = {};
+  (await readRows_("programs")).filter((r) => r.clientId === templateKey).forEach((r) => {
+    const p = Number(r.phase);
+    if (!byPhase[p] || String(r.updatedAt || "") > String(byPhase[p].updatedAt || "")) byPhase[p] = r;
   });
-  if (copied.length) await appendRows_("template", copied);
+  for (const p of Object.keys(byPhase).map(Number)) {
+    let sessions: any[] = [];
+    try { sessions = normSessions_(JSON.parse(byPhase[p].sessions || "[]")); } catch { sessions = []; }
+    sessions.forEach((s) => s.exercises.forEach((e: any) => { e.exId = uid_(); }));
+    await writeProgram_(clientId, p, sessions, false);
+  }
   return clientId;
 }
 
